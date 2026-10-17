@@ -1304,8 +1304,8 @@ class ReportAgent:
         if previous_sections:
             previous_parts = []
             for sec in previous_sections:
-                # 每个章节最多4000字
-                truncated = sec[:4000] + "..." if len(sec) > 4000 else sec
+                # 每个章节最多800字以防止超过 Groq TPM 限制
+                truncated = sec[:800] + "..." if len(sec) > 800 else sec
                 previous_parts.append(truncated)
             previous_content = "\n\n---\n\n".join(previous_parts)
         else:
@@ -1323,8 +1323,8 @@ class ReportAgent:
         
         # ReACT循环
         tool_calls_count = 0
-        max_iterations = 5  # 最大迭代轮数
-        min_tool_calls = 3  # 最少工具调用次数
+        max_iterations = 4  # 最大迭代轮数
+        min_tool_calls = 2  # 最少工具调用次数
         conflict_retries = 0  # 工具调用与Final Answer同时出现的连续冲突次数
         used_tools = set()  # 记录已调用过的工具名
         all_tools = {"insight_forge", "panorama_search", "quick_search", "interview_agents"}
@@ -1340,9 +1340,22 @@ class ReportAgent:
                     t('progress.deepSearchAndWrite', current=tool_calls_count, max=self.MAX_TOOL_CALLS_PER_SECTION)
                 )
             
+            # 压缩历史工具检索结果，防止超过 LLM API (如 Groq) 的单分钟 Token 限制 (8000 TPM)
+            compact_messages = []
+            for idx, m in enumerate(messages):
+                if m["role"] == "user" and "【工具返回结果 - " in m.get("content", ""):
+                    # 只有最后一条工具返回保留完整内容，更早的返回压缩至 300 字符
+                    if idx < len(messages) - 2:
+                        c = m["content"]
+                        if len(c) > 300:
+                            c = c[:300] + "\n...(历史检索已折叠)..."
+                        compact_messages.append({"role": m["role"], "content": c})
+                        continue
+                compact_messages.append(m)
+
             # 调用LLM
             response = self.llm.chat(
-                messages=messages,
+                messages=compact_messages,
                 temperature=0.5,
                 max_tokens=4096
             )
@@ -1497,11 +1510,16 @@ class ReportAgent:
 
                 cleaned_response = ReportAgent._strip_fake_tool_results(response)
                 messages.append({"role": "assistant", "content": cleaned_response})
+
+                # 截断过长的工具检索结果，防止超过 LLM API (如 Groq) 的单分钟 Token 限制
+                max_tool_chars = 1200
+                safe_result = result[:max_tool_chars] + ("\n...(检索结果已自动精简以适配模型上下文限制)..." if len(result) > max_tool_chars else "")
+
                 messages.append({
                     "role": "user",
                     "content": REACT_OBSERVATION_TEMPLATE.format(
                         tool_name=call["name"],
-                        result=result,
+                        result=safe_result,
                         tool_calls_count=tool_calls_count,
                         max_tool_calls=self.MAX_TOOL_CALLS_PER_SECTION,
                         used_tools_str=", ".join(used_tools),
@@ -1639,37 +1657,48 @@ class ReportAgent:
             )
             ReportManager.save_report(report)
             
-            # 阶段1: 规划大纲
-            report.status = ReportStatus.PLANNING
-            ReportManager.update_progress(
-                report_id, "planning", 5, t('progress.startPlanningOutline'),
-                completed_sections=[]
-            )
-            
-            # 记录规划开始日志
-            self.report_logger.log_planning_start()
-            
-            if progress_callback:
-                progress_callback("planning", 0, t('progress.startPlanningOutline'))
-            
-            outline = self.plan_outline(
-                progress_callback=lambda stage, prog, msg: 
-                    progress_callback(stage, prog // 5, msg) if progress_callback else None
-            )
-            report.outline = outline
-            
-            # 记录规划完成日志
-            self.report_logger.log_planning_complete(outline.to_dict())
-            
-            # 保存大纲到文件
-            ReportManager.save_outline(report_id, outline)
-            ReportManager.update_progress(
-                report_id, "planning", 15, t('progress.outlineDone', count=len(outline.sections)),
-                completed_sections=[]
-            )
-            ReportManager.save_report(report)
-            
-            logger.info(t('report.outlineSavedToFile', reportId=report_id))
+            # 阶段1: 规划大纲（如已有大纲则直接复用）
+            outline_path = ReportManager._get_outline_path(report_id)
+            if os.path.exists(outline_path):
+                logger.info(f"复用已存在的大纲文件: {outline_path}")
+                with open(outline_path, 'r', encoding='utf-8') as f:
+                    outline_dict = json.load(f)
+                outline = ReportOutline(
+                    title=outline_dict['title'],
+                    summary=outline_dict['summary'],
+                    sections=[ReportSection(title=s['title'], content=s.get('content', '')) for s in outline_dict.get('sections', [])]
+                )
+                report.outline = outline
+            else:
+                report.status = ReportStatus.PLANNING
+                ReportManager.update_progress(
+                    report_id, "planning", 5, t('progress.startPlanningOutline'),
+                    completed_sections=[]
+                )
+                
+                # 记录规划开始日志
+                self.report_logger.log_planning_start()
+                
+                if progress_callback:
+                    progress_callback("planning", 0, t('progress.startPlanningOutline'))
+                
+                outline = self.plan_outline(
+                    progress_callback=lambda stage, prog, msg: 
+                        progress_callback(stage, prog // 5, msg) if progress_callback else None
+                )
+                report.outline = outline
+                
+                # 记录规划完成日志
+                self.report_logger.log_planning_complete(outline.to_dict())
+                
+                # 保存大纲到文件
+                ReportManager.save_outline(report_id, outline)
+                ReportManager.update_progress(
+                    report_id, "planning", 15, t('progress.outlineDone', count=len(outline.sections)),
+                    completed_sections=[]
+                )
+                ReportManager.save_report(report)
+                logger.info(t('report.outlineSavedToFile', reportId=report_id))
             
             # 阶段2: 逐章节生成（分章节保存）
             report.status = ReportStatus.GENERATING
@@ -1681,6 +1710,23 @@ class ReportAgent:
                 section_num = i + 1
                 base_progress = 20 + int((i / total_sections) * 70)
                 
+                # 检查此章节是否已生成过并保存在磁盘上（支持断点续生成）
+                sec_path = ReportManager._get_section_path(report_id, section_num)
+                if os.path.exists(sec_path) and os.path.getsize(sec_path) > 100:
+                    logger.info(f"章节 {section_num} 已存在，直接复用: {sec_path}")
+                    with open(sec_path, 'r', encoding='utf-8') as f:
+                        raw_content = f.read().strip()
+                    # 去掉顶层大标题避免重复
+                    header_prefix = f"## {section.title}"
+                    if raw_content.startswith(header_prefix):
+                        clean_content = raw_content[len(header_prefix):].strip()
+                    else:
+                        clean_content = raw_content
+                    section.content = clean_content
+                    generated_sections.append(f"## {section.title}\n\n{clean_content}")
+                    completed_section_titles.append(section.title)
+                    continue
+
                 # 更新进度
                 ReportManager.update_progress(
                     report_id, "generating", base_progress,
@@ -2545,24 +2591,15 @@ class ReportManager:
     
     @classmethod
     def get_report_by_simulation(cls, simulation_id: str) -> Optional[Report]:
-        """根据模拟ID获取报告"""
-        cls._ensure_reports_dir()
-        
-        for item in os.listdir(cls.REPORTS_DIR):
-            item_path = os.path.join(cls.REPORTS_DIR, item)
-            # 新格式：文件夹
-            if os.path.isdir(item_path):
-                report = cls.get_report(item)
-                if report and report.simulation_id == simulation_id:
-                    return report
-            # 兼容旧格式：JSON文件
-            elif item.endswith('.json'):
-                report_id = item[:-5]
-                report = cls.get_report(report_id)
-                if report and report.simulation_id == simulation_id:
-                    return report
-        
-        return None
+        """根据模拟ID获取报告（优先返回最新已完成的）"""
+        reports = cls.list_reports(simulation_id=simulation_id)
+        if not reports:
+            return None
+        # 优先返回最新已完成的报告
+        completed = [r for r in reports if r.status == ReportStatus.COMPLETED]
+        if completed:
+            return completed[0]
+        return reports[0]
     
     @classmethod
     def list_reports(cls, simulation_id: Optional[str] = None, limit: int = 50) -> List[Report]:

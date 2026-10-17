@@ -881,8 +881,20 @@ const loadReportData = async () => {
     // Get report info
     const reportRes = await getReport(props.reportId)
     if (reportRes.success && reportRes.data) {
-      // Load agent logs to get report outline and sections
-      await loadAgentLogs()
+      if (reportRes.data.outline) {
+        reportOutline.value = reportRes.data.outline
+        if (reportRes.data.outline.sections) {
+          reportRes.data.outline.sections.forEach((sec, idx) => {
+            if (sec.content) {
+              generatedSections.value[idx + 1] = sec.content
+            }
+          })
+        }
+      }
+      // Load agent logs to get report outline and sections if not already loaded
+      if (!reportOutline.value) {
+        await loadAgentLogs()
+      }
     }
   } catch (err) {
     addLog(t('log.loadReportFailed', { error: err.message }))

@@ -42,6 +42,83 @@ def create_chat_completion(
 
     if response_format is not None:
         kwargs["response_format"] = response_format
+    else:
+        # Provide fallback tool schemas so providers like Groq accept
+        # model-emitted tool calls without throwing "Tool choice is none" or "tool not in request.tools"
+        kwargs["tools"] = [
+            {
+                "type": "function",
+                "function": {
+                    "name": "insight_forge",
+                    "description": "Deep insight search and question decomposition analysis",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {"type": "string"},
+                            "report_context": {"type": "string"},
+                        },
+                        "required": ["query"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "panorama_search",
+                    "description": "Wide-angle event timeline and overview search",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {"type": "string"},
+                        },
+                        "required": ["query"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "quick_search",
+                    "description": "Quick search for specific facts",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "query": {"type": "string"},
+                        },
+                        "required": ["query"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "interview_agents",
+                    "description": "Interview simulated agents for firsthand opinions",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "question": {"type": "string"},
+                            "agent_names": {"type": "array", "items": {"type": "string"}},
+                        },
+                        "required": ["question"],
+                    },
+                },
+            },
+            {
+                "type": "function",
+                "function": {
+                    "name": "tool_call",
+                    "description": "Generic tool invocation",
+                    "parameters": {
+                        "type": "object",
+                        "properties": {
+                            "name": {"type": "string"},
+                            "parameters": {"type": "object"},
+                        },
+                    },
+                },
+            },
+        ]
 
     gpt5_family = is_gpt5_family(model)
 
@@ -59,6 +136,8 @@ def create_chat_completion(
 
 def extract_chat_completion_text(response: Any) -> str:
     """Extract plain text from chat completion response across SDK content shapes."""
+    import json
+
     choices = getattr(response, "choices", None) or []
     if not choices:
         return ""
@@ -68,6 +147,34 @@ def extract_chat_completion_text(response: Any) -> str:
         return ""
 
     content = getattr(message, "content", "")
+
+    # Check if native tool_calls were emitted by the model
+    tool_calls = getattr(message, "tool_calls", None)
+    if tool_calls:
+        tool_call_strs: List[str] = []
+        for tc in tool_calls:
+            func = getattr(tc, "function", None)
+            name = getattr(func, "name", "unknown")
+            args_str = getattr(func, "arguments", "{}")
+            try:
+                args_dict = json.loads(args_str)
+            except Exception:
+                args_dict = {"query": str(args_str)}
+
+            if name == "tool_call" and "name" in args_dict and "parameters" in args_dict:
+                call_data = args_dict
+            else:
+                call_data = {"name": name, "parameters": args_dict}
+
+            call_json = json.dumps(call_data, ensure_ascii=False)
+            tool_call_strs.append(f"<tool_call>\n{call_json}\n</tool_call>")
+        if tool_call_strs:
+            existing = content if isinstance(content, str) else ""
+            return f"{existing}\n" + "\n".join(tool_call_strs)
+
+    # Fallback to reasoning if content is empty
+    if not content and hasattr(message, "reasoning") and getattr(message, "reasoning"):
+        return str(getattr(message, "reasoning"))
 
     if isinstance(content, str):
         return content

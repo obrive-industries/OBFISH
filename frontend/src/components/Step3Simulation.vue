@@ -512,7 +512,7 @@ const fetchRunStatus = async () => {
       }
       
       // 检测模拟是否已完成（通过 runner_status 或平台完成状态判断）
-      const isCompleted = data.runner_status === 'completed' || data.runner_status === 'stopped'
+      const isCompleted = data.runner_status === 'completed' || data.runner_status === 'stopped' || checkPlatformsCompleted(data)
       const isFailed = data.runner_status === 'failed'
       
       // runner_status is authoritative because the backend only publishes a

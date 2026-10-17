@@ -7,9 +7,19 @@
         <div v-if="reportOutline" class="report-content-wrapper">
           <!-- Report Header -->
           <div class="report-header-block">
-            <div class="report-meta">
-              <span class="report-tag">Prediction Report</span>
-              <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
+            <div class="report-meta" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <span class="report-tag">Prediction Report</span>
+                <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
+              </div>
+              <div style="display: flex; gap: 10px; align-items: center;">
+                <a :href="`http://localhost:5001/api/report/${reportId}/download`" download style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                  📥 Download Report (.md)
+                </a>
+                <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                  💬 Step 5: Chat with Report →
+                </button>
+              </div>
             </div>
             <h1 class="main-title">{{ reportOutline.title }}</h1>
             <p class="sub-title">{{ reportOutline.summary }}</p>
@@ -329,12 +339,22 @@
 
                   <!-- Report Complete -->
                   <template v-if="log.action === 'report_complete'">
-                    <div class="complete-banner">
-                      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                      </svg>
-                      <span>Report Generation Complete</span>
+                    <div class="complete-banner" style="display: flex; flex-direction: column; gap: 8px; align-items: center; padding: 12px;">
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                        </svg>
+                        <span>Report Generation Complete</span>
+                      </div>
+                      <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <a :href="`http://localhost:5001/api/report/${reportId}/download`" download style="background: #2563eb; color: #fff; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">
+                          📥 Download (.md)
+                        </a>
+                        <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold;">
+                          💬 Go to Step 5 →
+                        </button>
+                      </div>
                     </div>
                   </template>
                 </div>
