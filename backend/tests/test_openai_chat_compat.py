@@ -121,3 +121,30 @@ def test_extracts_text_from_supported_content_shapes():
 
     assert extract_chat_completion_text(response) == "first second third"
     assert extract_chat_completion_text(SimpleNamespace(choices=[])) == ""
+
+
+def test_extracts_text_from_reasoning_and_reasoning_content():
+    resp_reasoning = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content="",
+                    reasoning="reasoning output",
+                )
+            )
+        ]
+    )
+    assert extract_chat_completion_text(resp_reasoning) == "reasoning output"
+
+    resp_reasoning_content = SimpleNamespace(
+        choices=[
+            SimpleNamespace(
+                message=SimpleNamespace(
+                    content=None,
+                    reasoning_content='{"status": "ok"}',
+                )
+            )
+        ]
+    )
+    assert extract_chat_completion_text(resp_reasoning_content) == '{"status": "ok"}'
+

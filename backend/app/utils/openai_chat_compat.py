@@ -172,9 +172,11 @@ def extract_chat_completion_text(response: Any) -> str:
             existing = content if isinstance(content, str) else ""
             return f"{existing}\n" + "\n".join(tool_call_strs)
 
-    # Fallback to reasoning if content is empty
-    if not content and hasattr(message, "reasoning") and getattr(message, "reasoning"):
-        return str(getattr(message, "reasoning"))
+    # Fallback to reasoning / reasoning_content if content is empty
+    if not content:
+        reasoning = getattr(message, "reasoning", None) or getattr(message, "reasoning_content", None)
+        if reasoning:
+            return str(reasoning)
 
     if isinstance(content, str):
         return content

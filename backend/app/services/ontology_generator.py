@@ -225,7 +225,15 @@ class OntologyGenerator:
         )
         
         lang_instruction = get_language_instruction()
-        system_prompt = f"{ONTOLOGY_SYSTEM_PROMPT}\n\n{lang_instruction}\nIMPORTANT: Entity type names MUST be in English PascalCase (e.g., 'PersonEntity', 'MediaOrganization'). Relationship type names MUST be in English UPPER_SNAKE_CASE (e.g., 'WORKS_FOR'). Attribute names MUST be in English snake_case. Only description fields and analysis_summary should use the specified language above."
+        system_prompt = (
+            f"{ONTOLOGY_SYSTEM_PROMPT}\n\n{lang_instruction}\n"
+            "IMPORTANT: Entity type names MUST be in English PascalCase (e.g., 'PersonEntity', 'MediaOrganization'). "
+            "Relationship type names MUST be in English UPPER_SNAKE_CASE (e.g., 'WORKS_FOR'). "
+            "Attribute names MUST be in English snake_case. Only description fields and analysis_summary should use the specified language above.\n"
+            "CRITICAL TOKEN LIMIT RULE: Keep all entity and relationship descriptions concise (under 15 words). "
+            "Provide at most 2 attributes and 2 examples per entity type. Keep analysis_summary under 40 words. "
+            "This ensures the JSON output is compact and never truncated at provider token limits."
+        )
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_message}
