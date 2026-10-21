@@ -13,7 +13,7 @@
                 <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
               </div>
               <div style="display: flex; gap: 10px; align-items: center;">
-                <a :href="`http://localhost:5001/api/report/${reportId}/download`" download style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <a :href="`/api/report/${reportId}/download`" download style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                   📥 Download Report (.md)
                 </a>
                 <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
@@ -348,7 +348,7 @@
                         <span>Report Generation Complete</span>
                       </div>
                       <div style="display: flex; gap: 8px; margin-top: 4px;">
-                        <a :href="`http://localhost:5001/api/report/${reportId}/download`" download style="background: #2563eb; color: #fff; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">
+                        <a :href="`/api/report/${reportId}/download`" download style="background: #2563eb; color: #fff; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">
                           📥 Download (.md)
                         </a>
                         <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold;">

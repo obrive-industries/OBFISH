@@ -2,8 +2,9 @@ import axios from 'axios'
 import i18n from '../i18n'
 
 // 创建axios实例
+// 生产环境与本地通过相对路径直接请求 /api/（生产环境由 Nginx 代理，本地由 Vite proxy 转发）
 const service = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:5001',
+  baseURL: import.meta.env.VITE_API_BASE_URL || '',
   timeout: 300000, // 5分钟超时（本体生成可能需要较长时间）
   headers: {
     'Content-Type': 'application/json'
