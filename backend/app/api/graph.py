@@ -401,6 +401,11 @@ def generate_ontology():
             logger.exception("LLM returned an unusable ontology response")
         elif isinstance(provider_status, int):
             public_error = f"LLM provider request failed (HTTP {provider_status})"
+            if provider_status == 413:
+                public_error += (
+                    "; the uploaded content is too large for the configured "
+                    "LLM request. Try fewer or smaller documents"
+                )
             if request_id:
                 safe_request_id = re.sub(
                     r"[^a-zA-Z0-9._:-]", "", str(request_id)

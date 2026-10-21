@@ -10,6 +10,7 @@ from typing import Dict, Any, List, Optional
 from ..utils.llm_client import LLMClient
 from ..utils.locale import get_language_instruction
 from ..utils.file_parser import split_text_into_chunks
+from ..config import Config
 from ..utils.ontology import (
     MAX_ONTOLOGY_TYPES,
     normalize_ontology_attributes,
@@ -248,7 +249,7 @@ class OntologyGenerator:
         return result
     
     # 传给 LLM 的文本最大长度（5万字）
-    MAX_TEXT_LENGTH_FOR_LLM = 50000
+    MAX_TEXT_LENGTH_FOR_LLM = Config.ONTOLOGY_MAX_TEXT_LENGTH
     LONG_TEXT_CHUNK_SIZE = 8000
     LONG_TEXT_CHUNK_OVERLAP = 200
     MAX_LONG_TEXT_CHUNKS = 60
