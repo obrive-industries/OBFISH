@@ -104,10 +104,16 @@ class LLMClient:
         if not self.api_key:
             raise ValueError("LLM_API_KEY 未配置")
         
-        self.client = OpenAI(
-            api_key=self.api_key,
-            base_url=self.base_url
-        )
+        self.api_keys = [k.strip() for k in self.api_key.split(",") if k.strip()]
+        if not self.api_keys:
+            raise ValueError("LLM_API_KEY 未配置有效密钥")
+            
+        self.clients = [
+            OpenAI(api_key=k, base_url=self.base_url)
+            for k in self.api_keys
+        ]
+        self._key_index = 0
+        self.client = self.clients[0]
 
     def _create_completion(
         self,
@@ -117,16 +123,37 @@ class LLMClient:
         max_tokens: Optional[int],
         response_format: Optional[Dict[str, Any]],
     ) -> Any:
-        """Send one raw Chat Completions request through the compatibility layer."""
-
-        return create_chat_completion(
-            self.client,
-            model=self.model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-            response_format=response_format,
-        )
+        clients = getattr(self, "clients", [self.client])
+        num_clients = len(clients)
+        start_idx = getattr(self, "_key_index", 0) % num_clients
+        self._key_index = getattr(self, "_key_index", 0) + 1
+        
+        last_error = None
+        for i in range(num_clients):
+            idx = (start_idx + i) % num_clients
+            client = clients[idx]
+            try:
+                return create_chat_completion(
+                    client,
+                    model=self.model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    response_format=response_format,
+                )
+            except Exception as err:
+                last_error = err
+                status = getattr(err, "status_code", None)
+                if i < num_clients - 1 and (status in {429, 500, 502, 503, 504} or "rate" in str(err).lower()):
+                    logger.warning(
+                        "LLM Key #%d request failed with %s; rotating to next key...",
+                        idx + 1,
+                        type(err).__name__,
+                    )
+                    continue
+                raise
+        if last_error:
+            raise last_error
     
     def chat(
         self,

@@ -31,6 +31,9 @@ class Config:
     ONTOLOGY_MAX_TEXT_LENGTH = int(
         os.environ.get('ONTOLOGY_MAX_TEXT_LENGTH', '30000')
     )
+    LLM_BOOST_API_KEY = os.environ.get('LLM_BOOST_API_KEY')
+    LLM_BOOST_BASE_URL = os.environ.get('LLM_BOOST_BASE_URL')
+    LLM_BOOST_MODEL_NAME = os.environ.get('LLM_BOOST_MODEL_NAME')
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')

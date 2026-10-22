@@ -257,3 +257,23 @@ def test_chat_json_reports_missing_choices_without_retrying_forever():
         )
 
     assert len(sequence.calls) == 2
+
+
+def test_llm_client_multi_key_rotation_and_failover():
+    seq1 = CompletionSequence(ProviderError(status_code=429, body={"error": {"message": "rate limit"}}))
+    seq2 = CompletionSequence(_response('{"ok": true}'))
+    
+    client = object.__new__(LLMClient)
+    client.model = "compatible-model"
+    client.clients = [
+        SimpleNamespace(chat=SimpleNamespace(completions=seq1)),
+        SimpleNamespace(chat=SimpleNamespace(completions=seq2)),
+    ]
+    client._key_index = 0
+    client.client = client.clients[0]
+    
+    res = client.chat_json(messages=[{"role": "user", "content": "hi"}], max_attempts=1)
+    assert res == {"ok": True}
+    assert len(seq1.calls) == 1
+    assert len(seq2.calls) == 1
+

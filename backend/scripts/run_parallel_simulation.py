@@ -981,6 +981,58 @@ def _get_comment_info(
     return None
 
 
+def _attach_key_rotator(model: Any, keys: List[str], base_url: str, model_name: str, label: str = ""):
+    """为 CAMEL 模型附加多Key轮询与速率限制自动故障转移"""
+    import itertools
+    import openai
+    from openai import OpenAI, AsyncOpenAI
+    
+    async_clients = [AsyncOpenAI(api_key=k, base_url=base_url or None) for k in keys]
+    sync_clients = [OpenAI(api_key=k, base_url=base_url or None) for k in keys]
+    
+    async_counter = itertools.count()
+    sync_counter = itertools.count()
+    
+    async def rotating_async_create(*args, **kwargs):
+        num_keys = len(async_clients)
+        start_idx = next(async_counter) % num_keys
+        last_error = None
+        for i in range(num_keys):
+            idx = (start_idx + i) % num_keys
+            client = async_clients[idx]
+            try:
+                return await client.chat.completions.create(*args, **kwargs)
+            except (openai.RateLimitError, openai.APIConnectionError, openai.InternalServerError) as err:
+                last_error = err
+                print(f"[KeyRotator{label}] Key #{idx+1} 触发 {type(err).__name__}，自动切换至下一个 Key...")
+                continue
+            except Exception:
+                raise
+        if last_error:
+            raise last_error
+
+    def rotating_sync_create(*args, **kwargs):
+        num_keys = len(sync_clients)
+        start_idx = next(sync_counter) % num_keys
+        last_error = None
+        for i in range(num_keys):
+            idx = (start_idx + i) % num_keys
+            client = sync_clients[idx]
+            try:
+                return client.chat.completions.create(*args, **kwargs)
+            except (openai.RateLimitError, openai.APIConnectionError, openai.InternalServerError) as err:
+                last_error = err
+                print(f"[KeyRotator{label}] Key #{idx+1} 触发 {type(err).__name__}，自动切换至下一个 Key...")
+                continue
+            except Exception:
+                raise
+        if last_error:
+            raise last_error
+
+    model._async_client.chat.completions.create = rotating_async_create
+    model._client.chat.completions.create = rotating_sync_create
+
+
 def create_model(config: Dict[str, Any], use_boost: bool = False):
     """
     创建LLM模型
@@ -990,6 +1042,7 @@ def create_model(config: Dict[str, Any], use_boost: bool = False):
     - 加速配置（可选）：LLM_BOOST_API_KEY, LLM_BOOST_BASE_URL, LLM_BOOST_MODEL_NAME
     
     如果配置了加速 LLM，并行模拟时可以让不同平台使用不同的 API 服务商，提高并发能力。
+    同时支持逗号分隔的多 Key 轮询与 429 自动故障转移（例如 LLM_API_KEY=key1,key2,key3）。
     
     Args:
         config: 模拟配置字典
@@ -1019,22 +1072,29 @@ def create_model(config: Dict[str, Any], use_boost: bool = False):
     if not llm_model:
         llm_model = config.get("llm_model", "gpt-4o-mini")
     
-    # 设置 camel-ai 所需的环境变量
-    if llm_api_key:
-        os.environ["OPENAI_API_KEY"] = llm_api_key
-    
-    if not os.environ.get("OPENAI_API_KEY"):
+    # 解析逗号分隔的多个 Key
+    keys = [k.strip() for k in (llm_api_key or "").split(",") if k.strip()]
+    if not keys:
         raise ValueError("缺少 API Key 配置，请在项目根目录 .env 文件中设置 LLM_API_KEY")
+    
+    # 设置首个 Key 供 camel 初始化
+    os.environ["OPENAI_API_KEY"] = keys[0]
     
     if llm_base_url:
         os.environ["OPENAI_API_BASE_URL"] = llm_base_url
     
-    print(f"{config_label} model={llm_model}, base_url={llm_base_url[:40] if llm_base_url else '默认'}...")
+    print(f"{config_label} model={llm_model}, keys_count={len(keys)}, base_url={llm_base_url[:40] if llm_base_url else '默认'}...")
     
-    return ModelFactory.create(
+    model = ModelFactory.create(
         model_platform=ModelPlatformType.OPENAI,
         model_type=llm_model,
     )
+    
+    if len(keys) > 1:
+        _attach_key_rotator(model, keys, llm_base_url, llm_model, label=config_label)
+        print(f"{config_label} 已启用 {len(keys)} 个 API Key 动态轮询与自动负载均衡")
+    
+    return model
 
 
 def get_active_agents_for_round(
