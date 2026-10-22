@@ -982,8 +982,11 @@ def _get_comment_info(
 
 
 def _attach_key_rotator(model: Any, keys: List[str], base_url: str, model_name: str, label: str = ""):
-    """为 CAMEL 模型附加多Key轮询与速率限制自动故障转移"""
+    """为 CAMEL 模型附加多Key轮询、速率限制重试与自动故障转移"""
     import itertools
+    import asyncio
+    import time
+    import random
     import openai
     from openai import OpenAI, AsyncOpenAI
     
@@ -995,16 +998,21 @@ def _attach_key_rotator(model: Any, keys: List[str], base_url: str, model_name: 
     
     async def rotating_async_create(*args, **kwargs):
         num_keys = len(async_clients)
-        start_idx = next(async_counter) % num_keys
+        max_attempts = max(num_keys * 3, 5)
         last_error = None
-        for i in range(num_keys):
-            idx = (start_idx + i) % num_keys
-            client = async_clients[idx]
+        for attempt in range(max_attempts):
+            start_idx = next(async_counter) % num_keys
+            client = async_clients[start_idx]
             try:
                 return await client.chat.completions.create(*args, **kwargs)
             except (openai.RateLimitError, openai.APIConnectionError, openai.InternalServerError) as err:
                 last_error = err
-                print(f"[KeyRotator{label}] Key #{idx+1} 触发 {type(err).__name__}，自动切换至下一个 Key...")
+                backoff = min(2.0 ** attempt + random.uniform(0.5, 1.5), 15.0)
+                if num_keys > 1:
+                    print(f"[KeyRotator{label}] Key #{start_idx+1} 触发 {type(err).__name__}，切换并重试等待 {backoff:.1f}s (尝试 {attempt+1}/{max_attempts})...")
+                else:
+                    print(f"[KeyRotator{label}] 遇到 {type(err).__name__}，等待 {backoff:.1f}s 后自动重试 (尝试 {attempt+1}/{max_attempts})...")
+                await asyncio.sleep(backoff)
                 continue
             except Exception:
                 raise
@@ -1013,16 +1021,21 @@ def _attach_key_rotator(model: Any, keys: List[str], base_url: str, model_name: 
 
     def rotating_sync_create(*args, **kwargs):
         num_keys = len(sync_clients)
-        start_idx = next(sync_counter) % num_keys
+        max_attempts = max(num_keys * 3, 5)
         last_error = None
-        for i in range(num_keys):
-            idx = (start_idx + i) % num_keys
-            client = sync_clients[idx]
+        for attempt in range(max_attempts):
+            start_idx = next(sync_counter) % num_keys
+            client = sync_clients[start_idx]
             try:
                 return client.chat.completions.create(*args, **kwargs)
             except (openai.RateLimitError, openai.APIConnectionError, openai.InternalServerError) as err:
                 last_error = err
-                print(f"[KeyRotator{label}] Key #{idx+1} 触发 {type(err).__name__}，自动切换至下一个 Key...")
+                backoff = min(2.0 ** attempt + random.uniform(0.5, 1.5), 15.0)
+                if num_keys > 1:
+                    print(f"[KeyRotator{label}] Key #{start_idx+1} 触发 {type(err).__name__}，切换并重试等待 {backoff:.1f}s (尝试 {attempt+1}/{max_attempts})...")
+                else:
+                    print(f"[KeyRotator{label}] 遇到 {type(err).__name__}，等待 {backoff:.1f}s 后自动重试 (尝试 {attempt+1}/{max_attempts})...")
+                time.sleep(backoff)
                 continue
             except Exception:
                 raise
@@ -1090,9 +1103,11 @@ def create_model(config: Dict[str, Any], use_boost: bool = False):
         model_type=llm_model,
     )
     
+    _attach_key_rotator(model, keys, llm_base_url, llm_model, label=config_label)
     if len(keys) > 1:
-        _attach_key_rotator(model, keys, llm_base_url, llm_model, label=config_label)
         print(f"{config_label} 已启用 {len(keys)} 个 API Key 动态轮询与自动负载均衡")
+    else:
+        print(f"{config_label} 已启用速率限制自适应回退重试")
     
     return model
 
@@ -1216,7 +1231,7 @@ async def run_twitter_simulation(
         agent_graph=result.agent_graph,
         platform=oasis.DefaultPlatformType.TWITTER,
         database_path=db_path,
-        semaphore=30,  # 限制最大并发 LLM 请求数，防止 API 过载
+        semaphore=5,  # 降低并发度，防止突发流量触发 API RateLimit
     )
     
     await result.env.reset()
@@ -1263,7 +1278,10 @@ async def run_twitter_simulation(
                 pass
         
         if initial_actions:
-            await result.env.step(initial_actions)
+            try:
+                await result.env.step(initial_actions)
+            except Exception as e:
+                log_info(f"发布初始帖子遇到警告: {e}")
             log_info(f"已发布 {len(initial_actions)} 条初始帖子")
     
     # 记录 round 0 结束
@@ -1311,7 +1329,10 @@ async def run_twitter_simulation(
             continue
         
         actions = {agent: LLMAction() for _, agent in active_agents}
-        await result.env.step(actions)
+        try:
+            await result.env.step(actions)
+        except Exception as step_err:
+            log_info(f"第 {round_num + 1} 轮执行遇到非致命异常: {step_err}，跳过并继续下一轮")
         
         # 从数据库获取实际执行的动作并记录
         actual_actions, last_rowid = fetch_new_actions_from_db(
@@ -1407,7 +1428,7 @@ async def run_reddit_simulation(
         agent_graph=result.agent_graph,
         platform=oasis.DefaultPlatformType.REDDIT,
         database_path=db_path,
-        semaphore=30,  # 限制最大并发 LLM 请求数，防止 API 过载
+        semaphore=5,  # 降低并发度，防止突发流量触发 API RateLimit
     )
     
     await result.env.reset()
@@ -1462,7 +1483,10 @@ async def run_reddit_simulation(
                 pass
         
         if initial_actions:
-            await result.env.step(initial_actions)
+            try:
+                await result.env.step(initial_actions)
+            except Exception as e:
+                log_info(f"发布初始帖子遇到警告: {e}")
             log_info(f"已发布 {len(initial_actions)} 条初始帖子")
     
     # 记录 round 0 结束
@@ -1510,7 +1534,10 @@ async def run_reddit_simulation(
             continue
         
         actions = {agent: LLMAction() for _, agent in active_agents}
-        await result.env.step(actions)
+        try:
+            await result.env.step(actions)
+        except Exception as step_err:
+            log_info(f"第 {round_num + 1} 轮执行遇到非致命异常: {step_err}，跳过并继续下一轮")
         
         # 从数据库获取实际执行的动作并记录
         actual_actions, last_rowid = fetch_new_actions_from_db(

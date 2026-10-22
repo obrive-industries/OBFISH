@@ -405,6 +405,12 @@ class SimulationRunner:
         minutes_per_round = time_config.get("minutes_per_round", 30)
         total_rounds = int(total_hours * 60 / minutes_per_round)
         
+        # 如果未指定最大轮数，使用默认安全轮数（Config.OASIS_DEFAULT_MAX_ROUNDS，默认10轮）
+        safe_default_rounds = getattr(Config, 'OASIS_DEFAULT_MAX_ROUNDS', 10) or 10
+        if max_rounds is None or max_rounds <= 0:
+            max_rounds = min(total_rounds, safe_default_rounds)
+            logger.info(f"未指定 max_rounds，使用默认安全轮数: {max_rounds}")
+
         # 如果指定了最大轮数，则截断
         if max_rounds is not None and max_rounds > 0:
             original_rounds = total_rounds
@@ -518,11 +524,12 @@ class SimulationRunner:
                 sys.executable,  # Python解释器
                 script_path,
                 "--config", config_path,  # 使用完整配置文件路径
+                "--no-wait",  # 完成模拟循环后安全退出，以便终态自动转移至 COMPLETED
             ]
             
-            # 如果指定了最大轮数，添加到命令行参数
-            if max_rounds is not None and max_rounds > 0:
-                cmd.extend(["--max-rounds", str(max_rounds)])
+            # 添加最大轮数到命令行参数
+            if total_rounds is not None and total_rounds > 0:
+                cmd.extend(["--max-rounds", str(total_rounds)])
             
             # 创建主日志文件，避免 stdout/stderr 管道缓冲区满导致进程阻塞
             main_log_path = os.path.join(sim_dir, "simulation.log")
@@ -653,6 +660,20 @@ class SimulationRunner:
                 
                 # 更新状态
                 cls._save_run_state(state)
+
+                # 检查是否所有启用的平台都已标记完成
+                if cls._check_all_platforms_completed(state):
+                    logger.info(
+                        "所有启用平台已完成，等待模拟进程安全退出: simulation_id=%s",
+                        simulation_id,
+                    )
+                    try:
+                        exit_code = process.wait(timeout=5)
+                    except subprocess.TimeoutExpired:
+                        cls._terminate_process(process, simulation_id)
+                        exit_code = 0
+                    break
+
                 time.sleep(2)
             
             # 进程结束后，最后读取一次日志
@@ -661,7 +682,8 @@ class SimulationRunner:
             if os.path.exists(reddit_actions_log):
                 cls._read_action_log(reddit_actions_log, reddit_position, state, "reddit")
             
-            exit_code = process.returncode
+            if exit_code is None:
+                exit_code = process.returncode
             
         except Exception as e:
             logger.error(f"监控线程异常: {simulation_id}, error={str(e)}")

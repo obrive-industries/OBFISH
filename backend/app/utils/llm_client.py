@@ -125,12 +125,20 @@ class LLMClient:
     ) -> Any:
         clients = getattr(self, "clients", [self.client])
         num_clients = len(clients)
-        start_idx = getattr(self, "_key_index", 0) % num_clients
-        self._key_index = getattr(self, "_key_index", 0) + 1
-        
+        if num_clients <= 1:
+            return create_chat_completion(
+                self.client,
+                model=self.model,
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+                response_format=response_format,
+            )
+
+        max_attempts = num_clients * 2
         last_error = None
-        for i in range(num_clients):
-            idx = (start_idx + i) % num_clients
+        for attempt in range(max_attempts):
+            idx = (getattr(self, "_key_index", 0) + attempt) % num_clients
             client = clients[idx]
             try:
                 return create_chat_completion(
@@ -144,12 +152,18 @@ class LLMClient:
             except Exception as err:
                 last_error = err
                 status = getattr(err, "status_code", None)
-                if i < num_clients - 1 and (status in {429, 500, 502, 503, 504} or "rate" in str(err).lower()):
+                is_retryable = status in {429, 500, 502, 503, 504} or "rate" in str(err).lower()
+                if is_retryable and attempt < max_attempts - 1:
+                    import time
+                    import random
+                    backoff = min(2.0 ** attempt + random.uniform(0.1, 0.5), 5.0)
                     logger.warning(
-                        "LLM Key #%d request failed with %s; rotating to next key...",
+                        "LLM Key #%d request failed with %s; rotating and retrying in %.1fs...",
                         idx + 1,
                         type(err).__name__,
+                        backoff,
                     )
+                    time.sleep(backoff)
                     continue
                 raise
         if last_error:

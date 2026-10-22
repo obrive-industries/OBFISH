@@ -3,7 +3,10 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/')">MIROFISH</div>
+        <div class="brand" @click="router.push('/')">
+          <img src="../assets/logo/obrive-logo.svg" alt="ObFish Logo" class="brand-header-icon" />
+          <span>OBFISH</span>
+        </div>
       </div>
       
       <div class="header-center">
@@ -21,8 +24,6 @@
       </div>
 
       <div class="header-right">
-        <LanguageSwitcher />
-        <div class="step-divider"></div>
         <div class="workflow-step">
           <span class="step-num">Step 3/5</span>
           <span class="step-name">{{ $tm('main.stepNames')[2] }}</span>
@@ -75,7 +76,6 @@ import GraphPanel from '../components/GraphPanel.vue'
 import Step3Simulation from '../components/Step3Simulation.vue'
 import { getProject, getGraphData } from '../api/graph'
 import { getSimulation, getSimulationConfig, stopSimulation, closeSimulationEnv, getEnvStatus } from '../api/simulation'
-import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
@@ -320,20 +320,20 @@ onUnmounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #FFF;
+  background: #A2F1DF;
   overflow: hidden;
-  font-family: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
 }
 
 /* Header */
 .app-header {
   height: 60px;
-  border-bottom: 1px solid #EAEAEA;
+  border-bottom: 1.5px solid rgba(7, 65, 57, 0.15);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: #FFF;
+  background: #FFFFFF;
   z-index: 100;
   position: relative;
 }
@@ -348,16 +348,26 @@ onUnmounted(() => {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 800;
   font-size: 18px;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #074139;
+}
+
+.brand-header-icon {
+  height: 24px;
+  width: auto;
 }
 
 .view-switcher {
   display: flex;
-  background: #F5F5F5;
+  background: #F0F7F6;
   padding: 4px;
-  border-radius: 6px;
+  border-radius: 8px;
   gap: 4px;
+  border: 1px solid rgba(7, 65, 57, 0.1);
 }
 
 .switch-btn {
@@ -366,16 +376,16 @@ onUnmounted(() => {
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 600;
-  color: #666;
-  border-radius: 4px;
+  color: #526361;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .switch-btn.active {
-  background: #FFF;
-  color: #000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  background: #074139;
+  color: #a2f1df;
+  box-shadow: 0 2px 6px rgba(7, 65, 57, 0.18);
 }
 
 .header-right {
@@ -394,12 +404,13 @@ onUnmounted(() => {
 .step-num {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  color: #999;
+  color: #074139;
+  opacity: 0.6;
 }
 
 .step-name {
   font-weight: 700;
-  color: #000;
+  color: #074139;
 }
 
 .step-divider {
@@ -413,7 +424,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #666;
+  color: #526361;
   font-weight: 500;
 }
 
@@ -424,7 +435,7 @@ onUnmounted(() => {
   background: #CCC;
 }
 
-.status-indicator.processing .dot { background: #FF5722; animation: pulse 1s infinite; }
+.status-indicator.processing .dot { background: #074139; animation: pulse 1s infinite; }
 .status-indicator.completed .dot { background: #4CAF50; }
 .status-indicator.error .dot { background: #F44336; }
 

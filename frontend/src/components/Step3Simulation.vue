@@ -92,6 +92,27 @@
 
       <div class="action-controls">
         <button 
+          v-if="phase === 1"
+          class="action-btn secondary stop-btn"
+          :disabled="isStopping"
+          @click="handleStopSimulation"
+          title="Finish early and proceed to report"
+        >
+          <span v-if="isStopping" class="loading-spinner-small"></span>
+          {{ isStopping ? 'Stopping...' : 'Finish Early & Report' }}
+        </button>
+
+        <button 
+          v-if="phase === 2"
+          class="action-btn secondary"
+          :disabled="isStarting || isGeneratingReport"
+          @click="doStartSimulation(true)"
+          title="Restart simulation"
+        >
+          Restart
+        </button>
+
+        <button 
           class="action-btn primary"
           :disabled="phase !== 2 || isGeneratingReport"
           @click="handleNextStep"
@@ -380,7 +401,7 @@ const resetAllState = () => {
 }
 
 // 启动模拟
-const doStartSimulation = async () => {
+const doStartSimulation = async (forceRestart = false) => {
   if (!props.simulationId) {
     addLog(t('log.errorMissingSimId'))
     return
@@ -398,7 +419,7 @@ const doStartSimulation = async () => {
     const params = {
       simulation_id: props.simulationId,
       platform: 'parallel',
-      force: true,  // 强制重新开始
+      force: forceRestart,  // 强制重新开始
       enable_graph_memory_update: true  // 开启动态图谱更新
     }
     
@@ -688,11 +709,38 @@ watch(() => props.systemLogs?.length, () => {
   })
 })
 
-onMounted(() => {
+onMounted(async () => {
   addLog(t('log.step3Init'))
-  if (props.simulationId) {
-    doStartSimulation()
+  if (!props.simulationId) return
+
+  // 挂载时先检测现有状态，避免刷新页面时重复强制清空重启
+  try {
+    const res = await getRunStatus(props.simulationId)
+    if (res.success && res.data) {
+      const status = res.data.runner_status
+      runStatus.value = res.data
+      
+      if (status === 'running' || status === 'starting') {
+        addLog('Active simulation detected, reconnecting to monitor...')
+        phase.value = 1
+        startStatusPolling()
+        startDetailPolling()
+        emit('update-status', 'processing')
+        return
+      } else if (status === 'completed' || status === 'stopped' || checkPlatformsCompleted(res.data)) {
+        addLog('Simulation already completed, ready for report generation')
+        phase.value = 2
+        await fetchRunStatusDetail()
+        emit('update-status', 'completed')
+        return
+      }
+    }
+  } catch (err) {
+    console.warn('Check existing simulation status error:', err)
   }
+
+  // 仅在未运行且未完成时，首次启动
+  doStartSimulation(true)
 })
 
 onUnmounted(() => {
@@ -706,7 +754,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   background: #FFFFFF;
-  font-family: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
   overflow: hidden;
 }
 
@@ -889,12 +937,34 @@ onUnmounted(() => {
 }
 
 .action-btn.primary {
-  background: #000;
+  background: #074139;
   color: #FFF;
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  background: #333;
+  background: #0a574c;
+}
+
+.action-btn.secondary {
+  background: #F0F7F6;
+  color: #074139;
+  border: 1px solid rgba(7, 65, 57, 0.2);
+}
+
+.action-btn.secondary:hover:not(:disabled) {
+  background: #E2ECE9;
+  border-color: #074139;
+}
+
+.action-btn.stop-btn {
+  color: #B91C1C;
+  border-color: rgba(185, 28, 28, 0.3);
+  background: #FEF2F2;
+}
+
+.action-btn.stop-btn:hover:not(:disabled) {
+  background: #FEE2E2;
+  border-color: #B91C1C;
 }
 
 .action-btn:disabled {

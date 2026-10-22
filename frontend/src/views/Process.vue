@@ -2,7 +2,10 @@
   <div class="process-page">
     <!-- 顶部导航栏 -->
     <nav class="navbar">
-      <div class="nav-brand" @click="goHome">MIROFISH</div>
+      <div class="nav-brand" @click="goHome">
+        <img src="../assets/logo/obrive-white-logo.svg" alt="ObFish Logo" class="nav-brand-icon" />
+        <span>OBFISH</span>
+      </div>
       
       <!-- 中间步骤指示器 -->
       <div class="nav-center">
@@ -1101,18 +1104,20 @@ onUnmounted(() => {
 <style scoped>
 /* 变量 */
 :root {
-  --black: #000000;
+  --black: #111827;
   --white: #FFFFFF;
-  --orange: #FF6B35;
-  --gray-light: #F5F5F5;
-  --gray-border: #E0E0E0;
-  --gray-text: #666666;
+  --orange: #074139;
+  --obrive-primary: #074139;
+  --obrive-accent: #a2f1df;
+  --gray-light: #F8FAFA;
+  --gray-border: rgba(7, 65, 57, 0.12);
+  --gray-text: #526361;
 }
 
 .process-page {
   min-height: 100vh;
   background: var(--white);
-  font-family: 'JetBrains Mono', 'Noto Sans SC', monospace;
+  font-family: 'Space Grotesk', monospace;
   overflow: hidden; /* Prevent body scroll in fullscreen */
 }
 
@@ -1122,23 +1127,32 @@ onUnmounted(() => {
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  height: 56px;
-  background: #000;
+  height: 58px;
+  background: #074139;
   color: #fff;
   z-index: 10;
   position: relative;
+  border-bottom: 1px solid rgba(162, 241, 223, 0.15);
 }
 
 .nav-brand {
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.1rem;
+  font-weight: 800;
   letter-spacing: 0.1em;
   cursor: pointer;
   transition: opacity 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-brand-icon {
+  height: 24px;
+  width: auto;
 }
 
 .nav-brand:hover {
-  opacity: 0.8;
+  opacity: 0.85;
 }
 
 .nav-center {
@@ -1151,17 +1165,17 @@ onUnmounted(() => {
 }
 
 .step-badge {
-  background: #FF6B35;
-  color: #fff;
-  padding: 2px 8px;
-  font-size: 0.7rem;
-  font-weight: 600;
+  background: #a2f1df;
+  color: #074139;
+  padding: 3px 10px;
+  font-size: 0.72rem;
+  font-weight: 700;
   letter-spacing: 0.05em;
-  border-radius: 2px;
+  border-radius: 4px;
 }
 
 .step-name {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   letter-spacing: 0.05em;
   color: #fff;
 }

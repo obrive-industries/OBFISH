@@ -2,11 +2,14 @@
   <div class="home-container">
     <!-- 顶部导航栏 -->
     <nav class="navbar">
-      <div class="nav-brand">MIROFISH</div>
+      <div class="nav-brand-container">
+        <img src="../assets/logo/obrive-white-logo.svg" alt="ObFish Logo" class="brand-logo-img" />
+        <span class="nav-brand">OBFISH</span>
+        <span class="brand-badge">by Obrive</span>
+      </div>
       <div class="nav-links">
-        <LanguageSwitcher />
-        <a href="https://github.com/666ghj/MiroFish" target="_blank" class="github-link">
-          {{ $t('nav.visitGithub') }} <span class="arrow">↗</span>
+        <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="website-link">
+          {{ $t('nav.visitWebsite') }} <span class="arrow">↗</span>
         </a>
       </div>
     </nav>
@@ -16,7 +19,7 @@
       <section class="hero-section">
         <div class="hero-left">
           <div class="tag-row">
-            <span class="orange-tag">{{ $t('home.tagline') }}</span>
+            <span class="obrive-tag">{{ $t('home.tagline') }}</span>
             <span class="version-text">{{ $t('home.version') }}</span>
           </div>
           
@@ -29,7 +32,7 @@
             <p>
               <i18n-t keypath="home.heroDesc" tag="span">
                 <template #brand><span class="highlight-bold">{{ $t('home.heroDescBrand') }}</span></template>
-                <template #agentScale><span class="highlight-orange">{{ $t('home.heroDescAgentScale') }}</span></template>
+                <template #agentScale><span class="highlight-brand">{{ $t('home.heroDescAgentScale') }}</span></template>
                 <template #optimalSolution><span class="highlight-code">{{ $t('home.heroDescOptimalSolution') }}</span></template>
               </i18n-t>
             </p>
@@ -42,9 +45,17 @@
         </div>
         
         <div class="hero-right">
-          <!-- Logo 区域 -->
+          <!-- Mascot & Brand Showcase -->
           <div class="logo-container">
-            <img src="../assets/logo/MiroFish_logo_left.jpeg" alt="MiroFish Logo" class="hero-logo" />
+            <div class="obfish-hero-card">
+              <div class="hero-card-glow"></div>
+              <img src="../assets/logo/obfish-mascot.jpg" alt="ObFish Swarm Mascot" class="hero-mascot-img" />
+              <div class="hero-brand-name">OBFISH</div>
+              <div class="hero-brand-desc">Swarm Intelligence Simulation Platform</div>
+              <div class="hero-brand-pill">
+                <span class="pill-dot"></span> Powered by Obrive AI
+              </div>
+            </div>
           </div>
           
           <button class="scroll-down-btn" @click="scrollToBottom">
@@ -215,7 +226,6 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
-import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 
 const router = useRouter()
 
@@ -314,44 +324,70 @@ const startSimulation = () => {
 <style scoped>
 /* 全局变量与重置 */
 :root {
-  --black: #000000;
-  --white: #FFFFFF;
-  --orange: #FF4500;
-  --gray-light: #F5F5F5;
-  --gray-text: #666666;
-  --border: #E5E5E5;
-  /* 
-    使用 Space Grotesk 作为主要标题字体，JetBrains Mono 作为代码/标签字体
-    确保已在 index.html 引入这些 Google Fonts 
-  */
+  --black: #074139;
+  --white: #A2F1DF;
+  --card-bg: #FFFFFF;
+  --obrive-primary: #074139;
+  --obrive-primary-dark: #052e28;
+  --obrive-primary-light: #0d5c52;
+  --obrive-accent: #a2f1df;
+  --orange: #074139;
+  --gray-light: #E0F7F2;
+  --gray-text: #083c34;
+  --border: rgba(7, 65, 57, 0.2);
   --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Space Grotesk', 'Noto Sans SC', system-ui, sans-serif;
-  --font-cn: 'Noto Sans SC', system-ui, sans-serif;
+  --font-sans: 'Space Grotesk', system-ui, sans-serif;
 }
 
 .home-container {
   min-height: 100vh;
-  background: var(--white);
+  background: #A2F1DF;
   font-family: var(--font-sans);
   color: var(--black);
 }
 
 /* 顶部导航 */
 .navbar {
-  height: 60px;
-  background: var(--black);
-  color: var(--white);
+  height: 64px;
+  background: #074139;
+  color: #FFFFFF;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
+  border-bottom: 1px solid rgba(162, 241, 223, 0.2);
+  box-shadow: 0 2px 12px rgba(7, 65, 57, 0.15);
+}
+
+.nav-brand-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.brand-logo-img {
+  height: 28px;
+  width: auto;
 }
 
 .nav-brand {
   font-family: var(--font-mono);
   font-weight: 800;
-  letter-spacing: 1px;
-  font-size: 1.2rem;
+  letter-spacing: 1.5px;
+  font-size: 1.25rem;
+  color: #FFFFFF;
+}
+
+.brand-badge {
+  background: rgba(162, 241, 223, 0.15);
+  color: #a2f1df;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid rgba(162, 241, 223, 0.3);
+  font-family: var(--font-mono);
+  letter-spacing: 0.5px;
 }
 
 .nav-links {
@@ -360,20 +396,27 @@ const startSimulation = () => {
   gap: 16px;
 }
 
-.github-link {
-  color: var(--white);
+.website-link {
+  color: #a2f1df;
   text-decoration: none;
   font-family: var(--font-mono);
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.88rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: opacity 0.2s;
+  padding: 6px 14px;
+  border: 1px solid rgba(162, 241, 223, 0.35);
+  border-radius: 9999px;
+  background: rgba(162, 241, 223, 0.08);
+  transition: all 0.2s ease;
 }
 
-.github-link:hover {
-  opacity: 0.8;
+.website-link:hover {
+  background: #a2f1df;
+  color: #074139;
+  border-color: #a2f1df;
+  box-shadow: 0 0 12px rgba(162, 241, 223, 0.4);
 }
 
 .arrow {
@@ -409,32 +452,36 @@ const startSimulation = () => {
   font-size: 0.8rem;
 }
 
-.orange-tag {
-  background: var(--orange);
-  color: var(--white);
-  padding: 4px 10px;
+.obrive-tag {
+  background: #074139;
+  color: #A2F1DF;
+  padding: 6px 16px;
   font-weight: 700;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   font-size: 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid #074139;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.15);
 }
 
 .version-text {
-  color: #999;
-  font-weight: 500;
+  color: #074139;
+  font-weight: 600;
   letter-spacing: 0.5px;
+  opacity: 0.8;
 }
 
 .main-title {
   font-size: 4.5rem;
   line-height: 1.2;
-  font-weight: 500;
+  font-weight: 600;
   margin: 0 0 40px 0;
   letter-spacing: -2px;
-  color: var(--black);
+  color: #074139;
 }
 
 .gradient-text {
-  background: linear-gradient(90deg, #000000 0%, #444444 100%);
+  background: linear-gradient(90deg, #074139 0%, #0d5c52 50%, #00705f 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
@@ -443,10 +490,10 @@ const startSimulation = () => {
 .hero-desc {
   font-size: 1.05rem;
   line-height: 1.8;
-  color: var(--gray-text);
+  color: #08433a;
   max-width: 640px;
   margin-bottom: 50px;
-  font-weight: 400;
+  font-weight: 500;
   text-align: justify;
 }
 
@@ -455,40 +502,40 @@ const startSimulation = () => {
 }
 
 .highlight-bold {
-  color: var(--black);
-  font-weight: 700;
+  color: #074139;
+  font-weight: 800;
 }
 
-.highlight-orange {
-  color: var(--orange);
-  font-weight: 700;
+.highlight-brand {
+  color: #074139;
+  font-weight: 800;
   font-family: var(--font-mono);
 }
 
 .highlight-code {
-  background: rgba(0, 0, 0, 0.05);
-  padding: 2px 6px;
-  border-radius: 2px;
+  background: rgba(7, 65, 57, 0.14);
+  padding: 2px 8px;
+  border-radius: 4px;
   font-family: var(--font-mono);
   font-size: 0.9em;
-  color: var(--black);
-  font-weight: 600;
+  color: #074139;
+  font-weight: 700;
 }
 
 .slogan-text {
   font-size: 1.2rem;
-  font-weight: 520;
-  color: var(--black);
+  font-weight: 600;
+  color: #074139;
   letter-spacing: 1px;
-  border-left: 3px solid var(--orange);
+  border-left: 3.5px solid #074139;
   padding-left: 15px;
   margin-top: 20px;
 }
 
 .blinking-cursor {
-  color: var(--orange);
+  color: #074139;
   animation: blink 1s step-end infinite;
-  font-weight: 700;
+  font-weight: 800;
 }
 
 @keyframes blink {
@@ -499,7 +546,8 @@ const startSimulation = () => {
 .decoration-square {
   width: 16px;
   height: 16px;
-  background: var(--orange);
+  background: #074139;
+  border-radius: 3px;
 }
 
 .hero-right {
@@ -514,30 +562,111 @@ const startSimulation = () => {
   width: 100%;
   display: flex;
   justify-content: flex-end;
-  padding-right: 40px;
+  padding-right: 20px;
 }
 
-.hero-logo {
-  max-width: 500px; /* 调整logo大小 */
+.obfish-hero-card {
+  position: relative;
   width: 100%;
+  max-width: 460px;
+  padding: 26px 22px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid rgba(7, 65, 57, 0.18);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 16px 40px -10px rgba(7, 65, 57, 0.15);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.hero-card-glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(162, 241, 223, 0.8) 0%, rgba(162, 241, 223, 0) 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-mascot-img {
+  width: 100%;
+  max-width: 380px;
+  border-radius: 16px;
+  object-fit: cover;
+  margin-bottom: 16px;
+  box-shadow: 0 10px 25px rgba(7, 65, 57, 0.15);
+  border: 2px solid rgba(7, 65, 57, 0.15);
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.hero-mascot-img:hover {
+  transform: scale(1.025);
+}
+
+.hero-brand-name {
+  font-family: var(--font-mono);
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: #074139;
+  margin-bottom: 6px;
+}
+
+.hero-brand-desc {
+  font-size: 0.95rem;
+  color: #08433a;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.hero-brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: #A2F1DF;
+  border: 1.5px solid #074139;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  color: #074139;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.1);
+}
+
+.pill-dot {
+  width: 8px;
+  height: 8px;
+  background: #074139;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #074139;
 }
 
 .scroll-down-btn {
-  width: 40px;
-  height: 40px;
-  border: 1px solid var(--border);
-  background: transparent;
+  width: 44px;
+  height: 44px;
+  border: 1.5px solid #074139;
+  background: #FFFFFF;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--orange);
+  color: #074139;
   font-size: 1.2rem;
   transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.1);
 }
 
 .scroll-down-btn:hover {
-  border-color: var(--orange);
+  border-color: #074139;
+  background: #074139;
+  color: #a2f1df;
+  transform: translateY(2px);
 }
 
 /* Dashboard 双栏布局 */
@@ -563,7 +692,7 @@ const startSimulation = () => {
 .panel-header {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: #999;
+  color: #526361;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -571,7 +700,7 @@ const startSimulation = () => {
 }
 
 .status-dot {
-  color: var(--orange);
+  color: #10B981;
   font-size: 0.8rem;
 }
 
@@ -579,6 +708,7 @@ const startSimulation = () => {
   font-size: 2rem;
   font-weight: 520;
   margin: 0 0 15px 0;
+  color: #111827;
 }
 
 .section-desc {
@@ -594,34 +724,45 @@ const startSimulation = () => {
 }
 
 .metric-card {
-  border: 1px solid var(--border);
+  border: 1px solid rgba(7, 65, 57, 0.14);
+  border-radius: 12px;
   padding: 20px 30px;
   min-width: 150px;
+  background: #FAFDFD;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  border-color: rgba(7, 65, 57, 0.3);
+  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.05);
 }
 
 .metric-value {
   font-family: var(--font-mono);
   font-size: 1.8rem;
-  font-weight: 520;
+  font-weight: 700;
   margin-bottom: 5px;
+  color: #074139;
 }
 
 .metric-label {
   font-size: 0.85rem;
-  color: #999;
+  color: #526361;
 }
 
 /* 项目模拟步骤介绍 */
 .steps-container {
-  border: 1px solid var(--border);
+  border: 1px solid rgba(7, 65, 57, 0.14);
+  border-radius: 14px;
   padding: 30px;
   position: relative;
+  background: #FFFFFF;
 }
 
 .steps-header {
   font-family: var(--font-mono);
   font-size: 0.8rem;
-  color: #999;
+  color: #526361;
   margin-bottom: 25px;
   display: flex;
   align-items: center;
@@ -631,6 +772,7 @@ const startSimulation = () => {
 .diamond-icon {
   font-size: 1.2rem;
   line-height: 1;
+  color: #074139;
 }
 
 .workflow-list {
@@ -647,9 +789,9 @@ const startSimulation = () => {
 
 .step-num {
   font-family: var(--font-mono);
-  font-weight: 700;
-  color: var(--black);
-  opacity: 0.3;
+  font-weight: 800;
+  color: #074139;
+  opacity: 0.75;
 }
 
 .step-info {
@@ -657,9 +799,10 @@ const startSimulation = () => {
 }
 
 .step-title {
-  font-weight: 520;
+  font-weight: 600;
   font-size: 1rem;
   margin-bottom: 4px;
+  color: #111827;
 }
 
 .step-desc {
@@ -673,8 +816,11 @@ const startSimulation = () => {
 }
 
 .console-box {
-  border: 1px solid #CCC; /* 外部实线 */
-  padding: 8px; /* 内边距形成双重边框感 */
+  border: 1px solid rgba(7, 65, 57, 0.18);
+  border-radius: 16px;
+  padding: 8px;
+  background: #FFFFFF;
+  box-shadow: 0 4px 20px -2px rgba(7, 65, 57, 0.06);
 }
 
 .console-section {
@@ -691,11 +837,12 @@ const startSimulation = () => {
   margin-bottom: 15px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #666;
+  color: #526361;
 }
 
 .upload-zone {
-  border: 1px dashed #CCC;
+  border: 1.5px dashed rgba(7, 65, 57, 0.25);
+  border-radius: 12px;
   height: 200px;
   overflow-y: auto;
   display: flex;
@@ -703,7 +850,7 @@ const startSimulation = () => {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s;
-  background: #FAFAFA;
+  background: #F8FAFA;
 }
 
 .upload-zone.has-files {
@@ -711,8 +858,8 @@ const startSimulation = () => {
 }
 
 .upload-zone:hover {
-  background: #F0F0F0;
-  border-color: #999;
+  background: rgba(162, 241, 223, 0.08);
+  border-color: #074139;
 }
 
 .upload-placeholder {
@@ -722,24 +869,27 @@ const startSimulation = () => {
 .upload-icon {
   width: 40px;
   height: 40px;
-  border: 1px solid #DDD;
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 15px;
-  color: #999;
+  color: #074139;
+  background: #FFFFFF;
 }
 
 .upload-title {
-  font-weight: 500;
+  font-weight: 600;
   font-size: 0.9rem;
   margin-bottom: 5px;
+  color: #111827;
 }
 
 .upload-hint {
   font-family: var(--font-mono);
   font-size: 0.75rem;
-  color: #999;
+  color: #526361;
 }
 
 .file-list {
@@ -755,7 +905,8 @@ const startSimulation = () => {
   align-items: center;
   background: var(--white);
   padding: 8px 12px;
-  border: 1px solid #EEE;
+  border: 1px solid rgba(7, 65, 57, 0.15);
+  border-radius: 6px;
   font-family: var(--font-mono);
   font-size: 0.85rem;
 }
@@ -773,6 +924,10 @@ const startSimulation = () => {
   color: #999;
 }
 
+.remove-btn:hover {
+  color: #ef4444;
+}
+
 .console-divider {
   display: flex;
   align-items: center;
@@ -784,21 +939,28 @@ const startSimulation = () => {
   content: '';
   flex: 1;
   height: 1px;
-  background: #EEE;
+  background: rgba(7, 65, 57, 0.1);
 }
 
 .console-divider span {
   padding: 0 15px;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #BBB;
+  color: #526361;
   letter-spacing: 1px;
 }
 
 .input-wrapper {
   position: relative;
-  border: 1px solid #DDD;
-  background: #FAFAFA;
+  border: 1.5px solid rgba(7, 65, 57, 0.18);
+  border-radius: 10px;
+  background: #FAFDFD;
+  transition: all 0.2s ease;
+}
+
+.input-wrapper:focus-within {
+  border-color: #074139;
+  box-shadow: 0 0 0 3px rgba(162, 241, 223, 0.4);
 }
 
 .code-input {
@@ -812,6 +974,7 @@ const startSimulation = () => {
   resize: vertical;
   outline: none;
   min-height: 150px;
+  color: #111827;
 }
 
 .model-badge {
@@ -820,18 +983,20 @@ const startSimulation = () => {
   right: 15px;
   font-family: var(--font-mono);
   font-size: 0.7rem;
-  color: #AAA;
+  color: #074139;
+  background: rgba(162, 241, 223, 0.2);
+  padding: 2px 8px;
+  border-radius: 4px;
 }
 
 .start-engine-btn {
   width: 100%;
-  background: var(--black);
-  color: var(--white);
+  border-radius: 12px;
   border: none;
-  padding: 20px;
+  padding: 20px 24px;
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -844,15 +1009,19 @@ const startSimulation = () => {
 
 /* 可点击状态（非禁用） */
 .start-engine-btn:not(:disabled) {
-  background: var(--black);
-  border: 1px solid var(--black);
-  animation: pulse-border 2s infinite;
+  background: #074139;
+  color: #a2f1df;
+  border: 1px solid #074139;
+  box-shadow: 0 4px 15px rgba(7, 65, 57, 0.2);
+  animation: pulse-border 2.5s infinite;
 }
 
 .start-engine-btn:hover:not(:disabled) {
-  background: var(--orange);
-  border-color: var(--orange);
+  background: #052e28;
+  color: #FFFFFF;
+  border-color: #052e28;
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(7, 65, 57, 0.35);
 }
 
 .start-engine-btn:active:not(:disabled) {
@@ -860,18 +1029,18 @@ const startSimulation = () => {
 }
 
 .start-engine-btn:disabled {
-  background: #E5E5E5;
-  color: #999;
+  background: #E5E7EB;
+  color: #9CA3AF;
   cursor: not-allowed;
   transform: none;
-  border: 1px solid #E5E5E5;
+  border: 1px solid #E5E7EB;
 }
 
 /* 引导动画：微妙的边框脉冲 */
 @keyframes pulse-border {
-  0% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2); }
-  70% { box-shadow: 0 0 0 6px rgba(0, 0, 0, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 0, 0, 0); }
+  0% { box-shadow: 0 0 0 0 rgba(7, 65, 57, 0.3); }
+  70% { box-shadow: 0 0 0 8px rgba(7, 65, 57, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(7, 65, 57, 0); }
 }
 
 /* 响应式适配 */

@@ -302,8 +302,8 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .step-card.active {
-  border-color: #FF5722;
-  box-shadow: 0 4px 12px rgba(255, 87, 34, 0.08);
+  border-color: #074139;
+  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.12);
 }
 
 .card-header {
@@ -328,7 +328,7 @@ watch(() => props.systemLogs.length, () => {
 
 .step-card.active .step-num,
 .step-card.completed .step-num {
-  color: #000;
+  color: #074139;
 }
 
 .step-title {
@@ -346,8 +346,8 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .badge.success { background: #E8F5E9; color: #2E7D32; }
-.badge.processing { background: #FF5722; color: #FFF; }
-.badge.accent { background: #FF5722; color: #FFF; }
+.badge.processing { background: #074139; color: #a2f1df; }
+.badge.accent { background: #074139; color: #a2f1df; }
 .badge.pending { background: #F5F5F5; color: #999; }
 
 .api-note {
@@ -628,15 +628,15 @@ watch(() => props.systemLogs.length, () => {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #FF5722;
+  color: #074139;
   margin-bottom: 12px;
 }
 
 .spinner-sm {
   width: 14px;
   height: 14px;
-  border: 2px solid #FFCCBC;
-  border-top-color: #FF5722;
+  border: 2px solid rgba(7, 65, 57, 0.2);
+  border-top-color: #074139;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

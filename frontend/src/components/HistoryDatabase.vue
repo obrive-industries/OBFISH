@@ -626,8 +626,8 @@ onUnmounted(() => {
   right: 0;
   bottom: 0;
   background: 
-    linear-gradient(to right, rgba(255, 255, 255, 0.9) 0%, transparent 15%, transparent 85%, rgba(255, 255, 255, 0.9) 100%),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.8) 0%, transparent 20%, transparent 80%, rgba(255, 255, 255, 0.8) 100%);
+    linear-gradient(to right, rgba(162, 241, 223, 0.95) 0%, transparent 15%, transparent 85%, rgba(162, 241, 223, 0.95) 100%),
+    linear-gradient(to bottom, rgba(162, 241, 223, 0.85) 0%, transparent 20%, transparent 80%, rgba(162, 241, 223, 0.85) 100%);
   pointer-events: none;
 }
 
@@ -647,14 +647,14 @@ onUnmounted(() => {
 .section-line {
   flex: 1;
   height: 1px;
-  background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+  background: linear-gradient(90deg, transparent, rgba(7, 65, 57, 0.3), transparent);
   max-width: 300px;
 }
 
 .section-title {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: #9CA3AF;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #074139;
   letter-spacing: 3px;
   text-transform: uppercase;
 }
@@ -675,17 +675,17 @@ onUnmounted(() => {
   position: absolute;
   width: 280px;
   background: #FFFFFF;
-  border: 1px solid #E5E7EB;
-  border-radius: 0;
-  padding: 14px;
+  border: 1.5px solid rgba(7, 65, 57, 0.18);
+  border-radius: 14px;
+  padding: 16px;
   cursor: pointer;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(7, 65, 57, 0.08);
   transition: box-shadow 0.3s ease, border-color 0.3s ease, transform 700ms cubic-bezier(0.23, 1, 0.32, 1), opacity 700ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 .project-card:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border-color: rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 25px -4px rgba(7, 65, 57, 0.18), 0 6px 12px -2px rgba(7, 65, 57, 0.08);
+  border-color: #074139;
   z-index: 1000 !important;
 }
 
