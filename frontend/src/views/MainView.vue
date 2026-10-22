@@ -425,7 +425,7 @@ onUnmounted(() => {
   flex-direction: column;
   background: #A2F1DF;
   overflow: hidden;
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header */
@@ -449,10 +449,12 @@ onUnmounted(() => {
 }
 
 .brand {
-  font-family: 'JetBrains Mono', monospace;
-  font-weight: 800;
-  font-size: 18px;
-  letter-spacing: 1.5px;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 700;
+  -webkit-text-stroke: 0.5px #FFFFFF;
+  paint-order: stroke fill;
+  font-size: 16px;
+  letter-spacing: 2px;
   cursor: pointer;
   display: flex;
   align-items: center;

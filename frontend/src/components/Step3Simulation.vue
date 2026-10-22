@@ -445,7 +445,7 @@ const doStartSimulation = async (forceRestart = false) => {
       startStatusPolling()
       startDetailPolling()
     } else {
-      startError.value = res.error || '启动失败'
+      startError.value = res.error || 'Failed to start'
       addLog(t('log.startFailed', { error: res.error || t('common.unknownError') }))
       emit('update-status', 'error')
     }
@@ -551,28 +551,22 @@ const fetchRunStatus = async () => {
       }
     }
   } catch (err) {
-    console.warn('获取运行状态失败:', err)
+    console.warn('Failed to get run status:', err)
   }
 }
 
-// 检查所有启用的平台是否已完成
+// Check if all enabled platforms completed
 const checkPlatformsCompleted = (data) => {
-  // 如果没有任何平台数据，返回 false
   if (!data) return false
   
-  // 检查各平台的完成状态
   const twitterCompleted = data.twitter_completed === true
   const redditCompleted = data.reddit_completed === true
   
-  // 如果至少有一个平台完成了，检查是否所有启用的平台都完成了
-  // 通过 actions_count 判断平台是否被启用（如果 count > 0 或 running 曾为 true）
   const twitterEnabled = (data.twitter_actions_count > 0) || data.twitter_running || twitterCompleted
   const redditEnabled = (data.reddit_actions_count > 0) || data.reddit_running || redditCompleted
   
-  // 如果没有任何平台被启用，返回 false
   if (!twitterEnabled && !redditEnabled) return false
   
-  // 检查所有启用的平台是否都已完成
   if (twitterEnabled && !twitterCompleted) return false
   if (redditEnabled && !redditCompleted) return false
   
@@ -586,13 +580,10 @@ const fetchRunStatusDetail = async () => {
     const res = await getRunStatusDetail(props.simulationId)
     
     if (res.success && res.data) {
-      // 使用 all_actions 获取完整的动作列表
       const serverActions = res.data.all_actions || []
       
-      // 增量添加新动作（去重）
       let newActionsAdded = 0
       serverActions.forEach(action => {
-        // 生成唯一ID
         const actionId = action.id || `${action.timestamp}-${action.platform}-${action.agent_id}-${action.action_type}`
         
         if (!actionIds.value.has(actionId)) {
@@ -604,12 +595,9 @@ const fetchRunStatusDetail = async () => {
           newActionsAdded++
         }
       })
-      
-      // 不自动滚动，让用户自由查看时间轴
-      // 新动作会在底部追加
     }
   } catch (err) {
-    console.warn('获取详细状态失败:', err)
+    console.warn('Failed to get detailed status:', err)
   }
 }
 

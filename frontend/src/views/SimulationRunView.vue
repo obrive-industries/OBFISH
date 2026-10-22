@@ -322,7 +322,7 @@ onUnmounted(() => {
   flex-direction: column;
   background: #A2F1DF;
   overflow: hidden;
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header */

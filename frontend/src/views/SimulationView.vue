@@ -219,8 +219,8 @@ const checkAndStopRunningSimulation = async () => {
       }
     }
   } catch (err) {
-    // 检查环境状态失败不影响后续流程
-    console.warn('检查模拟状态失败:', err)
+    // Checking environment status failure does not block the workflow
+    console.warn('Failed to check simulation status:', err)
   }
 }
 
@@ -309,7 +309,7 @@ onMounted(async () => {
   flex-direction: column;
   background: #A2F1DF;
   overflow: hidden;
-  font-family: 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header */

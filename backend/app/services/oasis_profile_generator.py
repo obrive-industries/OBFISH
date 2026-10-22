@@ -715,7 +715,10 @@ class OasisProfileGenerator:
     
     def _get_system_prompt(self, is_individual: bool) -> str:
         """获取系统提示词"""
-        base_prompt = "你是社交媒体用户画像生成专家。生成详细、真实的人设用于舆论模拟,最大程度还原已有现实情况。必须返回有效的JSON格式，所有字符串值不能包含未转义的换行符。"
+        if get_locale() == 'zh':
+            base_prompt = "你是社交媒体用户画像生成专家。生成详细、真实的人设用于舆论模拟,最大程度还原已有现实情况。必须返回有效的JSON格式，所有字符串值不能包含未转义的换行符。"
+        else:
+            base_prompt = "You are an expert in social media user persona modeling. Generate detailed, authentic personas for simulation that reflect reality as accurately as possible. You must return valid JSON format, and string values must not contain unescaped line breaks."
         return f"{base_prompt}\n\n{get_language_instruction()}"
     
     def _build_individual_persona_prompt(
@@ -728,10 +731,11 @@ class OasisProfileGenerator:
     ) -> str:
         """构建个人实体的详细人设提示词"""
         
-        attrs_str = json.dumps(entity_attributes, ensure_ascii=False) if entity_attributes else "无"
-        context_str = context[:3000] if context else "无额外上下文"
+        attrs_str = json.dumps(entity_attributes, ensure_ascii=False) if entity_attributes else "None"
+        context_str = context[:3000] if context else "No additional context"
         
-        return f"""为实体生成详细的社交媒体用户人设,最大程度还原已有现实情况。
+        if get_locale() == 'zh':
+            return f"""为实体生成详细的社交媒体用户人设,最大程度还原已有现实情况。
 
 实体名称: {entity_name}
 实体类型: {entity_type}
@@ -755,7 +759,7 @@ class OasisProfileGenerator:
 3. age: 年龄数字（必须是整数）
 4. gender: 性别，必须是英文: "male" 或 "female"
 5. mbti: MBTI类型（如INTJ、ENFP等）
-6. country: 国家（使用中文，如"中国"）
+6. country: 国家
 7. profession: 职业
 8. interested_topics: 感兴趣话题数组
 
@@ -765,6 +769,40 @@ class OasisProfileGenerator:
 - {get_language_instruction()} (gender字段必须用英文male/female)
 - 内容要与实体信息保持一致
 - age必须是有效的整数，gender必须是"male"或"female"
+"""
+        else:
+            return f"""Generate a detailed social media user persona for the following entity, reflecting reality as accurately as possible.
+
+Entity Name: {entity_name}
+Entity Type: {entity_type}
+Entity Summary: {entity_summary}
+Entity Attributes: {attrs_str}
+
+Contextual Information:
+{context_str}
+
+Please generate a JSON object with the following fields:
+
+1. bio: Social media profile bio, approx 50-100 words
+2. persona: Comprehensive persona narrative (detailed plain text paragraph, ~500 words), including:
+   - Basic profile (age, profession, educational background, location)
+   - Background & relation to the events (key experiences, relationship with other entities)
+   - Psychological profile & personality (MBTI, core values, communication style)
+   - Social media behavior (posting frequency, topical preferences, engagement style)
+   - Stance and perspective regarding the simulation topics
+   - Personal memories (how they experienced past events and their previous actions/reactions)
+3. age: Age as an integer
+4. gender: Must be "male" or "female"
+5. mbti: MBTI type (e.g. INTJ, ENFP)
+6. country: Country name (e.g. "US", "UK", "Canada", "Global")
+7. profession: Profession or title
+8. interested_topics: Array of topic strings
+
+Important:
+- All values must be strings or numbers, with no unescaped newlines inside strings
+- Persona must be a coherent narrative description
+- Please respond in English (gender must be "male" or "female")
+- Keep information aligned with the source entity
 """
 
     def _build_group_persona_prompt(
@@ -777,10 +815,11 @@ class OasisProfileGenerator:
     ) -> str:
         """构建群体/机构实体的详细人设提示词"""
         
-        attrs_str = json.dumps(entity_attributes, ensure_ascii=False) if entity_attributes else "无"
-        context_str = context[:3000] if context else "无额外上下文"
+        attrs_str = json.dumps(entity_attributes, ensure_ascii=False) if entity_attributes else "None"
+        context_str = context[:3000] if context else "No additional context"
         
-        return f"""为机构/群体实体生成详细的社交媒体账号设定,最大程度还原已有现实情况。
+        if get_locale() == 'zh':
+            return f"""为机构/群体实体生成详细的社交媒体账号设定,最大程度还原已有现实情况。
 
 实体名称: {entity_name}
 实体类型: {entity_type}
@@ -804,7 +843,7 @@ class OasisProfileGenerator:
 3. age: 固定填30（机构账号的虚拟年龄）
 4. gender: 固定填"other"（机构账号使用other表示非个人）
 5. mbti: MBTI类型，用于描述账号风格，如ISTJ代表严谨保守
-6. country: 国家（使用中文，如"中国"）
+6. country: 国家
 7. profession: 机构职能描述
 8. interested_topics: 关注领域数组
 
@@ -814,6 +853,39 @@ class OasisProfileGenerator:
 - {get_language_instruction()} (gender字段必须用英文"other")
 - age必须是整数30，gender必须是字符串"other"
 - 机构账号发言要符合其身份定位"""
+        else:
+            return f"""Generate a detailed social media official account persona for the institutional/group entity, reflecting reality as accurately as possible.
+
+Entity Name: {entity_name}
+Entity Type: {entity_type}
+Entity Summary: {entity_summary}
+Entity Attributes: {attrs_str}
+
+Contextual Information:
+{context_str}
+
+Please generate a JSON object with the following fields:
+
+1. bio: Official account bio, approx 50-100 words, professional and poised
+2. persona: Detailed institutional persona narrative (plain text paragraph, ~500 words), including:
+   - Institutional profile (official name, nature of organization, core functions)
+   - Account positioning (target audience, role in discourse)
+   - Communication tone (language style, standard messaging, taboo topics)
+   - Publishing behavior (content types, frequency, active hours)
+   - Official stance and dispute handling procedures
+   - Institutional memory (connection with events and previous official actions/responses)
+3. age: Fixed at 30 (virtual age for organizations)
+4. gender: Fixed at "other"
+5. mbti: MBTI type representing organizational demeanor (e.g. ISTJ)
+6. country: Country name (e.g. "US", "UK", "Global")
+7. profession: Functional role / industry
+8. interested_topics: Array of focus areas
+
+Important:
+- All values must be strings or numbers, no null values
+- Persona must be a coherent narrative description without raw newlines
+- Please respond in English (gender must be "other")
+- The account voice must align with its official standing"""
     
     def _generate_profile_rule_based(
         self,
@@ -826,6 +898,7 @@ class OasisProfileGenerator:
         
         # 根据实体类型生成不同的人设
         entity_type_lower = entity_type.lower()
+        default_country = "Global" if get_locale() != 'zh' else "中国"
         
         if entity_type_lower in ["student", "alumni"]:
             return {
@@ -858,7 +931,7 @@ class OasisProfileGenerator:
                 "age": 30,  # 机构虚拟年龄
                 "gender": "other",  # 机构使用other
                 "mbti": "ISTJ",  # 机构风格：严谨保守
-                "country": "中国",
+                "country": default_country,
                 "profession": "Media",
                 "interested_topics": ["General News", "Current Events", "Public Affairs"],
             }
@@ -870,7 +943,7 @@ class OasisProfileGenerator:
                 "age": 30,  # 机构虚拟年龄
                 "gender": "other",  # 机构使用other
                 "mbti": "ISTJ",  # 机构风格：严谨保守
-                "country": "中国",
+                "country": default_country,
                 "profession": entity_type,
                 "interested_topics": ["Public Policy", "Community", "Official Announcements"],
             }

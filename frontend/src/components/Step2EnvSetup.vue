@@ -677,16 +677,16 @@ const customMaxRounds = ref(15)   // 默认推荐15轮，兼顾高质量模拟�
 
 // Watch stage to update phase
 watch(currentStage, (newStage) => {
-  if (newStage === '生成Agent人设' || newStage === 'generating_profiles') {
+  if (newStage === '生成Agent人设' || newStage === 'generating_profiles' || newStage === 'Generating Agent Profiles') {
     phase.value = 1
-  } else if (newStage === '生成模拟配置' || newStage === 'generating_config') {
+  } else if (newStage === '生成模拟配置' || newStage === 'generating_config' || newStage === 'Generating Simulation Config') {
     phase.value = 2
     // 进入配置生成阶段，开始轮询配置
     if (!configTimer) {
       addLog(t('log.startGeneratingConfig'))
       startConfigPolling()
     }
-  } else if (newStage === '准备模拟脚本' || newStage === 'copying_scripts') {
+  } else if (newStage === '准备模拟脚本' || newStage === 'copying_scripts' || newStage === 'Preparing Simulation Scripts') {
     phase.value = 2 // 仍属于配置阶段
   }
 })
@@ -910,7 +910,7 @@ const pollPrepareStatus = async () => {
       }
     }
   } catch (err) {
-    console.warn('轮询状态失败:', err)
+    console.warn('Status polling failed:', err)
   }
 }
 
@@ -954,7 +954,7 @@ const fetchProfilesRealtime = async () => {
       }
     }
   } catch (err) {
-    console.warn('获取 Profiles 失败:', err)
+    console.warn('Failed to fetch profiles:', err)
   }
 }
 
@@ -1027,7 +1027,7 @@ const fetchConfigRealtime = async () => {
       }
     }
   } catch (err) {
-    console.warn('获取 Config 失败:', err)
+    console.warn('Failed to fetch config:', err)
   }
 }
 

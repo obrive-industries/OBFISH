@@ -315,7 +315,7 @@ class SimulationManager:
             
             if filtered.filtered_count == 0:
                 state.status = SimulationStatus.FAILED
-                state.error = "没有找到符合条件的实体，请检查图谱是否正确构建"
+                state.error = "没有找到符合条件的实体，请检查图谱是否正确构建" if get_locale() == 'zh' else "No qualifying entities found. Please verify that the graph was built properly."
                 self._save_simulation_state(state)
                 raise ValueError(state.error)
             

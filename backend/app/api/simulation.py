@@ -52,7 +52,7 @@ def _get_default_platform(simulation_id: str) -> str:
 
 # Interview prompt 优化前缀
 # 添加此前缀可以避免Agent调用工具，直接用文本回复
-INTERVIEW_PROMPT_PREFIX = "结合你的人设、所有的过往记忆与行动，不调用任何工具直接用文本回复我："
+INTERVIEW_PROMPT_PREFIX = "Based on your persona, all past memories, and actions, reply directly in plain text in English without calling any tools: "
 
 
 def optimize_interview_prompt(prompt: str) -> str:

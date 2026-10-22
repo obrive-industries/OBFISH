@@ -3,9 +3,8 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
       <div class="nav-brand-container">
-        <img src="../assets/logo/obrive-white-logo.svg" alt="ObFish Logo" class="brand-logo-img" />
-        <span class="nav-brand">OBFISH</span>
-        <span class="brand-badge">by Obrive</span>
+        <img src="../assets/logo/obrive-logo.svg" alt="ObFish Logo" class="brand-logo-img" />
+        <span class="nav-brand">OBFISH<span class="brand-tm">TM</span></span>
       </div>
       <div class="nav-links">
         <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="website-link">
@@ -335,7 +334,7 @@ const startSimulation = () => {
   --gray-text: #083c34;
   --border: rgba(7, 65, 57, 0.2);
   --font-mono: 'JetBrains Mono', monospace;
-  --font-sans: 'Space Grotesk', system-ui, sans-serif;
+  --font-sans: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .home-container {
@@ -347,15 +346,20 @@ const startSimulation = () => {
 
 /* 顶部导航 */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
   height: 64px;
-  background: #074139;
-  color: #FFFFFF;
+  background: rgba(162, 241, 223, 0.95);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  color: #074139;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 40px;
-  border-bottom: 1px solid rgba(162, 241, 223, 0.2);
-  box-shadow: 0 2px 12px rgba(7, 65, 57, 0.15);
+  border-bottom: 1px solid rgba(7, 65, 57, 0.12);
+  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.05);
 }
 
 .nav-brand-container {
@@ -371,22 +375,26 @@ const startSimulation = () => {
 }
 
 .nav-brand {
-  font-family: var(--font-mono);
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  font-size: 1.25rem;
-  color: #FFFFFF;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 700;
+  -webkit-text-stroke: 0.6px #074139;
+  paint-order: stroke fill;
+  letter-spacing: 2.5px;
+  font-size: 1.32rem;
+  color: #074139;
+  display: inline-flex;
+  align-items: flex-start;
+  line-height: 1;
 }
 
-.brand-badge {
-  background: rgba(162, 241, 223, 0.15);
-  color: #a2f1df;
-  font-size: 0.7rem;
-  padding: 2px 8px;
-  border-radius: 9999px;
-  border: 1px solid rgba(162, 241, 223, 0.3);
-  font-family: var(--font-mono);
-  letter-spacing: 0.5px;
+.brand-tm {
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 0.52rem;
+  font-weight: 700;
+  -webkit-text-stroke: 0.25px #074139;
+  margin-left: 3px;
+  margin-top: -2px;
+  opacity: 0.9;
 }
 
 .nav-links {
@@ -396,7 +404,7 @@ const startSimulation = () => {
 }
 
 .website-link {
-  color: #a2f1df;
+  color: #074139;
   text-decoration: none;
   font-family: var(--font-mono);
   font-size: 0.88rem;
@@ -405,17 +413,17 @@ const startSimulation = () => {
   align-items: center;
   gap: 8px;
   padding: 6px 14px;
-  border: 1px solid rgba(162, 241, 223, 0.35);
+  border: 1px solid rgba(7, 65, 57, 0.25);
   border-radius: 9999px;
-  background: rgba(162, 241, 223, 0.08);
+  background: rgba(7, 65, 57, 0.06);
   transition: all 0.2s ease;
 }
 
 .website-link:hover {
-  background: #a2f1df;
-  color: #074139;
-  border-color: #a2f1df;
-  box-shadow: 0 0 12px rgba(162, 241, 223, 0.4);
+  background: #074139;
+  color: #A2F1DF;
+  border-color: #074139;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.2);
 }
 
 .arrow {
@@ -596,10 +604,12 @@ const startSimulation = () => {
 }
 
 .hero-brand-name {
-  font-family: var(--font-mono);
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 2.4rem;
-  font-weight: 800;
-  letter-spacing: 2.5px;
+  font-weight: 700;
+  -webkit-text-stroke: 1px #074139;
+  paint-order: stroke fill;
+  letter-spacing: 3px;
   color: #074139;
   margin-bottom: 6px;
 }
@@ -1057,55 +1067,55 @@ const startSimulation = () => {
 <style>
 /* English locale adjustments (unscoped to target html[lang]) */
 html[lang="en"] .main-title {
-  font-size: 3.5rem;
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  letter-spacing: -1px;
+  font-size: 3.2rem;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.5px;
 }
 
 html[lang="en"] .hero-desc {
   text-align: left;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0;
 }
 
 html[lang="en"] .slogan-text {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   letter-spacing: 0;
 }
 
 html[lang="en"] .tag-row {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 html[lang="en"] .navbar .nav-links {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Left pane: system status + workflow */
 html[lang="en"] .status-section {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 html[lang="en"] .status-section .status-ready {
-  font-size: 1.6rem;
-}
-
-html[lang="en"] .status-section .metric-value {
-  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-size: 1.4rem;
 }
 
+html[lang="en"] .status-section .metric-value {
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 1.2rem;
+}
+
 html[lang="en"] .workflow-list .step-title {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 html[lang="en"] .workflow-list .step-desc {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  font-size: 0.72rem !important;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 0.68rem !important;
   line-height: 1.4 !important;
 }
 
 html[lang="en"] .workflow-list {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 </style>

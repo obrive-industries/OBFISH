@@ -22,19 +22,19 @@ for filename in os.listdir(_locales_dir):
 
 def set_locale(locale: str):
     """Set locale for current thread. Call at the start of background threads."""
-    _thread_local.locale = locale
+    _thread_local.locale = locale or 'en'
 
 
 def get_locale() -> str:
     if has_request_context():
-        raw = request.headers.get('Accept-Language', 'zh')
-        return raw if raw in _translations else 'zh'
-    return getattr(_thread_local, 'locale', 'zh')
+        raw = request.headers.get('Accept-Language', 'en')
+        return raw if raw in _translations else 'en'
+    return getattr(_thread_local, 'locale', 'en')
 
 
 def t(key: str, **kwargs) -> str:
     locale = get_locale()
-    messages = _translations.get(locale, _translations.get('zh', {}))
+    messages = _translations.get(locale, _translations.get('en', {}))
 
     value = messages
     for part in key.split('.'):
@@ -45,7 +45,7 @@ def t(key: str, **kwargs) -> str:
             break
 
     if value is None:
-        value = _translations.get('zh', {})
+        value = _translations.get('en', {})
         for part in key.split('.'):
             if isinstance(value, dict):
                 value = value.get(part)
@@ -65,5 +65,5 @@ def t(key: str, **kwargs) -> str:
 
 def get_language_instruction() -> str:
     locale = get_locale()
-    lang_config = _languages.get(locale, _languages.get('zh', {}))
-    return lang_config.get('llmInstruction', '请使用中文回答。')
+    lang_config = _languages.get(locale, _languages.get('en', {}))
+    return lang_config.get('llmInstruction', 'Please respond in English.')
