@@ -48,7 +48,7 @@
           <!-- Mascot & Brand Showcase directly embedded into Hero -->
           <div class="hero-brand-embedded">
             <div class="mascot-frame">
-              <img src="../assets/logo/obfish-mascot.jpg" alt="ObFish Swarm Mascot" class="hero-mascot-img" />
+              <img src="../assets/logo/obfish-mascot.png" alt="ObFish Swarm Mascot" class="hero-mascot-img" />
             </div>
             <div class="hero-brand-name">OBFISH</div>
             <div class="hero-brand-desc">Swarm Intelligence Simulation Platform</div>
@@ -584,16 +584,15 @@ const startSimulation = () => {
 
 .hero-mascot-img {
   width: 100%;
-  max-width: 380px;
-  border-radius: 24px;
-  object-fit: cover;
-  box-shadow: 0 16px 36px -8px rgba(7, 65, 57, 0.25);
-  border: 3px solid rgba(7, 65, 57, 0.2);
-  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+  max-width: 420px;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 25px rgba(7, 65, 57, 0.22));
+  transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.3s ease;
 }
 
 .hero-mascot-img:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-6px) scale(1.03);
+  filter: drop-shadow(0 24px 30px rgba(7, 65, 57, 0.3));
 }
 
 .hero-brand-name {
