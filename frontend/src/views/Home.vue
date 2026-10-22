@@ -45,16 +45,15 @@
         </div>
         
         <div class="hero-right">
-          <!-- Mascot & Brand Showcase -->
-          <div class="logo-container">
-            <div class="obfish-hero-card">
-              <div class="hero-card-glow"></div>
+          <!-- Mascot & Brand Showcase directly embedded into Hero -->
+          <div class="hero-brand-embedded">
+            <div class="mascot-frame">
               <img src="../assets/logo/obfish-mascot.jpg" alt="ObFish Swarm Mascot" class="hero-mascot-img" />
-              <div class="hero-brand-name">OBFISH</div>
-              <div class="hero-brand-desc">Swarm Intelligence Simulation Platform</div>
-              <div class="hero-brand-pill">
-                <span class="pill-dot"></span> Powered by Obrive AI
-              </div>
+            </div>
+            <div class="hero-brand-name">OBFISH</div>
+            <div class="hero-brand-desc">Swarm Intelligence Simulation Platform</div>
+            <div class="hero-brand-pill">
+              <span class="pill-dot"></span> Powered by Obrive AI
             </div>
           </div>
           
@@ -565,77 +564,68 @@ const startSimulation = () => {
   padding-right: 20px;
 }
 
-.obfish-hero-card {
+.hero-brand-embedded {
   position: relative;
   width: 100%;
-  max-width: 460px;
-  padding: 26px 22px;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(7, 65, 57, 0.18);
-  border-radius: 24px;
+  max-width: 440px;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  box-shadow: 0 16px 40px -10px rgba(7, 65, 57, 0.15);
-  overflow: hidden;
-  backdrop-filter: blur(10px);
 }
 
-.hero-card-glow {
-  position: absolute;
-  top: -60px;
-  right: -60px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle, rgba(162, 241, 223, 0.8) 0%, rgba(162, 241, 223, 0) 70%);
-  border-radius: 50%;
-  pointer-events: none;
+.mascot-frame {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
 }
 
 .hero-mascot-img {
   width: 100%;
   max-width: 380px;
-  border-radius: 16px;
+  border-radius: 24px;
   object-fit: cover;
-  margin-bottom: 16px;
-  box-shadow: 0 10px 25px rgba(7, 65, 57, 0.15);
-  border: 2px solid rgba(7, 65, 57, 0.15);
+  box-shadow: 0 16px 36px -8px rgba(7, 65, 57, 0.25);
+  border: 3px solid rgba(7, 65, 57, 0.2);
   transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .hero-mascot-img:hover {
-  transform: scale(1.025);
+  transform: translateY(-4px) scale(1.02);
 }
 
 .hero-brand-name {
   font-family: var(--font-mono);
-  font-size: 2.2rem;
+  font-size: 2.4rem;
   font-weight: 800;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   color: #074139;
   margin-bottom: 6px;
 }
 
 .hero-brand-desc {
-  font-size: 0.95rem;
-  color: #08433a;
-  font-weight: 500;
-  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #074139;
+  font-weight: 600;
+  margin-bottom: 18px;
+  opacity: 0.9;
 }
 
 .hero-brand-pill {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 6px 16px;
-  background: #A2F1DF;
+  padding: 8px 20px;
+  background: rgba(255, 255, 255, 0.6);
   border: 1.5px solid #074139;
   border-radius: 9999px;
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   color: #074139;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.1);
+  box-shadow: 0 4px 14px rgba(7, 65, 57, 0.12);
+  backdrop-filter: blur(8px);
 }
 
 .pill-dot {

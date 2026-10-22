@@ -4,7 +4,7 @@
     <header class="app-header">
       <div class="header-left">
         <div class="brand" @click="router.push('/')">
-          <img src="../assets/logo/obrive-logo.svg" alt="ObFish Logo" class="brand-header-icon" />
+          <img src="../assets/logo/obrive-white-logo.svg" alt="ObFish Logo" class="brand-header-icon" />
           <span>OBFISH</span>
         </div>
       </div>
@@ -431,14 +431,15 @@ onUnmounted(() => {
 /* Header */
 .app-header {
   height: 60px;
-  border-bottom: 1.5px solid rgba(7, 65, 57, 0.15);
+  border-bottom: 1px solid rgba(162, 241, 223, 0.2);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: #FFFFFF;
+  background: #074139;
   z-index: 100;
   position: relative;
+  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.2);
 }
 
 .header-center {
@@ -456,7 +457,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #074139;
+  color: #FFFFFF;
 }
 
 .brand-header-icon {
@@ -466,11 +467,11 @@ onUnmounted(() => {
 
 .view-switcher {
   display: flex;
-  background: #F0F7F6;
+  background: rgba(162, 241, 223, 0.12);
   padding: 4px;
   border-radius: 8px;
   gap: 4px;
-  border: 1px solid rgba(7, 65, 57, 0.1);
+  border: 1px solid rgba(162, 241, 223, 0.25);
 }
 
 .switch-btn {
@@ -479,16 +480,17 @@ onUnmounted(() => {
   padding: 6px 16px;
   font-size: 12px;
   font-weight: 600;
-  color: #526361;
+  color: #A2F1DF;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
 }
 
 .switch-btn.active {
-  background: #074139;
-  color: #a2f1df;
-  box-shadow: 0 2px 6px rgba(7, 65, 57, 0.18);
+  background: #A2F1DF;
+  color: #074139;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .status-indicator {
@@ -496,7 +498,7 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #526361;
+  color: #A2F1DF;
   font-weight: 500;
 }
 
@@ -516,26 +518,26 @@ onUnmounted(() => {
 .step-num {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  color: #074139;
-  opacity: 0.6;
+  color: #A2F1DF;
+  opacity: 0.75;
 }
 
 .step-name {
   font-weight: 700;
-  color: #074139;
+  color: #FFFFFF;
 }
 
 .step-divider {
   width: 1px;
   height: 14px;
-  background-color: #E0E0E0;
+  background-color: rgba(162, 241, 223, 0.3);
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #CCC;
+  background: #A2F1DF;
 }
 
 .status-indicator.processing .dot { background: #074139; animation: pulse 1s infinite; }
