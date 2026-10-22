@@ -28,6 +28,9 @@ class Config:
     LLM_API_KEY = os.environ.get('LLM_API_KEY')
     LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
     LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
+    ONTOLOGY_MAX_TEXT_LENGTH = int(
+        os.environ.get('ONTOLOGY_MAX_TEXT_LENGTH', '30000')
+    )
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
