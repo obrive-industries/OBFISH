@@ -22,6 +22,7 @@ RUN npm ci \
 
 # 复制项目源码
 COPY . .
+RUN mkdir -p /app/instance /app/backend/uploads && chmod -R 777 /app/instance /app/backend/uploads
 
 EXPOSE 3000 5001
 

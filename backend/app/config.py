@@ -26,10 +26,22 @@ class Config:
     _brain_db = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../instance/brain_users.db'))
     _legacy_db = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../instance/obmind_users.db'))
     _default_db = _legacy_db if (not os.path.exists(_brain_db) and os.path.exists(_legacy_db)) else _brain_db
-    SQLALCHEMY_DATABASE_URI = os.environ.get(
-        'DATABASE_URL',
-        f'sqlite:///{_default_db}'
-    )
+    
+    _raw_db_url = os.environ.get('DATABASE_URL')
+    if _raw_db_url and 'sqlite' in _raw_db_url:
+        _sqlite_file = _raw_db_url.replace('sqlite:///', '')
+        try:
+            _target_dir = os.path.dirname(os.path.abspath(_sqlite_file))
+            os.makedirs(_target_dir, exist_ok=True)
+        except Exception:
+            _raw_db_url = None
+
+    try:
+        os.makedirs(os.path.dirname(_default_db), exist_ok=True)
+    except Exception:
+        pass
+
+    SQLALCHEMY_DATABASE_URI = _raw_db_url or f'sqlite:///{_default_db}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT

@@ -27,6 +27,18 @@ def create_app(config_class=Config):
     if hasattr(app, 'json') and hasattr(app.json, 'ensure_ascii'):
         app.json.ensure_ascii = False
 
+    # Ensure SQLite parent directory exists if using SQLite
+    db_uri = app.config.get("SQLALCHEMY_DATABASE_URI", "")
+    if "sqlite" in db_uri:
+        db_path = db_uri.replace("sqlite:///", "")
+        if db_path and not db_path.startswith(":memory:"):
+            try:
+                os.makedirs(os.path.dirname(os.path.abspath(db_path)), exist_ok=True)
+            except Exception:
+                fallback_db = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../instance/brain_users.db"))
+                os.makedirs(os.path.dirname(fallback_db), exist_ok=True)
+                app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{fallback_db}"
+
     # Initialise SQLAlchemy (uses SQLALCHEMY_DATABASE_URI from Config)
     db.init_app(app)
     with app.app_context():
