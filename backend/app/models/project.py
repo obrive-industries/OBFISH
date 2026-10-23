@@ -31,6 +31,7 @@ class Project:
     status: ProjectStatus
     created_at: str
     updated_at: str
+    user_id: Optional[str] = None
     
     # 文件信息
     files: List[Dict[str, str]] = field(default_factory=list)  # [{filename, path, size}]
@@ -62,6 +63,7 @@ class Project:
             "status": self.status.value if isinstance(self.status, ProjectStatus) else self.status,
             "created_at": self.created_at,
             "updated_at": self.updated_at,
+            "user_id": self.user_id,
             "files": self.files,
             "total_text_length": self.total_text_length,
             "ontology": self.ontology,
@@ -89,6 +91,7 @@ class Project:
             status=status,
             created_at=data.get('created_at', ''),
             updated_at=data.get('updated_at', ''),
+            user_id=data.get('user_id'),
             files=data.get('files', []),
             total_text_length=data.get('total_text_length', 0),
             ontology=data.get('ontology'),
@@ -136,12 +139,13 @@ class ProjectManager:
         return os.path.join(cls._get_project_dir(project_id), 'extracted_text.txt')
     
     @classmethod
-    def create_project(cls, name: str = "Unnamed Project") -> Project:
+    def create_project(cls, name: str = "Unnamed Project", user_id: Optional[str] = None) -> Project:
         """
         创建新项目
         
         Args:
             name: 项目名称
+            user_id: 可选的用户ID（用于多租户数据隔离）
             
         Returns:
             新创建的Project对象
@@ -154,6 +158,7 @@ class ProjectManager:
         project = Project(
             project_id=project_id,
             name=name,
+            user_id=user_id,
             status=ProjectStatus.CREATED,
             created_at=now,
             updated_at=now
@@ -201,12 +206,13 @@ class ProjectManager:
         return Project.from_dict(data)
     
     @classmethod
-    def list_projects(cls, limit: Optional[int] = 50) -> List[Project]:
+    def list_projects(cls, limit: Optional[int] = 50, user_id: Optional[str] = None) -> List[Project]:
         """
-        列出所有项目
+        列出项目（支持按用户ID过滤隔离）
         
         Args:
             limit: 返回数量限制
+            user_id: 可选的用户ID过滤
             
         Returns:
             项目列表，按创建时间倒序
@@ -217,6 +223,8 @@ class ProjectManager:
         for project_id in os.listdir(cls.PROJECTS_DIR):
             project = cls.get_project(project_id)
             if project:
+                if user_id is not None and project.user_id != user_id:
+                    continue
                 projects.append(project)
         
         # 按创建时间倒序排序

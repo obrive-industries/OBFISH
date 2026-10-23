@@ -18,6 +18,15 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _normalize_dt(dt: datetime | None) -> datetime | None:
+    """Ensure datetime is timezone-aware (UTC) even if stored as naive in SQLite."""
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt
+
+
 class User(db.Model):
     """User account model."""
 
@@ -45,6 +54,11 @@ class User(db.Model):
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=_utcnow)
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow)
     last_login_at = db.Column(db.DateTime(timezone=True), nullable=True)
+
+    # BYOK (Bring Your Own Key) Settings
+    custom_llm_api_key = db.Column(db.String(255), nullable=True)
+    custom_llm_base_url = db.Column(db.String(255), nullable=True)
+    custom_llm_model_name = db.Column(db.String(255), nullable=True)
 
     # ------------------------------------------------------------------ #
     # Password helpers
@@ -79,7 +93,8 @@ class User(db.Model):
             return False
         if self.verification_token != token:
             return False
-        if _utcnow() > self.verification_token_expires_at:
+        exp = _normalize_dt(self.verification_token_expires_at)
+        if exp and _utcnow() > exp:
             return False  # Token expired
 
         self.is_verified = True
@@ -90,7 +105,8 @@ class User(db.Model):
     def is_verification_token_expired(self) -> bool:
         if not self.verification_token_expires_at:
             return True
-        return _utcnow() > self.verification_token_expires_at
+        exp = _normalize_dt(self.verification_token_expires_at)
+        return _utcnow() > exp if exp else True
 
     # ------------------------------------------------------------------ #
     # Password reset
@@ -112,7 +128,8 @@ class User(db.Model):
             return False
         if self.reset_token != token:
             return False
-        if _utcnow() > self.reset_token_expires_at:
+        exp = _normalize_dt(self.reset_token_expires_at)
+        if exp and _utcnow() > exp:
             return False  # Token expired
 
         self.set_password(new_password)
@@ -132,6 +149,9 @@ class User(db.Model):
             "full_name": self.full_name,
             "is_verified": self.is_verified,
             "is_active": self.is_active,
+            "has_custom_api_key": bool(self.custom_llm_api_key),
+            "custom_llm_base_url": self.custom_llm_base_url,
+            "custom_llm_model_name": self.custom_llm_model_name,
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "last_login_at": self.last_login_at.isoformat() if self.last_login_at else None,
         }

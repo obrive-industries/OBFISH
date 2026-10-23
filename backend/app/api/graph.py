@@ -151,10 +151,12 @@ def get_project(project_id: str):
 @graph_bp.route('/project/list', methods=['GET'])
 def list_projects():
     """
-    列出所有项目
+    列出所有项目（支持多租户用户数据隔离）
     """
+    from ..utils.auth_middleware import get_current_user_id
     limit = request.args.get('limit', 50, type=int)
-    projects = ProjectManager.list_projects(limit=limit)
+    user_id = get_current_user_id()
+    projects = ProjectManager.list_projects(limit=limit, user_id=user_id)
     
     return jsonify({
         "success": True,
@@ -317,9 +319,11 @@ def generate_ontology():
             }), 400
         
         # 创建项目
-        project = ProjectManager.create_project(name=project_name)
+        from ..utils.auth_middleware import get_current_user_id
+        user_id = get_current_user_id()
+        project = ProjectManager.create_project(name=project_name, user_id=user_id)
         project.simulation_requirement = simulation_requirement
-        logger.info(f"创建项目: {project.project_id}")
+        logger.info(f"创建项目: {project.project_id} (user_id={user_id})")
         
         # 保存文件并提取文本
         document_texts = []

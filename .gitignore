@@ -19,6 +19,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 *.so
+*.db
+instance/
+backend/instance/
 .Python
 .venv/
 venv/

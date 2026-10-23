@@ -36,6 +36,31 @@ def _extract_bearer_token() -> str | None:
     return None
 
 
+def get_current_user_id() -> str | None:
+    """Helper to extract user_id if valid bearer token is present, else None."""
+    token = _extract_bearer_token()
+    if not token:
+        return None
+    try:
+        payload = decode_token(token, expected_type="access")
+        return payload.get("sub")
+    except Exception:
+        return None
+
+
+def optional_auth(f):
+    """
+    Decorator: If valid JWT access token is present, sets g.user_id and g.is_verified.
+    If no token or invalid, still executes route with g.user_id = None.
+    """
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        g.user_id = get_current_user_id()
+        g.is_verified = False
+        return f(*args, **kwargs)
+    return decorated
+
+
 def require_auth(f):
     """
     Decorator: Requires a valid (not necessarily verified) JWT access token.

@@ -19,16 +19,16 @@ from typing import Optional
 logger = logging.getLogger("obmind.email")
 
 
-# ------------------------------------------------------------------ #
-# Config (read once at import time)
-# ------------------------------------------------------------------ #
-_SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.gmail.com")
-_SMTP_PORT = int(os.environ.get("SMTP_PORT", "587"))
-_SMTP_USER = os.environ.get("SMTP_USER", "")
-_SMTP_PASSWORD = os.environ.get("SMTP_PASSWORD", "")
-_FROM_NAME = os.environ.get("SMTP_FROM_NAME", "ObMind by Obrive")
-_FROM_EMAIL = os.environ.get("SMTP_FROM_EMAIL", _SMTP_USER)
-_APP_BASE_URL = os.environ.get("APP_BASE_URL", "https://obfish.obrive.com").rstrip("/")
+def _get_smtp_config():
+    """Retrieve latest SMTP settings from environment on demand."""
+    host = os.environ.get("SMTP_HOST", "smtp-relay.brevo.com")
+    port = int(os.environ.get("SMTP_PORT", "587"))
+    user = os.environ.get("SMTP_USER", "")
+    password = os.environ.get("SMTP_PASSWORD", "")
+    from_name = os.environ.get("SMTP_FROM_NAME", "ObMind by Obrive")
+    from_email = os.environ.get("SMTP_FROM_EMAIL", "noreply@obrive.com") or user
+    app_base_url = os.environ.get("APP_BASE_URL", "https://obfish.obrive.com").rstrip("/")
+    return host, port, user, password, from_name, from_email, app_base_url
 
 
 # ------------------------------------------------------------------ #
@@ -40,7 +40,9 @@ def _send(to_email: str, subject: str, html_body: str, text_body: str) -> bool:
     Send a multipart email (HTML + plain-text fallback) via SMTP TLS.
     Returns True on success, False on failure (error is logged, never raised).
     """
-    if not _SMTP_USER or not _SMTP_PASSWORD:
+    host, port, user, password, from_name, from_email, _ = _get_smtp_config()
+
+    if not user or not password:
         # Dev mode: just log the email content instead of sending
         logger.warning(
             "[DEV MODE] SMTP not configured — email NOT sent.\n"
@@ -50,19 +52,20 @@ def _send(to_email: str, subject: str, html_body: str, text_body: str) -> bool:
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = subject
-    msg["From"] = f"{_FROM_NAME} <{_FROM_EMAIL}>"
+    msg["From"] = f"{from_name} <{from_email}>"
     msg["To"] = to_email
 
     msg.attach(MIMEText(text_body, "plain"))
     msg.attach(MIMEText(html_body, "html"))
 
     try:
-        with smtplib.SMTP(_SMTP_HOST, _SMTP_PORT, timeout=10) as server:
+        with smtplib.SMTP(host, port, timeout=15) as server:
             server.ehlo()
             server.starttls()
-            server.login(_SMTP_USER, _SMTP_PASSWORD)
-            server.sendmail(_FROM_EMAIL, [to_email], msg.as_string())
-        logger.info(f"Email sent: {subject!r} → {to_email}")
+            server.ehlo()
+            server.login(user, password)
+            server.sendmail(from_email, [to_email], msg.as_string())
+        logger.info(f"Email sent successfully: {subject!r} → {to_email}")
         return True
     except Exception as exc:
         logger.error(f"Failed to send email to {to_email}: {exc}", exc_info=True)
@@ -134,7 +137,8 @@ def send_verification_email(to_email: str, full_name: str, token: str) -> bool:
     Send an email address verification link to the user.
     The link points to: /verify-email?token=<token>
     """
-    verify_url = f"{_APP_BASE_URL}/verify-email?token={token}"
+    _, _, _, _, _, _, app_base_url = _get_smtp_config()
+    verify_url = f"{app_base_url}/verify-email?token={token}"
 
     content = f"""
       <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">Welcome to ObMind!</h2>
@@ -185,7 +189,8 @@ def send_password_reset_email(to_email: str, full_name: str, token: str) -> bool
     """
     Send a password reset link. Token expires in 30 minutes.
     """
-    reset_url = f"{_APP_BASE_URL}/reset-password?token={token}"
+    _, _, _, _, _, _, app_base_url = _get_smtp_config()
+    reset_url = f"{app_base_url}/reset-password?token={token}"
 
     content = f"""
       <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">Reset your password</h2>
@@ -239,6 +244,7 @@ def send_welcome_email(to_email: str, full_name: str) -> bool:
     """
     Send a welcome email after account is successfully verified.
     """
+    _, _, _, _, _, _, app_base_url = _get_smtp_config()
     content = f"""
       <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">You're in! 🎉</h2>
       <p style="margin:0 0 20px;color:#526361;font-size:14px;line-height:1.6;">
@@ -247,7 +253,7 @@ def send_welcome_email(to_email: str, full_name: str) -> bool:
         Upload a seed dossier and let our swarm intelligence engine predict the future for you.
       </p>
       <p style="margin:0 0 28px;">
-        <a href="{_APP_BASE_URL}/"
+        <a href="{app_base_url}/"
            style="display:inline-block;background:#074139;color:#A2F1DF;text-decoration:none;
                   padding:14px 32px;border-radius:8px;font-weight:700;font-size:15px;">
           Launch ObMind →
@@ -257,7 +263,7 @@ def send_welcome_email(to_email: str, full_name: str) -> bool:
 
     text_body = (
         f"Hi {full_name},\n\nYour ObMind account is verified!\n\n"
-        f"Launch the platform: {_APP_BASE_URL}/\n\n— ObMind by Obrive"
+        f"Launch the platform: {app_base_url}/\n\n— ObMind by Obrive"
     )
 
     return _send(

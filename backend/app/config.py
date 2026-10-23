@@ -23,15 +23,25 @@ class Config:
     
     # Database (SQLAlchemy)
     # Default: SQLite for local dev. Set DATABASE_URL to postgres:// for production.
+    _default_db = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../instance/obmind_users.db'))
     SQLALCHEMY_DATABASE_URI = os.environ.get(
         'DATABASE_URL',
-        'sqlite:///obmind_users.db'  # stored in backend/instance/
+        f'sqlite:///{_default_db}'
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # JWT
-    JWT_ACCESS_TTL_MINUTES = int(os.environ.get('JWT_ACCESS_TTL_MINUTES', '15'))
+    JWT_ACCESS_TTL_MINUTES = int(os.environ.get('JWT_ACCESS_TTL_MINUTES', '60'))
     JWT_REFRESH_TTL_DAYS = int(os.environ.get('JWT_REFRESH_TTL_DAYS', '30'))
+
+    # Brevo / SMTP Configuration
+    SMTP_HOST = os.environ.get('SMTP_HOST', 'smtp-relay.brevo.com')
+    SMTP_PORT = int(os.environ.get('SMTP_PORT', '587'))
+    SMTP_USER = os.environ.get('SMTP_USER', '')
+    SMTP_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
+    SMTP_FROM_NAME = os.environ.get('SMTP_FROM_NAME', 'ObMind by Obrive')
+    SMTP_FROM_EMAIL = os.environ.get('SMTP_FROM_EMAIL', 'noreply@obrive.com')
+    APP_BASE_URL = os.environ.get('APP_BASE_URL', 'https://obfish.obrive.com').rstrip('/')
 
     # LLM配置（统一使用OpenAI格式）
     LLM_API_KEY = os.environ.get('LLM_API_KEY')

@@ -440,3 +440,83 @@ def me():
         return _err("User not found.", code="USER_NOT_FOUND", status=404)
 
     return _ok({"user": user.to_public_dict()})
+
+
+# ------------------------------------------------------------------ #
+# PUT /api/auth/profile (Update name & BYOK settings)
+# ------------------------------------------------------------------ #
+
+@auth_bp.route("/profile", methods=["PUT"])
+@require_auth
+def update_profile():
+    """
+    Update profile fields, including BYOK (Bring Your Own Key) LLM settings.
+    Body: { full_name?, custom_llm_api_key?, custom_llm_base_url?, custom_llm_model_name? }
+    """
+    user = User.query.get(g.user_id)
+    if not user:
+        return _err("User not found.", code="USER_NOT_FOUND", status=404)
+
+    data = request.get_json(silent=True) or {}
+
+    if "full_name" in data:
+        name = (data["full_name"] or "").strip()
+        if err := _validate_full_name(name):
+            return _err(err)
+        user.full_name = name
+
+    # BYOK settings
+    if "custom_llm_api_key" in data:
+        key = data["custom_llm_api_key"]
+        user.custom_llm_api_key = key.strip() if key else None
+
+    if "custom_llm_base_url" in data:
+        base_url = data["custom_llm_base_url"]
+        user.custom_llm_base_url = base_url.strip() if base_url else None
+
+    if "custom_llm_model_name" in data:
+        model = data["custom_llm_model_name"]
+        user.custom_llm_model_name = model.strip() if model else None
+
+    db.session.commit()
+    logger.info(f"User profile updated: {user.email}")
+
+    return _ok({
+        "message": "Profile updated successfully.",
+        "user": user.to_public_dict()
+    })
+
+
+# ------------------------------------------------------------------ #
+# POST /api/auth/change-password
+# ------------------------------------------------------------------ #
+
+@auth_bp.route("/change-password", methods=["POST"])
+@require_auth
+def change_password():
+    """
+    Change password for currently authenticated user.
+    Body: { current_password, new_password }
+    """
+    user = User.query.get(g.user_id)
+    if not user:
+        return _err("User not found.", code="USER_NOT_FOUND", status=404)
+
+    data = request.get_json(silent=True) or {}
+    current_password = data.get("current_password") or ""
+    new_password = data.get("new_password") or ""
+
+    if not current_password or not new_password:
+        return _err("Both current and new password are required.")
+
+    if not user.check_password(current_password):
+        return _err("Incorrect current password.", code="INVALID_PASSWORD", status=400)
+
+    if err := _validate_password(new_password):
+        return _err(err)
+
+    user.set_password(new_password)
+    db.session.commit()
+    logger.info(f"Password changed for user: {user.email}")
+
+    return _ok({"message": "Password changed successfully."})
