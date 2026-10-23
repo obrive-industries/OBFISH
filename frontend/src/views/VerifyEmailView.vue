@@ -3,9 +3,9 @@
     <div class="verify-card">
       <!-- Brand Header -->
       <div class="verify-header">
-        <img src="../assets/logo/obrive-logo.svg" alt="ObMind Logo" class="brand-logo" />
+        <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="brand-logo" />
         <h1 class="brand-title">OBMIND</h1>
-        <p class="brand-sub">Swarm Intelligence Platform</p>
+        <p class="brand-sub">Predictive Intelligence Platform</p>
       </div>
 
       <!-- State: Loading -->
@@ -119,30 +119,32 @@ const handleResend = async () => {
 }
 
 const goToDashboard = () => {
-  router.push('/')
+  router.push('/console')
 }
 </script>
 
 <style scoped>
 .verify-page {
   min-height: 100vh;
-  background: #A2F1DF;
+  background: #070b0e;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #ffffff;
 }
 
 .verify-card {
-  background: #FFFFFF;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(7, 65, 57, 0.12);
+  background: rgba(12, 18, 22, 0.85);
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   width: 100%;
   max-width: 500px;
   padding: 40px;
   text-align: center;
-  border: 1px solid rgba(7, 65, 57, 0.12);
+  border: 1px solid rgba(0, 229, 163, 0.25);
+  backdrop-filter: blur(16px);
 }
 
 .verify-header {
@@ -155,16 +157,17 @@ const goToDashboard = () => {
 }
 
 .brand-title {
-  font-family: 'Michroma', sans-serif;
+  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.6rem;
   letter-spacing: 2px;
-  color: #074139;
+  color: #ffffff;
   margin: 0;
+  font-weight: 800;
 }
 
 .brand-sub {
   font-size: 0.82rem;
-  color: #526361;
+  color: #94a3b8;
   margin-top: 4px;
 }
 
@@ -177,8 +180,8 @@ const goToDashboard = () => {
 .spinner {
   width: 44px;
   height: 44px;
-  border: 3.5px solid rgba(7, 65, 57, 0.15);
-  border-top-color: #074139;
+  border: 3.5px solid rgba(0, 229, 163, 0.15);
+  border-top-color: #00E5A3;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: 20px;
@@ -201,35 +204,37 @@ const goToDashboard = () => {
 }
 
 .success-icon {
-  background: rgba(16, 185, 129, 0.12);
-  color: #059669;
-  border: 2px solid #10B981;
+  background: rgba(0, 229, 163, 0.15);
+  color: #00E5A3;
+  border: 2px solid #00E5A3;
+  box-shadow: 0 0 20px rgba(0, 229, 163, 0.3);
 }
 
 .error-icon {
-  background: rgba(239, 68, 68, 0.12);
-  color: #DC2626;
-  border: 2px solid #EF4444;
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 2px solid #ef4444;
 }
 
 .state-title {
   font-size: 1.4rem;
   font-weight: 700;
-  color: #074139;
+  color: #ffffff;
   margin-bottom: 10px;
 }
 
 .state-desc {
   font-size: 0.95rem;
-  color: #526361;
+  color: #94a3b8;
   line-height: 1.5;
   margin-bottom: 25px;
 }
 
 .error-desc {
   font-size: 0.92rem;
-  color: #B91C1C;
-  background: #FEF2F2;
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
   padding: 12px 16px;
   border-radius: 8px;
   margin-bottom: 24px;
@@ -237,27 +242,28 @@ const goToDashboard = () => {
 }
 
 .primary-btn {
-  background: #074139;
-  color: #A2F1DF;
+  background: linear-gradient(135deg, #00E5A3 0%, #074139 100%);
+  color: #070b0e;
   border: none;
-  border-radius: 8px;
-  padding: 12px 28px;
-  font-size: 0.95rem;
+  border-radius: 10px;
+  padding: 13px 32px;
+  font-size: 1rem;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: 0 4px 14px rgba(7, 65, 57, 0.2);
+  transition: all 0.25s ease;
+  box-shadow: 0 6px 20px rgba(0, 229, 163, 0.35);
 }
 
 .primary-btn:hover {
-  background: #052e28;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(0, 229, 163, 0.5);
+  color: #000;
 }
 
 .resend-box {
   width: 100%;
-  background: #F8FDFC;
-  border: 1px solid rgba(7, 65, 57, 0.14);
+  background: rgba(7, 11, 14, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   padding: 18px;
   margin-bottom: 20px;
@@ -267,7 +273,7 @@ const goToDashboard = () => {
 .resend-label {
   font-size: 0.85rem;
   font-weight: 600;
-  color: #074139;
+  color: #cbd5e1;
   margin-bottom: 8px;
 }
 
@@ -278,26 +284,34 @@ const goToDashboard = () => {
 
 .input-field {
   flex: 1;
-  padding: 9px 12px;
-  border: 1px solid rgba(7, 65, 57, 0.25);
-  border-radius: 6px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: #fff;
   font-size: 0.88rem;
   outline: none;
 }
 
 .input-field:focus {
-  border-color: #074139;
+  border-color: #00E5A3;
 }
 
 .secondary-btn {
   background: #074139;
-  color: #A2F1DF;
-  border: none;
-  border-radius: 6px;
-  padding: 9px 16px;
+  border: 1px solid rgba(0, 229, 163, 0.4);
+  color: #00E5A3;
+  border-radius: 8px;
+  padding: 10px 18px;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.secondary-btn:hover:not(:disabled) {
+  background: #00E5A3;
+  color: #070b0e;
 }
 
 .secondary-btn:disabled {
@@ -307,14 +321,14 @@ const goToDashboard = () => {
 
 .resend-success-msg {
   font-size: 0.82rem;
-  color: #059669;
+  color: #00E5A3;
   margin-top: 8px;
 }
 
 .text-link {
   background: transparent;
   border: none;
-  color: #074139;
+  color: #00E5A3;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;

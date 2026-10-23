@@ -4,16 +4,25 @@
  */
 import { reactive } from 'vue'
 
+const PROMPT_KEY = 'obmind_pending_prompt'
+
 const state = reactive({
   files: [],
-  simulationRequirement: '',
-  isPending: false
+  simulationRequirement: localStorage.getItem(PROMPT_KEY) || '',
+  isPending: Boolean(localStorage.getItem(PROMPT_KEY))
 })
 
 export function setPendingUpload(files, requirement) {
   state.files = files
   state.simulationRequirement = requirement
   state.isPending = true
+  if (requirement) {
+    try {
+      localStorage.setItem(PROMPT_KEY, requirement)
+    } catch (e) {
+      console.warn('Failed to cache pending prompt in localStorage:', e)
+    }
+  }
 }
 
 export function getPendingUpload() {
@@ -28,6 +37,11 @@ export function clearPendingUpload() {
   state.files = []
   state.simulationRequirement = ''
   state.isPending = false
+  try {
+    localStorage.removeItem(PROMPT_KEY)
+  } catch (e) {
+    console.warn('Failed to clear pending prompt cache:', e)
+  }
 }
 
 export default state

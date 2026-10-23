@@ -3,7 +3,7 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/')">
+        <div class="brand" @click="router.push('/console')" title="Return to ObMind Console">
           <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
           <span>OBMIND</span>
         </div>

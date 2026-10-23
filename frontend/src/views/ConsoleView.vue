@@ -50,7 +50,12 @@
         <span class="banner-text">
           Your email <strong>{{ authStore.user.value?.email }}</strong> is not verified yet. Please check your Brevo inbox to enable engine simulation runs.
         </span>
-        <button class="banner-btn" @click="authStore.openProfileModal">View Profile</button>
+        <div class="banner-actions">
+          <button class="banner-btn-secondary" @click="handleResendVerification" :disabled="resending">
+            {{ resending ? 'Sending...' : 'Resend Link' }}
+          </button>
+          <button class="banner-btn" @click="authStore.openProfileModal">View Profile</button>
+        </div>
       </div>
 
       <!-- Double Panel Console Layout -->
@@ -108,7 +113,7 @@
             <div class="console-section">
               <div class="section-label-bar">
                 <span class="label-title">REALITY SEED</span>
-                <span class="label-hint">PDF, MD, TXT (up to 50MB)</span>
+                <span class="label-hint">PDF, DOCX, MD, TXT (up to 50MB)</span>
               </div>
 
               <div 
@@ -123,7 +128,7 @@
                   ref="fileInput"
                   type="file"
                   multiple
-                  accept=".pdf,.md,.txt"
+                  accept=".pdf,.docx,.md,.txt"
                   @change="handleFileSelect"
                   style="display: none"
                   :disabled="loading"
@@ -198,11 +203,12 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import authStore from '../store/auth'
+import authApi from '../api/auth'
 import { setPendingUpload, getPendingUpload } from '../store/pendingUpload.js'
 
 const router = useRouter()
@@ -213,6 +219,7 @@ const formData = ref({
 })
 const files = ref([])
 const loading = ref(false)
+const resending = ref(false)
 const isDragOver = ref(false)
 const fileInput = ref(null)
 
@@ -257,6 +264,34 @@ onMounted(() => {
     }
   }
 })
+
+// Watch auth state to restore pending dossier if login happened in-place
+watch(() => authStore.isAuthenticated.value, (isAuth) => {
+  if (isAuth) {
+    const pending = getPendingUpload()
+    if (pending && pending.isPending) {
+      if (pending.simulationRequirement && !formData.value.simulationRequirement) {
+        formData.value.simulationRequirement = pending.simulationRequirement
+      }
+      if (pending.files && pending.files.length > 0 && files.value.length === 0) {
+        files.value = pending.files
+      }
+    }
+  }
+})
+
+const handleResendVerification = async () => {
+  if (!authStore.user.value?.email) return
+  resending.value = true
+  try {
+    await authApi.resendVerification(authStore.user.value.email)
+    alert('A new verification email has been sent via Brevo. Please check your inbox.')
+  } catch (err) {
+    alert(err.message || 'Failed to resend verification link.')
+  } finally {
+    resending.value = false
+  }
+}
 
 const userInitials = computed(() => {
   const name = authStore.user.value?.full_name || 'User'
@@ -310,10 +345,16 @@ const handleDrop = (e) => {
   addFiles(dropped)
 }
 
+const MAX_FILE_SIZE_BYTES = 50 * 1024 * 1024 // 50MB
 const addFiles = (newFiles) => {
   const valid = newFiles.filter(file => {
     const ext = file.name.split('.').pop().toLowerCase()
-    return ['pdf', 'md', 'txt'].includes(ext)
+    const isFormatOk = ['pdf', 'docx', 'md', 'txt'].includes(ext)
+    const isSizeOk = file.size <= MAX_FILE_SIZE_BYTES
+    if (!isSizeOk) {
+      alert(`File "${file.name}" exceeds the 50MB size limit.`)
+    }
+    return isFormatOk && isSizeOk
   })
   files.value.push(...valid)
 }
@@ -570,8 +611,30 @@ const handleStartEngine = () => {
   font-size: 0.9rem;
 }
 
-.banner-btn {
+.banner-actions {
   margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.banner-btn-secondary {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fde68a;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.banner-btn-secondary:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.35);
+  color: #fff;
+}
+
+.banner-btn {
   background: #f59e0b;
   border: none;
   color: #070b0e;
@@ -579,6 +642,11 @@ const handleStartEngine = () => {
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.banner-btn:hover {
+  background: #fbbf24;
 }
 
 /* Console Grid */

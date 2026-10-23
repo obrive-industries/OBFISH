@@ -1,51 +1,44 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import LandingView from '../views/LandingView.vue'
-import ConsoleView from '../views/ConsoleView.vue'
-import Process from '../views/MainView.vue'
-import SimulationView from '../views/SimulationView.vue'
-import SimulationRunView from '../views/SimulationRunView.vue'
-import ReportView from '../views/ReportView.vue'
-import InteractionView from '../views/InteractionView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Landing',
-    component: LandingView
+    component: () => import('../views/LandingView.vue')
   },
   {
     path: '/console',
     name: 'Console',
-    component: ConsoleView
+    component: () => import('../views/ConsoleView.vue')
   },
   {
     path: '/process/:projectId',
     name: 'Process',
-    component: Process,
+    component: () => import('../views/MainView.vue'),
     props: true
   },
   {
     path: '/simulation/:simulationId',
     name: 'Simulation',
-    component: SimulationView,
+    component: () => import('../views/SimulationView.vue'),
     props: true
   },
   {
     path: '/simulation/:simulationId/start',
     name: 'SimulationRun',
-    component: SimulationRunView,
+    component: () => import('../views/SimulationRunView.vue'),
     props: true
   },
   {
     path: '/report/:reportId',
     name: 'Report',
-    component: ReportView,
+    component: () => import('../views/ReportView.vue'),
     props: true
   },
   {
     path: '/interaction/:reportId',
     name: 'Interaction',
-    component: InteractionView,
+    component: () => import('../views/InteractionView.vue'),
     props: true
   },
   {
@@ -57,6 +50,22 @@ const routes = [
     path: '/reset-password',
     name: 'ResetPassword',
     component: () => import('../views/ResetPasswordView.vue')
+  },
+  {
+    path: '/home',
+    redirect: '/'
+  },
+  {
+    path: '/app',
+    redirect: '/console'
+  },
+  {
+    path: '/dashboard',
+    redirect: '/console'
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    redirect: '/'
   }
 ]
 

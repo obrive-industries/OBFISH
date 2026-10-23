@@ -61,7 +61,7 @@ def _read_text_with_fallback(file_path: str) -> str:
 class FileParser:
     """文件解析器"""
     
-    SUPPORTED_EXTENSIONS = {'.pdf', '.md', '.markdown', '.txt'}
+    SUPPORTED_EXTENSIONS = {'.pdf', '.md', '.markdown', '.txt', '.docx'}
     
     @classmethod
     def is_supported(cls, file_path: str) -> bool:
@@ -104,6 +104,8 @@ class FileParser:
             return cls._extract_from_md(file_path)
         elif suffix == '.txt':
             return cls._extract_from_txt(file_path)
+        elif suffix == '.docx':
+            return cls._extract_from_docx(file_path)
         
         raise ValueError(f"无法处理的文件格式: {suffix}")
     
@@ -133,6 +135,27 @@ class FileParser:
     def _extract_from_txt(file_path: str) -> str:
         """从TXT提取文本，支持自动编码检测"""
         return _read_text_with_fallback(file_path)
+    
+    @staticmethod
+    def _extract_from_docx(file_path: str) -> str:
+        """从DOCX提取文本"""
+        try:
+            import docx
+        except ImportError:
+            raise ImportError("需要安装python-docx: uv pip install python-docx")
+        
+        doc = docx.Document(file_path)
+        parts = []
+        for p in doc.paragraphs:
+            text = p.text.strip()
+            if text:
+                parts.append(text)
+        for table in doc.tables:
+            for row in table.rows:
+                row_text = " | ".join(cell.text.strip() for cell in row.cells if cell.text.strip())
+                if row_text:
+                    parts.append(row_text)
+        return "\n\n".join(parts)
     
     @classmethod
     def extract_from_multiple(cls, file_paths: List[str]) -> str:
