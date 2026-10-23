@@ -345,25 +345,6 @@ const handleMobileNav = (hash) => {
   flex-shrink: 0;
 }
 
-.btn-signin {
-  background: transparent;
-  border: 1px solid rgba(7, 65, 57, 0.24);
-  color: #074139;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.btn-signin:hover {
-  background-color: rgba(7, 65, 57, 0.08);
-  border-color: #074139;
-}
 
 .user-pill {
   display: flex;
@@ -619,23 +600,6 @@ const handleMobileNav = (hash) => {
   justify-content: space-between;
 }
 
-.mobile-signin {
-  background: none;
-  border: 1px solid rgba(7, 65, 57, 0.2);
-  color: #074139;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 600;
-  cursor: pointer;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  transition: all 0.2s ease;
-}
-
-.mobile-signin:hover {
-  background: rgba(7, 65, 57, 0.08);
-}
 
 .mobile-user-info {
   display: flex;
@@ -708,10 +672,6 @@ const handleMobileNav = (hash) => {
     height: 54px;
     padding: 0 14px;
     border-radius: 12px;
-  }
-
-  .btn-signin {
-    display: none;
   }
 }
 </style>
