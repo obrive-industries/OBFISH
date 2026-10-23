@@ -1118,6 +1118,16 @@ class SimulationRunner:
                         process.wait(timeout=5)
                     except Exception:
                         process.kill()
+            elif getattr(state, "process_pid", None):
+                pid = state.process_pid
+                try:
+                    if hasattr(os, "killpg") and hasattr(os, "getpgid"):
+                        pgid = os.getpgid(pid)
+                        os.killpg(pgid, signal.SIGTERM)
+                    else:
+                        os.kill(pid, signal.SIGTERM)
+                except (ProcessLookupError, OSError):
+                    pass
 
         # Let the monitor consume the final action-log tail and own the single
         # updater drain. It will publish STOPPED (rather than COMPLETED) because

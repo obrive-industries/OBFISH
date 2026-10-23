@@ -30,6 +30,20 @@ def create_app(config_class=Config):
     # Initialise SQLAlchemy (uses SQLALCHEMY_DATABASE_URI from Config)
     db.init_app(app)
     with app.app_context():
+        # Enable WAL mode and busy timeout on SQLite to prevent 'database is locked' errors
+        if "sqlite" in str(db.engine.url):
+            try:
+                from sqlalchemy import event
+                @event.listens_for(db.engine, "connect")
+                def _set_sqlite_pragma(dbapi_connection, connection_record):
+                    cursor = dbapi_connection.cursor()
+                    cursor.execute("PRAGMA journal_mode=WAL")
+                    cursor.execute("PRAGMA synchronous=NORMAL")
+                    cursor.execute("PRAGMA busy_timeout=5000")
+                    cursor.close()
+            except Exception:
+                pass
+
         db.create_all()  # Create tables if they don't exist yet
         try:
             from sqlalchemy import inspect, text
@@ -89,6 +103,7 @@ def create_app(config_class=Config):
     
     # 健康检查
     @app.route('/health')
+    @app.route('/api/health')
     def health():
         return {'status': 'ok', 'service': 'Brain Backend'}
     

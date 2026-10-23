@@ -10,9 +10,9 @@ WorkingDirectory=/var/www/obmind/backend
 Environment="PATH=/var/www/obmind/backend/.venv/bin:/usr/local/bin:/usr/bin"
 EnvironmentFile=/var/www/obmind/.env
 ExecStart=/var/www/obmind/backend/.venv/bin/gunicorn \
-    --workers 4 \
+    --workers 1 \
     --worker-class gthread \
-    --threads 4 \
+    --threads 8 \
     --bind 127.0.0.1:5001 \
     --timeout 300 \
     --graceful-timeout 30 \
