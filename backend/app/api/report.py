@@ -81,6 +81,19 @@ def generate_report():
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
 
+        # 权限检查（邮箱验证要求）
+        from ..utils.auth_middleware import get_current_user, check_simulation_permission, get_user_llm_client
+        user = get_current_user()
+        allowed, reason = check_simulation_permission(user)
+        if not allowed:
+            return jsonify({
+                "success": False,
+                "error": reason,
+                "code": "EMAIL_NOT_VERIFIED"
+            }), 403
+
+        user_llm = get_user_llm_client(user)
+
         run_state = SimulationRunner.get_run_state(simulation_id)
         updater = ZepGraphMemoryManager.get_updater(simulation_id)
         active_statuses = {
@@ -255,7 +268,8 @@ def generate_report():
                     agent = ReportAgent(
                         graph_id=graph_id,
                         simulation_id=simulation_id,
-                        simulation_requirement=simulation_requirement
+                        simulation_requirement=simulation_requirement,
+                        llm_client=user_llm
                     )
 
                     def progress_callback(stage, progress, message):
@@ -494,9 +508,13 @@ def list_reports():
         simulation_id = request.args.get('simulation_id')
         limit = request.args.get('limit', 50, type=int)
         
+        from ..utils.auth_middleware import get_current_user_id
+        user_id = get_current_user_id()
+        
         reports = ReportManager.list_reports(
             simulation_id=simulation_id,
-            limit=limit
+            limit=limit,
+            user_id=user_id
         )
         
         return jsonify({

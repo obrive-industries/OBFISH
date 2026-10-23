@@ -2602,10 +2602,20 @@ class ReportManager:
         return reports[0]
     
     @classmethod
-    def list_reports(cls, simulation_id: Optional[str] = None, limit: int = 50) -> List[Report]:
-        """列出报告"""
+    def list_reports(cls, simulation_id: Optional[str] = None, limit: int = 50, user_id: Optional[str] = None) -> List[Report]:
+        """列出报告（支持多租户隔离）"""
         cls._ensure_reports_dir()
         
+        allowed_simulation_ids = None
+        if user_id is not None:
+            try:
+                from .simulation_manager import SimulationManager
+                user_sims = SimulationManager().list_simulations(user_id=user_id)
+                allowed_simulation_ids = {s.simulation_id for s in user_sims}
+            except Exception as e:
+                logger.warning(f"Failed to fetch user simulations for report isolation: {e}")
+                allowed_simulation_ids = set()
+
         reports = []
         for item in os.listdir(cls.REPORTS_DIR):
             item_path = os.path.join(cls.REPORTS_DIR, item)
@@ -2613,15 +2623,21 @@ class ReportManager:
             if os.path.isdir(item_path):
                 report = cls.get_report(item)
                 if report:
-                    if simulation_id is None or report.simulation_id == simulation_id:
-                        reports.append(report)
+                    if simulation_id is not None and report.simulation_id != simulation_id:
+                        continue
+                    if allowed_simulation_ids is not None and report.simulation_id not in allowed_simulation_ids:
+                        continue
+                    reports.append(report)
             # 兼容旧格式：JSON文件
             elif item.endswith('.json'):
                 report_id = item[:-5]
                 report = cls.get_report(report_id)
                 if report:
-                    if simulation_id is None or report.simulation_id == simulation_id:
-                        reports.append(report)
+                    if simulation_id is not None and report.simulation_id != simulation_id:
+                        continue
+                    if allowed_simulation_ids is not None and report.simulation_id not in allowed_simulation_ids:
+                        continue
+                    reports.append(report)
         
         # 按创建时间倒序
         reports.sort(key=lambda r: r.created_at, reverse=True)

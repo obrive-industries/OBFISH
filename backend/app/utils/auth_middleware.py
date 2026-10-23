@@ -117,3 +117,47 @@ def require_verified(f):
         return f(*args, **kwargs)
 
     return decorated
+
+
+def get_current_user():
+    """Return the User model instance for the current authenticated request, or None."""
+    uid = get_current_user_id()
+    if not uid:
+        return None
+    try:
+        from ..models.user import User, db
+        return db.session.get(User, uid)
+    except Exception as e:
+        logger.warning(f"Failed to fetch user {uid}: {e}")
+        return None
+
+
+def get_user_llm_client(user=None):
+    """
+    Return an LLMClient initialized with the user's BYOK credentials if provided,
+    otherwise falling back to platform defaults from Config.
+    """
+    from .llm_client import LLMClient
+    from ..config import Config
+
+    target_user = user or get_current_user()
+    if target_user and target_user.custom_llm_api_key:
+        logger.info(f"Using BYOK credentials for user: {target_user.email} (model={target_user.custom_llm_model_name or Config.LLM_MODEL_NAME})")
+        return LLMClient(
+            api_key=target_user.custom_llm_api_key,
+            base_url=target_user.custom_llm_base_url or Config.LLM_BASE_URL,
+            model=target_user.custom_llm_model_name or Config.LLM_MODEL_NAME
+        )
+    return LLMClient()
+
+
+def check_simulation_permission(user=None) -> tuple[bool, str | None]:
+    """
+    Enforces email verification for simulation/ontology workflows.
+    Returns (True, None) if permitted, or (False, error_msg) if blocked.
+    """
+    target_user = user or get_current_user()
+    if target_user and not target_user.is_verified:
+        return False, "Please verify your email address before running simulations."
+    return True, None
+

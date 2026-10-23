@@ -142,6 +142,14 @@ def get_project(project_id: str):
             "error": t('api.projectNotFound', id=project_id)
         }), 404
 
+    from ..utils.auth_middleware import get_current_user_id
+    user_id = get_current_user_id()
+    if user_id and project.user_id and project.user_id != user_id:
+        return jsonify({
+            "success": False,
+            "error": "Access denied"
+        }), 403
+
     return jsonify({
         "success": True,
         "data": project.to_dict()
@@ -181,6 +189,14 @@ def _delete_project_impl(project_id: str):
             "success": False,
             "error": t('api.projectNotFound', id=project_id)
         }), 404
+
+    from ..utils.auth_middleware import get_current_user_id
+    user_id = get_current_user_id()
+    if user_id and project.user_id and project.user_id != user_id:
+        return jsonify({
+            "success": False,
+            "error": "Access denied"
+        }), 403
     if _project_has_active_build(project):
         return jsonify({
             "success": False,
@@ -319,8 +335,17 @@ def generate_ontology():
             }), 400
         
         # 创建项目
-        from ..utils.auth_middleware import get_current_user_id
-        user_id = get_current_user_id()
+        from ..utils.auth_middleware import get_current_user, get_user_llm_client, check_simulation_permission
+        user = get_current_user()
+        allowed, reason = check_simulation_permission(user)
+        if not allowed:
+            return jsonify({
+                "success": False,
+                "error": reason,
+                "code": "EMAIL_NOT_VERIFIED"
+            }), 403
+
+        user_id = user.id if user else None
         project = ProjectManager.create_project(name=project_name, user_id=user_id)
         project.simulation_requirement = simulation_requirement
         logger.info(f"创建项目: {project.project_id} (user_id={user_id})")
@@ -362,7 +387,11 @@ def generate_ontology():
         
         # 生成本体
         logger.info("调用 LLM 生成本体定义...")
-        generator = OntologyGenerator()
+        user_llm = get_user_llm_client(user)
+        try:
+            generator = OntologyGenerator(llm_client=user_llm)
+        except TypeError:
+            generator = OntologyGenerator()
         ontology = generator.generate(
             document_texts=document_texts,
             simulation_requirement=simulation_requirement,
@@ -520,6 +549,23 @@ def _build_graph_impl():
                 "success": False,
                 "error": t('api.projectNotFound', id=project_id)
             }), 404
+
+        # 权限与归属检查
+        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        user = get_current_user()
+        allowed, reason = check_simulation_permission(user)
+        if not allowed:
+            return jsonify({
+                "success": False,
+                "error": reason,
+                "code": "EMAIL_NOT_VERIFIED"
+            }), 403
+
+        if project.user_id and user and project.user_id != user.id:
+            return jsonify({
+                "success": False,
+                "error": "Access denied to this project"
+            }), 403
 
         # 检查项目状态
         force = data.get('force', False)  # 强制重新构建

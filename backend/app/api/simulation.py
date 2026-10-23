@@ -451,6 +451,21 @@ def prepare_simulation():
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
         
+        # 权限检查（邮箱验证要求）
+        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        user = get_current_user()
+        allowed, reason = check_simulation_permission(user)
+        if not allowed:
+            return jsonify({
+                "success": False,
+                "error": reason,
+                "code": "EMAIL_NOT_VERIFIED"
+            }), 403
+
+        user_byok_api_key = user.custom_llm_api_key if user else None
+        user_byok_base_url = user.custom_llm_base_url if user else None
+        user_byok_model_name = user.custom_llm_model_name if user else None
+
         # 检查是否强制重新生成
         force_regenerate = data.get('force_regenerate', False)
         logger.info(f"开始处理 /prepare 请求: simulation_id={simulation_id}, force_regenerate={force_regenerate}")
@@ -617,7 +632,10 @@ def prepare_simulation():
                     defined_entity_types=entity_types_list,
                     use_llm_for_profiles=use_llm_for_profiles,
                     progress_callback=progress_callback,
-                    parallel_profile_count=parallel_profile_count
+                    parallel_profile_count=parallel_profile_count,
+                    custom_llm_api_key=user_byok_api_key,
+                    custom_llm_base_url=user_byok_base_url,
+                    custom_llm_model_name=user_byok_model_name
                 )
 
                 if result_state.status == SimulationStatus.FAILED:
@@ -799,6 +817,17 @@ def get_simulation(simulation_id: str):
                 "success": False,
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
+
+        from ..utils.auth_middleware import get_current_user_id
+        from ..models.project import ProjectManager
+        user_id = get_current_user_id()
+        if user_id:
+            project = ProjectManager.get_project(state.project_id)
+            if project and project.user_id and project.user_id != user_id:
+                return jsonify({
+                    "success": False,
+                    "error": "Access denied"
+                }), 403
         
         result = state.to_dict()
         
@@ -945,9 +974,11 @@ def get_simulation_history():
     """
     try:
         limit = request.args.get('limit', 20, type=int)
+        from ..utils.auth_middleware import get_current_user_id
+        user_id = get_current_user_id()
         
         manager = SimulationManager()
-        simulations = manager.list_simulations()[:limit]
+        simulations = manager.list_simulations(user_id=user_id)[:limit]
         
         # 增强模拟数据，只从 Simulation 文件读取
         enriched_simulations = []
@@ -1464,7 +1495,21 @@ def generate_profiles():
                 "error": t('api.noMatchingEntities')
             }), 400
         
-        generator = OasisProfileGenerator()
+        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        user = get_current_user()
+        allowed, reason = check_simulation_permission(user)
+        if not allowed:
+            return jsonify({
+                "success": False,
+                "error": reason,
+                "code": "EMAIL_NOT_VERIFIED"
+            }), 403
+
+        generator = OasisProfileGenerator(
+            api_key=user.custom_llm_api_key if (user and user.custom_llm_api_key) else None,
+            base_url=user.custom_llm_base_url if (user and user.custom_llm_base_url) else None,
+            model_name=user.custom_llm_model_name if (user and user.custom_llm_model_name) else None
+        )
         profiles = generator.generate_profiles_from_entities(
             entities=filtered.entities,
             use_llm=use_llm
@@ -1584,6 +1629,17 @@ def start_simulation():
                 "success": False,
                 "error": t('api.invalidPlatform', platform=platform)
             }), 400
+
+        # 权限检查（邮箱验证要求）
+        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        user = get_current_user()
+        allowed, reason = check_simulation_permission(user)
+        if not allowed:
+            return jsonify({
+                "success": False,
+                "error": reason,
+                "code": "EMAIL_NOT_VERIFIED"
+            }), 403
 
         # 检查模拟是否已准备好
         manager = SimulationManager()
@@ -1754,7 +1810,10 @@ def start_simulation():
                 platform=platform,
                 max_rounds=max_rounds,
                 enable_graph_memory_update=enable_graph_memory_update,
-                graph_id=graph_id
+                graph_id=graph_id,
+                custom_llm_api_key=user.custom_llm_api_key if user else None,
+                custom_llm_base_url=user.custom_llm_base_url if user else None,
+                custom_llm_model_name=user.custom_llm_model_name if user else None
             )
         
         response_data = run_state.to_dict()

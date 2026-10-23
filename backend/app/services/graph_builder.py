@@ -287,8 +287,9 @@ class GraphBuilderService:
                 )
                 for batch in getattr(page, "batches", None) or []:
                     metadata = getattr(batch, "metadata", None) or {}
+                    op_id = metadata.get("obmind_operation_id") or metadata.get("mirofish_operation_id")
                     if (
-                        metadata.get("obmind_operation_id") == operation_id
+                        op_id == operation_id
                         and metadata.get("graph_id") == graph_id
                     ):
                         matches.append(batch)

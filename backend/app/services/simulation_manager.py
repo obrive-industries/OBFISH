@@ -17,7 +17,7 @@ from ..utils.logger import get_logger
 from .zep_entity_reader import ZepEntityReader, FilteredEntities
 from .oasis_profile_generator import OasisProfileGenerator, OasisAgentProfile
 from .simulation_config_generator import SimulationConfigGenerator, SimulationParameters
-from ..utils.locale import t
+from ..utils.locale import t, get_locale
 
 logger = get_logger('obmind.simulation')
 
@@ -249,7 +249,10 @@ class SimulationManager:
         defined_entity_types: Optional[List[str]] = None,
         use_llm_for_profiles: bool = True,
         progress_callback: Optional[callable] = None,
-        parallel_profile_count: int = 3
+        parallel_profile_count: int = 3,
+        custom_llm_api_key: Optional[str] = None,
+        custom_llm_base_url: Optional[str] = None,
+        custom_llm_model_name: Optional[str] = None
     ) -> SimulationState:
         """
         准备模拟环境（全程自动化）
@@ -330,8 +333,13 @@ class SimulationManager:
                     total=total_entities
                 )
             
-            # 传入graph_id以启用Zep检索功能，获取更丰富的上下文
-            generator = OasisProfileGenerator(graph_id=state.graph_id)
+            # 传入graph_id以启用Zep检索功能，获取更丰富的上下文，并注入BYOK配置
+            generator = OasisProfileGenerator(
+                graph_id=state.graph_id,
+                api_key=custom_llm_api_key,
+                base_url=custom_llm_base_url,
+                model_name=custom_llm_model_name
+            )
             
             def profile_progress(current, total, msg):
                 if progress_callback:
@@ -410,7 +418,11 @@ class SimulationManager:
                     total=3
                 )
             
-            config_generator = SimulationConfigGenerator()
+            config_generator = SimulationConfigGenerator(
+                api_key=custom_llm_api_key,
+                base_url=custom_llm_base_url,
+                model_name=custom_llm_model_name
+            )
             
             if progress_callback:
                 progress_callback(
@@ -480,9 +492,15 @@ class SimulationManager:
         """获取模拟状态"""
         return self._load_simulation_state(simulation_id)
     
-    def list_simulations(self, project_id: Optional[str] = None) -> List[SimulationState]:
-        """列出所有模拟"""
+    def list_simulations(self, project_id: Optional[str] = None, user_id: Optional[str] = None) -> List[SimulationState]:
+        """列出模拟（支持按项目ID和多租户用户ID隔离过滤）"""
         simulations = []
+        
+        allowed_project_ids = None
+        if user_id is not None:
+            from ..models.project import ProjectManager
+            user_projects = ProjectManager.list_projects(limit=None, user_id=user_id)
+            allowed_project_ids = {p.project_id for p in user_projects}
         
         if os.path.exists(self.SIMULATION_DATA_DIR):
             for sim_id in os.listdir(self.SIMULATION_DATA_DIR):
@@ -493,8 +511,11 @@ class SimulationManager:
                 
                 state = self._load_simulation_state(sim_id)
                 if state:
-                    if project_id is None or state.project_id == project_id:
-                        simulations.append(state)
+                    if project_id is not None and state.project_id != project_id:
+                        continue
+                    if allowed_project_ids is not None and state.project_id not in allowed_project_ids:
+                        continue
+                    simulations.append(state)
         
         return simulations
     

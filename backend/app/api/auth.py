@@ -246,7 +246,7 @@ def refresh():
     except TokenInvalidError:
         return _err("Invalid refresh token.", code="TOKEN_INVALID", status=401)
 
-    user = User.query.get(payload["sub"])
+    user = db.session.get(User, payload["sub"])
     if not user or not user.is_active:
         return _err("User not found or deactivated.", code="USER_NOT_FOUND", status=401)
 
@@ -261,17 +261,17 @@ def refresh():
 # GET /api/auth/verify-email?token=<token>
 # ------------------------------------------------------------------ #
 
-@auth_bp.route("/verify-email", methods=["GET"])
+@auth_bp.route("/verify-email", methods=["GET", "POST"])
 def verify_email():
     """
     Verify a user's email address using the token from the verification link.
 
-    Query param: token
+    Query param or JSON body: token
 
     On success: marks user as verified, sends welcome email, returns
     fresh access token with is_verified=True so the frontend can update state.
     """
-    token = request.args.get("token", "").strip()
+    token = (request.args.get("token") or (request.get_json(silent=True) or {}).get("token") or "").strip()
     if not token:
         return _err("Verification token is missing.", code="MISSING_TOKEN")
 
@@ -435,7 +435,7 @@ def me():
     Return the current user's public profile.
     Requires: valid access token.
     """
-    user = User.query.get(g.user_id)
+    user = db.session.get(User, g.user_id)
     if not user:
         return _err("User not found.", code="USER_NOT_FOUND", status=404)
 
@@ -446,14 +446,14 @@ def me():
 # PUT /api/auth/profile (Update name & BYOK settings)
 # ------------------------------------------------------------------ #
 
-@auth_bp.route("/profile", methods=["PUT"])
+@auth_bp.route("/profile", methods=["PUT", "PATCH"])
 @require_auth
 def update_profile():
     """
     Update profile fields, including BYOK (Bring Your Own Key) LLM settings.
     Body: { full_name?, custom_llm_api_key?, custom_llm_base_url?, custom_llm_model_name? }
     """
-    user = User.query.get(g.user_id)
+    user = db.session.get(User, g.user_id)
     if not user:
         return _err("User not found.", code="USER_NOT_FOUND", status=404)
 
@@ -498,7 +498,7 @@ def change_password():
     Change password for currently authenticated user.
     Body: { current_password, new_password }
     """
-    user = User.query.get(g.user_id)
+    user = db.session.get(User, g.user_id)
     if not user:
         return _err("User not found.", code="USER_NOT_FOUND", status=404)
 
