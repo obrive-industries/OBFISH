@@ -10,6 +10,7 @@ const state = reactive({
   refreshToken: localStorage.getItem(REFRESH_KEY) || null,
   authModalOpen: false,
   authModalTab: 'login', // 'login' | 'register' | 'forgot'
+  authNotice: '',
   profileModalOpen: false,
   initialized: false
 })
@@ -61,13 +62,15 @@ export const authStore = {
     localStorage.removeItem(USER_KEY)
   },
 
-  openAuthModal(tab = 'login') {
+  openAuthModal(tab = 'login', notice = '') {
     state.authModalTab = tab
+    state.authNotice = notice
     state.authModalOpen = true
   },
 
   closeAuthModal() {
     state.authModalOpen = false
+    state.authNotice = ''
   },
 
   openProfileModal() {

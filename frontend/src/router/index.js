@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import Home from '../views/Home.vue'
+import LandingView from '../views/LandingView.vue'
+import ConsoleView from '../views/ConsoleView.vue'
 import Process from '../views/MainView.vue'
 import SimulationView from '../views/SimulationView.vue'
 import SimulationRunView from '../views/SimulationRunView.vue'
@@ -9,8 +10,13 @@ import InteractionView from '../views/InteractionView.vue'
 const routes = [
   {
     path: '/',
-    name: 'Home',
-    component: Home
+    name: 'Landing',
+    component: LandingView
+  },
+  {
+    path: '/console',
+    name: 'Console',
+    component: ConsoleView
   },
   {
     path: '/process/:projectId',

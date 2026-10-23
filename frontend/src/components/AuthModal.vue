@@ -27,6 +27,11 @@
         </button>
       </div>
 
+      <!-- Notice Alert -->
+      <div v-if="authStore.state.authNotice" class="alert notice-alert">
+        <span class="notice-icon">🔒</span> {{ authStore.state.authNotice }}
+      </div>
+
       <!-- Error / Success Alert -->
       <div v-if="errorMsg" class="alert error-alert">
         {{ errorMsg }}
@@ -374,6 +379,16 @@ const handleForgot = async () => {
   background: #FEF2F2;
   color: #B91C1C;
   border: 1px solid #FCA5A5;
+}
+
+.notice-alert {
+  background: rgba(7, 65, 57, 0.08);
+  color: #074139;
+  border: 1px solid rgba(7, 65, 57, 0.25);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .success-alert {
