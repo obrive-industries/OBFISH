@@ -99,7 +99,6 @@ const useCases = [
   padding: 110px 24px;
   background: #ffffff;
   position: relative;
-  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .container {

@@ -412,6 +412,9 @@
             <p>
               Simulate Possibilities. Make Smarter Decisions. &copy; {{ currentYear }} Obrive Industries. All rights reserved.
             </p>
+            <p class="footer-positioning-note">
+              Join the Wishlist to get notified at launch ! Proposed product positioning. Capabilities should be enabled and validated before being presented as live features.
+            </p>
           </div>
         </div>
       </section>
@@ -429,7 +432,6 @@ const currentYear = new Date().getFullYear()
 .landing-footer {
   background: #ffffff;
   padding: 72px 24px 44px;
-  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .footer-container {
@@ -748,6 +750,13 @@ const currentYear = new Date().getFullYear()
 
 .bottom-copyright p {
   margin: 0;
+}
+
+.footer-positioning-note {
+  font-size: 10px;
+  line-height: 1.5;
+  color: rgba(7, 65, 57, 0.45);
+  margin-top: 6px !important;
 }
 
 /* Responsive Styles */
