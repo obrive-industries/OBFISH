@@ -1,17 +1,17 @@
 <template>
   <div class="console-container">
-    <!-- Console Top Navbar -->
+    <!-- Minimal Application Header (Full-width sticky Obrive header) -->
     <header class="console-navbar">
       <div class="nav-left">
         <router-link to="/" class="brand-link" title="Return to ObMind Home">
-          <img src="../assets/icons/obrive-white-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
+          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
           <span class="brand-name font-microgramma">OBMIND</span>
           <span class="console-tag font-microgramma">CONSOLE</span>
         </router-link>
 
         <nav class="console-nav-links">
-          <router-link to="/" class="console-nav-link">← Landing Page</router-link>
-          <a href="#history" class="console-nav-link" @click.prevent="scrollToHistory">Simulation History</a>
+          <router-link to="/" class="console-nav-link font-microgramma">← Landing Page</router-link>
+          <a href="#history" class="console-nav-link font-microgramma" @click.prevent="scrollToHistory">Simulation History</a>
         </nav>
       </div>
 
@@ -19,7 +19,7 @@
         <!-- BYOK Key Status Badge -->
         <div class="byok-badge" @click="openByokSettings" title="Configure Custom LLM API Key">
           <span class="byok-dot"></span>
-          <span class="byok-text">BYOK {{ hasCustomKey ? 'ACTIVE' : 'DEFAULT' }}</span>
+          <span class="byok-text font-microgramma">BYOK {{ hasCustomKey ? 'ACTIVE' : 'DEFAULT' }}</span>
         </div>
 
         <!-- Language Switcher -->
@@ -32,15 +32,60 @@
           <span v-if="authStore.isVerified.value" class="status-dot verified" title="Email Verified"></span>
           <span v-else class="status-dot unverified" title="Verification Pending"></span>
         </div>
-        <button v-else class="btn-signin" @click="authStore.openAuthModal('login')">
+        <button v-else class="btn-signin font-microgramma" @click="authStore.openAuthModal('login')">
           Sign In
         </button>
 
-        <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="link-obrive">
+        <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="link-obrive font-microgramma">
           Explore Obrive <span class="arrow">↗</span>
         </a>
       </div>
     </header>
+
+    <!-- Obrive Signature Mint Accent Gradient Hero Section -->
+    <section class="console-hero">
+      <div class="hero-container">
+        <!-- Category Badge Pill with Official RoundedBallIcon -->
+        <div class="brand-pill">
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">PREDICTIVE CONSOLE // SYSTEM READY</span>
+        </div>
+
+        <!-- Microgramma Bold Main Title -->
+        <h1 class="hero-title font-microgramma">
+          OBMIND PREDICTIVE CONSOLE
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="hero-subtitle">
+          Deploy multi-agent simulation swarms, upload reality seed documents, and stress-test strategic hypotheses before real-world execution.
+        </p>
+
+        <!-- System Readiness Metrics -->
+        <div class="hero-metrics">
+          <div class="metric-chip">
+            <span class="chip-val font-microgramma">LOW COST</span>
+            <span class="chip-label">High token efficiency & edge caching</span>
+          </div>
+          <div class="metric-chip">
+            <span class="chip-val font-microgramma">HIGH AVAIL</span>
+            <span class="chip-label">Autonomous swarm cluster</span>
+          </div>
+          <div class="metric-chip">
+            <span class="chip-val font-microgramma">DETERMINISTIC</span>
+            <span class="chip-label">Multi-agent consensus verification</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Obrive Brand Divider Line -->
+      <div class="hero-divider">
+        <div class="divider-inner">
+          <div class="divider-badge font-microgramma">SYSTEM READY</div>
+          <p class="divider-text font-microgramma">TURNING COMPLEX UNCERTAINTIES INTO PREDICTIVE DECISIONS.</p>
+        </div>
+      </div>
+    </section>
 
     <!-- Main Workspace -->
     <main class="console-main">
@@ -60,45 +105,34 @@
 
       <!-- Double Panel Console Layout -->
       <div class="console-grid">
-        <!-- Left Panel: System Ready & Workflow Steps from docx -->
-        <div class="left-panel">
+        <!-- Left Panel: System Ready & 5 Workflow Steps -->
+        <div class="left-panel obrive-card">
           <div class="panel-badge">
-            <span class="live-dot"></span> SYSTEM READY
+            <span class="live-dot"></span>
+            <span class="font-microgramma">SYSTEM READY</span>
           </div>
 
-          <h1 class="panel-heading font-microgramma">System Ready</h1>
+          <h2 class="panel-heading font-microgramma">System Ready</h2>
           <p class="panel-sub">
-            OBMIND is ready to explore possibilities and simulate potential outcomes.
+            OBMIND is primed to explore possibilities, stress-test variables, and simulate potential strategic outcomes.
           </p>
-
-          <!-- Metrics Row -->
-          <div class="metrics-row">
-            <div class="metric-card">
-              <span class="metric-val">LOW COST</span>
-              <span class="metric-desc">High token efficiency & edge caching</span>
-            </div>
-            <div class="metric-card">
-              <span class="metric-val">HIGH AVAIL</span>
-              <span class="metric-desc">Autonomous multi-agent cluster</span>
-            </div>
-          </div>
 
           <!-- Workflow Steps (01 to 05) from docx -->
           <div class="workflow-box">
             <div class="workflow-header">
               <span class="diamond-icon">◇</span>
-              <span class="workflow-title">Workflow Steps</span>
+              <span class="workflow-title font-microgramma">Workflow Architecture</span>
             </div>
 
             <div class="workflow-steps-list">
               <div 
-                v-for="(step, idx) in consoleSteps" 
+                v-for="step in consoleSteps" 
                 :key="step.number"
                 class="console-step-item"
               >
-                <span class="step-idx">{{ step.number }}</span>
+                <span class="step-idx font-microgramma">{{ step.number }}</span>
                 <div class="step-meta">
-                  <h4 class="step-name">{{ step.title }}</h4>
+                  <h4 class="step-name font-microgramma">{{ step.title }}</h4>
                   <p class="step-detail">{{ step.description }}</p>
                 </div>
               </div>
@@ -106,13 +140,13 @@
           </div>
         </div>
 
-        <!-- Right Panel: Interaction Console -->
+        <!-- Right Panel: Interaction Console Workspace -->
         <div class="right-panel">
-          <div class="console-box">
+          <div class="console-box obrive-card">
             <!-- Upload Section -->
             <div class="console-section">
               <div class="section-label-bar">
-                <span class="label-title">REALITY SEED</span>
+                <span class="label-title font-microgramma">REALITY SEED</span>
                 <span class="label-hint">PDF, DOCX, MD, TXT (up to 50MB)</span>
               </div>
 
@@ -153,7 +187,7 @@
             <!-- Parameters Section -->
             <div class="console-section">
               <div class="section-label-bar">
-                <span class="label-title">SIMULATION REQUIREMENT & HYPOTHESIS</span>
+                <span class="label-title font-microgramma">SIMULATION REQUIREMENT & HYPOTHESIS</span>
                 <span class="label-hint">Natural language prompt</span>
               </div>
 
@@ -161,29 +195,31 @@
                 <textarea
                   v-model="formData.simulationRequirement"
                   class="scenario-input"
-                  placeholder="Describe what you want to explore, key stakeholders, or the critical decision you need to make..."
+                  placeholder="Describe the scenario, market situation, key stakeholder dynamics, or critical decision you need to simulate..."
                   rows="6"
                   :disabled="loading"
                 ></textarea>
 
                 <div class="engine-badge-pill">
                   <span class="badge-dot"></span>
-                  <span>OB-SWARM INTELLIGENCE</span>
+                  <span class="font-microgramma">OB-SWARM INTELLIGENCE</span>
                 </div>
               </div>
             </div>
 
-            <!-- Launch Button Section with Auth Gate -->
+            <!-- Launch Button Section with Obrive Animated Button styling -->
             <div class="console-section launch-section">
               <button 
                 class="btn-start-engine font-microgramma"
-                :class="{ 'btn-ready': canSubmit }"
+                :class="{ 'btn-ready': canSubmit && !loading }"
                 @click="handleStartEngine"
                 :disabled="!canSubmit || loading"
               >
                 <span v-if="!loading" class="btn-text-content">
-                  <span>Start Engine</span>
-                  <RightAnimateIcon color="primary" :size="14" />
+                  <span class="btn-label">Start Engine</span>
+                  <span class="btn-arrow-wrap">
+                    <RightAnimateIcon color="primary" :size="16" />
+                  </span>
                 </span>
                 <span v-else class="btn-text-content">
                   <span>Initializing Swarm...</span>
@@ -208,6 +244,7 @@ import { useRouter } from 'vue-router'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
+import RoundedBallIcon from '../components/common/RoundedBallIcon.vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
 import { setPendingUpload, getPendingUpload } from '../store/pendingUpload.js'
@@ -405,30 +442,32 @@ const handleStartEngine = () => {
 <style scoped>
 .console-container {
   min-height: 100vh;
-  background-color: #070b0e;
-  color: #ffffff;
+  background-color: #F8FCFA;
+  color: #074139;
   display: flex;
   flex-direction: column;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Navbar */
+/* Minimal Application Header (Full-width sticky) */
 .console-navbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
-  background: rgba(12, 18, 22, 0.9);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(12px);
+  padding: 14px 32px;
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid rgba(7, 65, 57, 0.12);
+  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 50;
+  box-shadow: 0 2px 12px rgba(7, 65, 57, 0.04);
 }
 
 .nav-left {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 24px;
 }
 
 .brand-link {
@@ -436,46 +475,49 @@ const handleStartEngine = () => {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: #fff;
+  color: #074139;
 }
 
 .brand-logo-img {
-  height: 24px;
+  height: 28px;
   width: auto;
 }
 
 .brand-name {
-  font-family: 'Space Grotesk', sans-serif;
   font-weight: 800;
   font-size: 1.15rem;
-  letter-spacing: 2px;
+  letter-spacing: 0.05em;
+  color: #074139;
 }
 
 .console-tag {
-  font-family: 'JetBrains Mono', monospace;
   font-size: 0.65rem;
-  padding: 2px 8px;
-  background: rgba(0, 229, 163, 0.15);
-  border: 1px solid rgba(0, 229, 163, 0.3);
-  color: #00E5A3;
-  border-radius: 4px;
-  letter-spacing: 1px;
+  font-weight: 700;
+  padding: 3px 8px;
+  background: rgba(162, 241, 223, 0.4);
+  border: 1px solid rgba(7, 65, 57, 0.22);
+  color: #074139;
+  border-radius: 6px;
+  letter-spacing: 0.08em;
 }
 
 .console-nav-links {
   display: flex;
-  gap: 18px;
+  gap: 20px;
+  margin-left: 8px;
 }
 
 .console-nav-link {
-  color: #94a3b8;
-  font-size: 0.85rem;
+  color: #526361;
+  font-size: 0.78rem;
+  font-weight: 600;
   text-decoration: none;
   transition: color 0.2s ease;
+  letter-spacing: 0.04em;
 }
 
 .console-nav-link:hover {
-  color: #00E5A3;
+  color: #074139;
 }
 
 .nav-right {
@@ -488,53 +530,57 @@ const handleStartEngine = () => {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 10px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
+  padding: 6px 12px;
+  background: rgba(7, 65, 57, 0.05);
+  border: 1px solid rgba(7, 65, 57, 0.16);
+  border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .byok-badge:hover {
-  border-color: #00E5A3;
+  border-color: #074139;
+  background: rgba(162, 241, 223, 0.25);
 }
 
 .byok-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00E5A3;
-  box-shadow: 0 0 6px #00E5A3;
+  background: #074139;
+  box-shadow: 0 0 6px rgba(7, 65, 57, 0.5);
 }
 
 .byok-text {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  color: #cbd5e1;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #074139;
+  letter-spacing: 0.06em;
 }
 
 .user-pill {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 5px 14px 5px 6px;
+  background: rgba(7, 65, 57, 0.05);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .user-pill:hover {
-  border-color: #00E5A3;
+  border-color: #074139;
+  background: rgba(7, 65, 57, 0.08);
 }
 
 .avatar {
-  width: 24px;
-  height: 24px;
+  width: 26px;
+  height: 26px;
   border-radius: 50%;
   background: #074139;
-  color: #00E5A3;
+  color: #CAEDE5;
   font-size: 0.72rem;
   font-weight: 700;
   display: flex;
@@ -544,7 +590,8 @@ const handleStartEngine = () => {
 
 .user-name {
   font-size: 0.85rem;
-  color: #e2e8f0;
+  font-weight: 600;
+  color: #074139;
 }
 
 .status-dot {
@@ -554,8 +601,8 @@ const handleStartEngine = () => {
 }
 
 .status-dot.verified {
-  background: #00E5A3;
-  box-shadow: 0 0 6px #00E5A3;
+  background: #074139;
+  box-shadow: 0 0 6px rgba(7, 65, 57, 0.4);
 }
 
 .status-dot.unverified {
@@ -564,51 +611,194 @@ const handleStartEngine = () => {
 
 .btn-signin {
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #e2e8f0;
-  padding: 6px 14px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border: 1px solid #074139;
+  color: #074139;
+  padding: 7px 16px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .btn-signin:hover {
-  border-color: #00E5A3;
-  color: #00E5A3;
+  background: #074139;
+  color: #CAEDE5;
 }
 
 .link-obrive {
-  color: #94a3b8;
-  font-size: 0.85rem;
+  color: #074139;
+  font-size: 0.75rem;
+  font-weight: 700;
   text-decoration: none;
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 6px 12px;
+  border-radius: 9999px;
+  background: rgba(162, 241, 223, 0.35);
+  transition: all 0.2s ease;
 }
 
 .link-obrive:hover {
-  color: #fff;
+  background: #074139;
+  color: #CAEDE5;
 }
 
-/* Main */
+/* Obrive Mint Accent Gradient Hero Section */
+.console-hero {
+  position: relative;
+  background: linear-gradient(
+    90deg,
+    #caede5 0%,
+    #beeee3 25%,
+    #b2f0e1 50%,
+    #a5f1df 75%,
+    #98f2dd 100%
+  );
+  padding: 56px 24px 0;
+  border-bottom: 1px solid rgba(7, 65, 57, 0.15);
+  overflow: hidden;
+}
+
+.hero-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.brand-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 9999px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(8px);
+}
+
+.pill-text {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: #074139;
+  letter-spacing: 0.08em;
+}
+
+.hero-title {
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: #074139;
+  margin-bottom: 16px;
+  letter-spacing: 0.02em;
+}
+
+.hero-subtitle {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 780px;
+  color: #074139;
+  opacity: 0.88;
+  margin-bottom: 32px;
+  font-weight: 500;
+}
+
+.hero-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 36px;
+}
+
+.metric-chip {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 200px;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 15px rgba(7, 65, 57, 0.05);
+}
+
+.chip-val {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #074139;
+  letter-spacing: 0.06em;
+}
+
+.chip-label {
+  font-size: 0.72rem;
+  color: #3f5451;
+  font-weight: 500;
+}
+
+/* Obrive Brand Divider Line */
+.hero-divider {
+  width: 100%;
+  border-top: 1.5px solid rgba(7, 65, 57, 0.22);
+  padding: 16px 24px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.divider-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.divider-badge {
+  background: #074139;
+  color: #CAEDE5;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  letter-spacing: 0.08em;
+}
+
+.divider-text {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #074139;
+  letter-spacing: 0.06em;
+  text-align: right;
+}
+
+/* Main Workspace */
 .console-main {
-  max-width: 1400px;
+  max-width: 1320px;
   width: 100%;
   margin: 0 auto;
-  padding: 40px 24px 80px;
+  padding: 44px 24px 80px;
   flex: 1;
 }
 
+/* Email Verification Banner */
 .verify-banner {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: rgba(245, 158, 11, 0.1);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-  padding: 12px 18px;
-  border-radius: 10px;
-  margin-bottom: 24px;
-  color: #fde68a;
+  background: #FFFBEB;
+  border: 1px solid #FCD34D;
+  padding: 14px 20px;
+  border-radius: 12px;
+  margin-bottom: 28px;
+  color: #92400E;
   font-size: 0.9rem;
 }
 
@@ -620,51 +810,64 @@ const handleStartEngine = () => {
 }
 
 .banner-btn-secondary {
-  background: rgba(245, 158, 11, 0.2);
-  border: 1px solid rgba(245, 158, 11, 0.4);
-  color: #fde68a;
-  padding: 5px 12px;
-  border-radius: 6px;
+  background: #FEF3C7;
+  border: 1px solid #F59E0B;
+  color: #B45309;
+  padding: 6px 14px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .banner-btn-secondary:hover:not(:disabled) {
-  background: rgba(245, 158, 11, 0.35);
-  color: #fff;
+  background: #FDE68A;
 }
 
 .banner-btn {
-  background: #f59e0b;
+  background: #074139;
   border: none;
-  color: #070b0e;
-  padding: 5px 12px;
-  border-radius: 6px;
+  color: #CAEDE5;
+  padding: 6px 14px;
+  border-radius: 8px;
   font-weight: 600;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .banner-btn:hover {
-  background: #fbbf24;
+  background: #0d5c52;
 }
 
 /* Console Grid */
 .console-grid {
   display: grid;
-  grid-template-columns: 1fr 1.25fr;
+  grid-template-columns: 1fr 1.28fr;
   gap: 32px;
   margin-bottom: 60px;
 }
 
+/* Obrive Cards */
+.obrive-card {
+  background: #FFFFFF;
+  border: 1.5px solid rgba(7, 65, 57, 0.16);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(7, 65, 57, 0.05);
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.obrive-card:hover {
+  border-color: rgba(7, 65, 57, 0.35);
+  box-shadow: 0 8px 30px rgba(7, 65, 57, 0.08);
+}
+
 /* Left Panel */
 .left-panel {
-  background: rgba(12, 18, 22, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 32px;
-  backdrop-filter: blur(14px);
+  padding: 36px 32px;
+  display: flex;
+  flex-direction: column;
 }
 
 .panel-badge {
@@ -672,69 +875,41 @@ const handleStartEngine = () => {
   align-items: center;
   gap: 8px;
   padding: 4px 12px;
-  background: rgba(7, 65, 57, 0.3);
-  border: 1px solid rgba(0, 229, 163, 0.25);
+  background: rgba(162, 241, 223, 0.4);
+  border: 1px solid rgba(7, 65, 57, 0.2);
   border-radius: 9999px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  color: #00E5A3;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: #074139;
   margin-bottom: 20px;
+  width: fit-content;
 }
 
 .live-dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  background: #00E5A3;
-  box-shadow: 0 0 8px #00E5A3;
+  background: #074139;
+  box-shadow: 0 0 6px rgba(7, 65, 57, 0.4);
 }
 
 .panel-heading {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 2rem;
+  font-size: 1.8rem;
   font-weight: 800;
-  margin: 0 0 8px 0;
-  color: #ffffff;
+  margin: 0 0 10px 0;
+  color: #074139;
+  letter-spacing: 0.02em;
 }
 
 .panel-sub {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.6;
-  color: #94a3b8;
-  margin: 0 0 24px 0;
-}
-
-.metrics-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.metric-card {
-  background: rgba(7, 11, 14, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 16px;
-}
-
-.metric-val {
-  display: block;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.9rem;
-  font-weight: 700;
-  color: #00E5A3;
-  margin-bottom: 4px;
-}
-
-.metric-desc {
-  font-size: 0.75rem;
-  color: #64748b;
-  line-height: 1.4;
+  color: #526361;
+  margin: 0 0 28px 0;
 }
 
 .workflow-box {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1.5px solid rgba(7, 65, 57, 0.12);
   padding-top: 24px;
 }
 
@@ -746,38 +921,50 @@ const handleStartEngine = () => {
 }
 
 .diamond-icon {
-  color: #00E5A3;
+  color: #074139;
+  font-size: 0.85rem;
+  font-weight: 800;
 }
 
 .workflow-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: #cbd5e1;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #074139;
   text-transform: uppercase;
 }
 
 .workflow-steps-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .console-step-item {
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #F9FCFB;
+  border: 1px solid rgba(7, 65, 57, 0.1);
+  transition: all 0.25s ease;
+}
+
+.console-step-item:hover {
+  background: #F0FAF7;
+  border-color: rgba(7, 65, 57, 0.28);
+  transform: translateX(3px);
 }
 
 .step-idx {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
-  font-weight: 700;
-  color: #00E5A3;
-  background: rgba(7, 65, 57, 0.3);
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #074139;
+  background: #CAEDE5;
   padding: 4px 8px;
   border-radius: 6px;
+  line-height: 1;
 }
 
 .step-meta {
@@ -785,17 +972,17 @@ const handleStartEngine = () => {
 }
 
 .step-name {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #074139;
   margin: 0 0 4px 0;
+  letter-spacing: 0.02em;
 }
 
 .step-detail {
-  font-size: 0.82rem;
+  font-size: 0.8rem;
   line-height: 1.5;
-  color: #94a3b8;
+  color: #526361;
   margin: 0;
 }
 
@@ -806,15 +993,10 @@ const handleStartEngine = () => {
 }
 
 .console-box {
-  background: rgba(12, 18, 22, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 18px;
-  padding: 32px;
+  padding: 36px 32px;
   display: flex;
   flex-direction: column;
   gap: 28px;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 .console-section {
@@ -830,36 +1012,35 @@ const handleStartEngine = () => {
 }
 
 .label-title {
-  font-family: 'Space Grotesk', sans-serif;
   font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: #cbd5e1;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: #074139;
 }
 
 .label-hint {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   color: #64748b;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .upload-dropzone {
-  min-height: 160px;
-  border: 2px dashed rgba(255, 255, 255, 0.12);
+  min-height: 170px;
+  border: 2px dashed rgba(7, 65, 57, 0.25);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
   cursor: pointer;
-  background: rgba(7, 11, 14, 0.4);
+  background: #F9FCFB;
   transition: all 0.25s ease;
 }
 
 .upload-dropzone:hover,
 .upload-dropzone.drag-over {
-  border-color: #00E5A3;
-  background: rgba(0, 229, 163, 0.04);
+  border-color: #074139;
+  background: rgba(162, 241, 223, 0.25);
 }
 
 .upload-empty {
@@ -873,26 +1054,32 @@ const handleStartEngine = () => {
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(7, 65, 57, 0.4);
-  border: 1px solid rgba(0, 229, 163, 0.3);
-  color: #00E5A3;
+  background: #CAEDE5;
+  border: 1.5px solid #074139;
+  color: #074139;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 1.2rem;
+  font-weight: 800;
   margin-bottom: 12px;
+  transition: transform 0.2s ease;
+}
+
+.upload-dropzone:hover .upload-icon-circle {
+  transform: translateY(-2px);
 }
 
 .upload-text-bold {
   font-size: 0.95rem;
-  font-weight: 600;
-  color: #e2e8f0;
+  font-weight: 700;
+  color: #074139;
   margin-bottom: 4px;
 }
 
 .upload-text-sub {
   font-size: 0.8rem;
-  color: #64748b;
+  color: #526361;
 }
 
 .file-chips-grid {
@@ -906,16 +1093,17 @@ const handleStartEngine = () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
-  background: rgba(7, 65, 57, 0.35);
-  border: 1px solid rgba(0, 229, 163, 0.25);
+  padding: 8px 14px;
+  background: #EBF7F4;
+  border: 1.5px solid rgba(7, 65, 57, 0.25);
   border-radius: 8px;
   font-size: 0.85rem;
-  color: #ffffff;
+  font-weight: 600;
+  color: #074139;
 }
 
 .chip-name {
-  max-width: 200px;
+  max-width: 220px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -924,10 +1112,11 @@ const handleStartEngine = () => {
 .chip-remove {
   background: none;
   border: none;
-  color: #94a3b8;
-  font-size: 1.1rem;
+  color: #526361;
+  font-size: 1.2rem;
   cursor: pointer;
   padding: 0 2px;
+  line-height: 1;
 }
 
 .chip-remove:hover {
@@ -941,23 +1130,24 @@ const handleStartEngine = () => {
 .scenario-input {
   width: 100%;
   box-sizing: border-box;
-  background: rgba(7, 11, 14, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  background: #F9FCFB;
+  border: 1.5px solid rgba(7, 65, 57, 0.2);
+  border-radius: 14px;
   padding: 16px;
-  padding-bottom: 44px;
-  color: #ffffff;
+  padding-bottom: 48px;
+  color: #074139;
   font-family: inherit;
   font-size: 0.95rem;
   line-height: 1.6;
   outline: none;
   resize: vertical;
-  transition: border-color 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .scenario-input:focus {
-  border-color: #00E5A3;
-  box-shadow: 0 0 15px rgba(0, 229, 163, 0.15);
+  border-color: #074139;
+  box-shadow: 0 0 0 3px rgba(162, 241, 223, 0.45);
+  background: #FFFFFF;
 }
 
 .engine-badge-pill {
@@ -968,74 +1158,99 @@ const handleStartEngine = () => {
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  background: rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(7, 65, 57, 0.08);
+  border: 1px solid rgba(7, 65, 57, 0.2);
   border-radius: 20px;
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.68rem;
-  color: #00E5A3;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #074139;
+  letter-spacing: 0.05em;
 }
 
 .badge-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #00E5A3;
+  background: #074139;
 }
 
 .launch-section {
   padding-top: 8px;
 }
 
+/* Obrive Official Animated Button Design for Start Engine */
 .btn-start-engine {
   width: 100%;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  color: #64748b;
-  font-size: 1.05rem;
-  font-weight: 700;
+  padding: 16px 28px;
+  background: rgba(7, 65, 57, 0.12);
+  border: 1.5px solid rgba(7, 65, 57, 0.18);
+  border-radius: 14px;
+  color: #7a8d8a;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
   cursor: not-allowed;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
 .btn-start-engine.btn-ready {
-  background: linear-gradient(135deg, #00E5A3 0%, #074139 100%);
-  border-color: #00E5A3;
-  color: #070b0e;
+  background: #074139;
+  border-color: #074139;
+  color: #CAEDE5;
   cursor: pointer;
-  box-shadow: 0 8px 25px rgba(0, 229, 163, 0.3);
+  box-shadow: 0 8px 24px rgba(7, 65, 57, 0.25);
 }
 
 .btn-start-engine.btn-ready:hover {
+  background: #052e28;
+  box-shadow: 0 12px 30px rgba(7, 65, 57, 0.35);
   transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(0, 229, 163, 0.5);
 }
 
 .btn-text-content {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-.btn-arrow {
-  transition: transform 0.2s ease;
+.btn-arrow-wrap {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
 }
 
-.btn-start-engine.btn-ready:hover .btn-arrow {
+.btn-start-engine.btn-ready:hover .btn-arrow-wrap {
   transform: translateX(4px);
 }
 
 /* History */
 .history-wrapper {
-  margin-top: 40px;
+  margin-top: 20px;
 }
 
 @media (max-width: 960px) {
   .console-grid {
     grid-template-columns: 1fr;
+  }
+
+  .divider-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .divider-text {
+    text-align: left;
+  }
+
+  .console-hero {
+    padding: 36px 16px 0;
+  }
+
+  .hero-title {
+    font-size: 1.75rem;
   }
 }
 </style>

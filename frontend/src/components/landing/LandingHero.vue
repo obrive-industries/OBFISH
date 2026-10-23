@@ -2,8 +2,8 @@
   <section class="landing-hero" id="overview">
     <div class="hero-container">
       <div class="hero-content">
-        <!-- Main Heading in Michroma font with Title Case matching Owning the Future -->
-        <h1 class="hero-title font-michroma">
+        <!-- Main Heading in Microgramma Bold matching Owning the Future -->
+        <h1 class="hero-title font-microgramma">
           Predictive Intelligence
         </h1>
 
@@ -145,12 +145,12 @@ const handleWishlist = () => {
   text-align: center;
 }
 
-/* Main Heading matched to Owning the Future in Michroma font */
+/* Main Heading matched to Owning the Future in Microgramma Bold font */
 .hero-title {
-  font-family: 'Michroma', sans-serif !important;
+  font-family: 'Microgramma', sans-serif !important;
   font-size: clamp(2.4rem, 5vw, 4.4rem);
-  font-weight: 700;
-  line-height: 1.16;
+  font-weight: 800;
+  line-height: 1.15;
   color: #074139;
   margin: 0 0 24px 0;
   letter-spacing: -0.015em;

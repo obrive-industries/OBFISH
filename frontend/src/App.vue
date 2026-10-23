@@ -99,8 +99,7 @@ body {
 /* Obrive Typography Classes */
 .font-microgramma {
   font-family: 'Microgramma', sans-serif !important;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .font-michroma {
