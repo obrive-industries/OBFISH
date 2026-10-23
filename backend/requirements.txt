@@ -1,14 +1,15 @@
 # ===========================================
-# MiroFish Backend Dependencies
+# ObMind Backend Dependencies
 # ===========================================
 # Python 3.11+ required
 # Install: pip install -r requirements.txt
 # ===========================================
 
-# ============= 核心框架 =============
+# ============= 核心框架 & WSGI =============
 flask>=3.0.0
 flask-cors>=6.0.0
 flask-sqlalchemy>=3.1.0
+gunicorn>=22.0.0
 
 # ============= Auth & Database Drivers =============
 PyJWT>=2.8.0

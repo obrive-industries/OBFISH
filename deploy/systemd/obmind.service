@@ -1,0 +1,31 @@
+[Unit]
+Description=ObMind Multi-Agent Simulation Engine (Obrive)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/obmind/backend
+Environment="PATH=/var/www/obmind/backend/.venv/bin:/usr/local/bin:/usr/bin"
+EnvironmentFile=/var/www/obmind/.env
+ExecStart=/var/www/obmind/backend/.venv/bin/gunicorn \
+    --workers 4 \
+    --worker-class gthread \
+    --threads 4 \
+    --bind 127.0.0.1:5001 \
+    --timeout 300 \
+    --graceful-timeout 30 \
+    --access-logfile /var/log/obmind/access.log \
+    --error-logfile /var/log/obmind/error.log \
+    --capture-output \
+    run:app
+
+Restart=always
+RestartSec=5s
+KillMode=mixed
+TimeoutStopSec=60
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
