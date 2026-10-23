@@ -32,7 +32,7 @@
             variant="outline"
             size="lg"
             :pill="true"
-            :iconSize="16"
+            :showArrow="false"
             class="hero-btn-pill font-michroma"
           >
             Explore Obrive

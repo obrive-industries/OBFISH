@@ -979,7 +979,7 @@ watch(() => props.simulationId, (newId) => {
   display: flex;
   flex-direction: column;
   background: #F8F9FA;
-  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow: hidden;
 }
 
@@ -1175,8 +1175,8 @@ watch(() => props.simulationId, (newId) => {
 
 /* Generated Content */
 .generated-content {
-  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 13px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
   line-height: 1.8;
   color: #374151;
 }

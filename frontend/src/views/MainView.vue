@@ -3,8 +3,8 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/console')" title="Return to ObMind Console">
-          <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
+        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to ObMind Console">
+          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
           <span>OBMIND</span>
         </div>
       </div>
@@ -441,23 +441,23 @@ onUnmounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #A2F1DF;
+  background: #F4FBF9;
   overflow: hidden;
-  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header */
 .app-header {
   height: 60px;
-  border-bottom: 1px solid rgba(162, 241, 223, 0.2);
+  border-bottom: 1.5px solid rgba(7, 65, 57, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 24px;
-  background: #074139;
+  background: #FFFFFF;
   z-index: 100;
   position: relative;
-  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.2);
+  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.04);
 }
 
 .header-center {
@@ -467,50 +467,49 @@ onUnmounted(() => {
 }
 
 .brand {
-  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-weight: 700;
-  -webkit-text-stroke: 0.5px #FFFFFF;
-  paint-order: stroke fill;
-  font-size: 16px;
-  letter-spacing: 2px;
+  font-family: 'Microgramma', sans-serif !important;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: 0.05em;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #FFFFFF;
+  color: #074139;
 }
 
 .brand-header-icon {
-  height: 24px;
+  height: 26px;
   width: auto;
 }
 
 .view-switcher {
   display: flex;
-  background: rgba(162, 241, 223, 0.12);
+  background: #EBF7F4;
   padding: 4px;
   border-radius: 8px;
   gap: 4px;
-  border: 1px solid rgba(162, 241, 223, 0.25);
+  border: 1px solid rgba(7, 65, 57, 0.15);
 }
 
 .switch-btn {
   border: none;
   background: transparent;
   padding: 6px 16px;
-  font-size: 12px;
-  font-weight: 600;
-  color: #A2F1DF;
+  font-family: 'Microgramma', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  color: #526361;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  letter-spacing: 0.04em;
 }
 
 .switch-btn.active {
-  background: #A2F1DF;
-  color: #074139;
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  background: #074139;
+  color: #CAEDE5;
+  box-shadow: 0 2px 6px rgba(7, 65, 57, 0.18);
 }
 
 .status-indicator {
@@ -518,8 +517,8 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   font-size: 12px;
-  color: #A2F1DF;
-  font-weight: 500;
+  color: #526361;
+  font-weight: 600;
 }
 
 .header-right {
@@ -538,31 +537,34 @@ onUnmounted(() => {
 .step-num {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
-  color: #A2F1DF;
-  opacity: 0.75;
+  color: #074139;
+  opacity: 0.65;
 }
 
 .step-name {
+  font-family: 'Microgramma', sans-serif;
   font-weight: 700;
-  color: #FFFFFF;
+  font-size: 13px;
+  color: #074139;
+  letter-spacing: 0.02em;
 }
 
 .step-divider {
   width: 1px;
   height: 14px;
-  background-color: rgba(162, 241, 223, 0.3);
+  background-color: rgba(7, 65, 57, 0.18);
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #A2F1DF;
+  background: #CCC;
 }
 
 .status-indicator.processing .dot { background: #074139; animation: pulse 1s infinite; }
-.status-indicator.completed .dot { background: #4CAF50; }
-.status-indicator.error .dot { background: #F44336; }
+.status-indicator.completed .dot { background: #10B981; }
+.status-indicator.error .dot { background: #EF4444; }
 
 @keyframes pulse { 50% { opacity: 0.5; } }
 
@@ -582,15 +584,15 @@ onUnmounted(() => {
 }
 
 .panel-wrapper.left {
-  border-right: 1px solid #EAEAEA;
+  border-right: 1.5px solid rgba(7, 65, 57, 0.12);
 }
 
 .user-pill-dark {
   display: flex;
   align-items: center;
   gap: 7px;
-  background: rgba(162, 241, 223, 0.12);
-  border: 1px solid rgba(162, 241, 223, 0.3);
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
   padding: 3px 10px 3px 5px;
   cursor: pointer;
@@ -598,16 +600,16 @@ onUnmounted(() => {
 }
 
 .user-pill-dark:hover {
-  background: rgba(162, 241, 223, 0.25);
-  border-color: #A2F1DF;
+  background: rgba(7, 65, 57, 0.1);
+  border-color: #074139;
 }
 
 .user-avatar-tiny {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #A2F1DF;
-  color: #074139;
+  background: #074139;
+  color: #CAEDE5;
   font-size: 0.65rem;
   font-weight: 800;
   display: flex;
@@ -618,7 +620,7 @@ onUnmounted(() => {
 .user-pill-name {
   font-size: 0.78rem;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #074139;
   max-width: 110px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -626,18 +628,19 @@ onUnmounted(() => {
 }
 
 .sign-in-btn-header {
-  background: #A2F1DF;
-  color: #074139;
+  background: #074139;
+  color: #CAEDE5;
   border: none;
   border-radius: 9999px;
-  padding: 4px 14px;
-  font-size: 0.78rem;
+  padding: 5px 16px;
+  font-size: 0.75rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .sign-in-btn-header:hover {
-  background: #FFFFFF;
+  background: #052e28;
 }
 </style>

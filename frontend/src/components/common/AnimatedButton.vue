@@ -161,13 +161,13 @@ const resolvedArrowColor = computed(() => {
 .btn-variant-outline {
   background-color: transparent;
   color: #074139;
-  border: 1px solid rgba(7, 65, 57, 0.4);
+  border: 1px solid #074139;
   transition: all 0.3s ease;
 }
 
 .btn-variant-outline:hover {
-  background-color: #074139;
-  color: #ffffff;
+  background-color: rgba(7, 65, 57, 0.08);
+  color: #074139;
   border-color: #074139;
 }
 

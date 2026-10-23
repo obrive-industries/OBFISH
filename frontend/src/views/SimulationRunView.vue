@@ -3,8 +3,8 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand" @click="router.push('/console')" title="Return to ObMind Console">
-          <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
+        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to ObMind Console">
+          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
           <span>OBMIND</span>
         </div>
       </div>
@@ -320,15 +320,15 @@ onUnmounted(() => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #A2F1DF;
+  background: #F4FBF9;
   overflow: hidden;
-  font-family: 'Michroma', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 /* Header */
 .app-header {
   height: 60px;
-  border-bottom: 1.5px solid rgba(7, 65, 57, 0.15);
+  border-bottom: 1.5px solid rgba(7, 65, 57, 0.12);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -336,6 +336,7 @@ onUnmounted(() => {
   background: #FFFFFF;
   z-index: 100;
   position: relative;
+  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.04);
 }
 
 .header-center {
@@ -345,10 +346,10 @@ onUnmounted(() => {
 }
 
 .brand {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Microgramma', sans-serif !important;
   font-weight: 800;
-  font-size: 18px;
-  letter-spacing: 1.5px;
+  font-size: 17px;
+  letter-spacing: 0.05em;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -357,34 +358,36 @@ onUnmounted(() => {
 }
 
 .brand-header-icon {
-  height: 24px;
+  height: 26px;
   width: auto;
 }
 
 .view-switcher {
   display: flex;
-  background: #F0F7F6;
+  background: #EBF7F4;
   padding: 4px;
   border-radius: 8px;
   gap: 4px;
-  border: 1px solid rgba(7, 65, 57, 0.1);
+  border: 1px solid rgba(7, 65, 57, 0.15);
 }
 
 .switch-btn {
   border: none;
   background: transparent;
   padding: 6px 16px;
-  font-size: 12px;
-  font-weight: 600;
+  font-family: 'Microgramma', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
   color: #526361;
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
+  letter-spacing: 0.04em;
 }
 
 .switch-btn.active {
   background: #074139;
-  color: #a2f1df;
+  color: #CAEDE5;
   box-shadow: 0 2px 6px rgba(7, 65, 57, 0.18);
 }
 
@@ -405,18 +408,21 @@ onUnmounted(() => {
   font-family: 'JetBrains Mono', monospace;
   font-weight: 700;
   color: #074139;
-  opacity: 0.6;
+  opacity: 0.65;
 }
 
 .step-name {
+  font-family: 'Microgramma', sans-serif;
   font-weight: 700;
+  font-size: 13px;
   color: #074139;
+  letter-spacing: 0.02em;
 }
 
 .step-divider {
   width: 1px;
   height: 14px;
-  background-color: #E0E0E0;
+  background-color: rgba(7, 65, 57, 0.18);
 }
 
 .status-indicator {
@@ -425,7 +431,7 @@ onUnmounted(() => {
   gap: 8px;
   font-size: 12px;
   color: #526361;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .dot {
@@ -436,8 +442,8 @@ onUnmounted(() => {
 }
 
 .status-indicator.processing .dot { background: #074139; animation: pulse 1s infinite; }
-.status-indicator.completed .dot { background: #4CAF50; }
-.status-indicator.error .dot { background: #F44336; }
+.status-indicator.completed .dot { background: #10B981; }
+.status-indicator.error .dot { background: #EF4444; }
 
 @keyframes pulse { 50% { opacity: 0.5; } }
 
@@ -457,7 +463,7 @@ onUnmounted(() => {
 }
 
 .panel-wrapper.left {
-  border-right: 1px solid #EAEAEA;
+  border-right: 1.5px solid rgba(7, 65, 57, 0.12);
 }
 </style>
 

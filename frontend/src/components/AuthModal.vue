@@ -329,10 +329,11 @@ const handleForgot = async () => {
 }
 
 .modal-brand {
-  font-family: 'Michroma', sans-serif;
+  font-family: 'Microgramma', sans-serif !important;
+  font-weight: 800;
   font-size: 1.45rem;
   color: #074139;
-  letter-spacing: 2px;
+  letter-spacing: 0.05em;
   margin: 0;
 }
 

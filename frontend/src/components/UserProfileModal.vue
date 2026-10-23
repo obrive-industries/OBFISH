@@ -320,7 +320,7 @@ const handleLogout = () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Michroma', sans-serif;
+  font-family: 'Microgramma', sans-serif;
   font-weight: 700;
   font-size: 1.1rem;
 }

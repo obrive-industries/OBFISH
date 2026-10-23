@@ -43,7 +43,15 @@ onUnmounted(() => {
 @font-face {
   font-family: 'Microgramma';
   src: url('./assets/fonts/microgramma-bold.otf') format('opentype');
-  font-weight: 700;
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Microgramma Bold';
+  src: url('./assets/fonts/microgramma-bold.otf') format('opentype');
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
@@ -98,13 +106,13 @@ body {
 
 /* Obrive Typography Classes */
 .font-microgramma {
-  font-family: 'Microgramma', sans-serif !important;
-  letter-spacing: 0.02em;
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
+  font-weight: 800;
+  letter-spacing: 0;
 }
 
 .font-michroma {
   font-family: 'Michroma', sans-serif !important;
-  letter-spacing: 0.02em;
 }
 
 /* Obrive Gradients */
