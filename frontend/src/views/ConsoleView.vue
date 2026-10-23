@@ -10,31 +10,18 @@
         </router-link>
 
         <nav class="console-nav-links">
-          <router-link to="/" class="console-nav-link font-microgramma">← Landing Page</router-link>
           <a href="#history" class="console-nav-link font-microgramma" @click.prevent="scrollToHistory">Simulation History</a>
         </nav>
       </div>
 
       <div class="nav-right">
-        <!-- BYOK Key Status Badge -->
-        <div class="byok-badge" @click="openByokSettings" title="Configure Custom LLM API Key">
-          <span class="byok-dot"></span>
-          <span class="byok-text font-microgramma">BYOK {{ hasCustomKey ? 'ACTIVE' : 'DEFAULT' }}</span>
-        </div>
-
-        <!-- Language Switcher -->
-        <LanguageSwitcher />
-
-        <!-- User Profile Pill / Sign In -->
-        <div v-if="authStore.isAuthenticated.value" class="user-pill" @click="authStore.openProfileModal">
+        <!-- User Profile Pill (Only shown when authenticated) -->
+        <div v-if="authStore.isAuthenticated.value" class="user-pill" @click="authStore.openProfileModal" title="Account & Settings">
           <div class="avatar">{{ userInitials }}</div>
           <span class="user-name">{{ authStore.user.value?.full_name || 'My Account' }}</span>
           <span v-if="authStore.isVerified.value" class="status-dot verified" title="Email Verified"></span>
           <span v-else class="status-dot unverified" title="Verification Pending"></span>
         </div>
-        <button v-else class="btn-signin font-microgramma" @click="authStore.openAuthModal('login')">
-          Sign In
-        </button>
 
         <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="link-obrive font-microgramma">
           Explore Obrive <span class="arrow">↗</span>
@@ -241,7 +228,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
 import RoundedBallIcon from '../components/common/RoundedBallIcon.vue'
