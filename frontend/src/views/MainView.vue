@@ -33,6 +33,14 @@
           <span class="dot"></span>
           {{ statusText }}
         </span>
+        <div class="step-divider"></div>
+        <div v-if="authStore.isAuthenticated.value" class="user-pill-dark" @click="authStore.openProfileModal">
+          <div class="user-avatar-tiny">{{ userInitials }}</div>
+          <span class="user-pill-name">{{ authStore.user.value?.full_name || 'Account' }}</span>
+        </div>
+        <button v-else class="sign-in-btn-header" @click="authStore.openAuthModal('login')">
+          Sign In
+        </button>
       </div>
     </header>
 
@@ -86,10 +94,20 @@ import Step1GraphBuild from '../components/Step1GraphBuild.vue'
 import Step2EnvSetup from '../components/Step2EnvSetup.vue'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
+import authStore from '../store/auth'
 
 const route = useRoute()
 const router = useRouter()
 const { t, tm } = useI18n()
+
+const userInitials = computed(() => {
+  const name = authStore.user.value?.full_name || 'User'
+  const parts = name.trim().split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  return name.slice(0, 2).toUpperCase()
+})
 
 // Layout State
 const viewMode = ref('split') // graph | split | workbench
@@ -565,5 +583,61 @@ onUnmounted(() => {
 
 .panel-wrapper.left {
   border-right: 1px solid #EAEAEA;
+}
+
+.user-pill-dark {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(162, 241, 223, 0.12);
+  border: 1px solid rgba(162, 241, 223, 0.3);
+  border-radius: 9999px;
+  padding: 3px 10px 3px 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-pill-dark:hover {
+  background: rgba(162, 241, 223, 0.25);
+  border-color: #A2F1DF;
+}
+
+.user-avatar-tiny {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #A2F1DF;
+  color: #074139;
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-pill-name {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #FFFFFF;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sign-in-btn-header {
+  background: #A2F1DF;
+  color: #074139;
+  border: none;
+  border-radius: 9999px;
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sign-in-btn-header:hover {
+  background: #FFFFFF;
 }
 </style>

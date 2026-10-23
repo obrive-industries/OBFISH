@@ -25,9 +25,9 @@ def _get_smtp_config():
     port = int(os.environ.get("SMTP_PORT", "587"))
     user = os.environ.get("SMTP_USER", "")
     password = os.environ.get("SMTP_PASSWORD", "")
-    from_name = os.environ.get("SMTP_FROM_NAME", "ObMind by Obrive")
-    from_email = os.environ.get("SMTP_FROM_EMAIL", "noreply@obrive.com") or user
-    app_base_url = os.environ.get("APP_BASE_URL", "https://obfish.obrive.com").rstrip("/")
+    from_name = os.environ.get("SMTP_FROM_NAME", "Obmind")
+    from_email = os.environ.get("SMTP_FROM_EMAIL", "ai@obrive.com") or user
+    app_base_url = os.environ.get("APP_BASE_URL", "https://obmind.obrive.com").rstrip("/")
     return host, port, user, password, from_name, from_email, app_base_url
 
 

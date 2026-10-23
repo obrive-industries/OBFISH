@@ -10,10 +10,12 @@ flask>=3.0.0
 flask-cors>=6.0.0
 flask-sqlalchemy>=3.1.0
 
-# ============= Auth =============
+# ============= Auth & Database Drivers =============
 PyJWT>=2.8.0
 bcrypt>=4.0.0
-psycopg2-binary>=2.9.0   # Postgres driver (also works with SQLite for local dev)
+psycopg2-binary>=2.9.0   # PostgreSQL driver
+pymysql>=1.1.0          # Hostinger MySQL driver
+cryptography>=42.0.0    # MySQL auth & token encryption
 
 # ============= LLM 相关 =============
 # OpenAI SDK（统一使用 OpenAI 格式调用 LLM）

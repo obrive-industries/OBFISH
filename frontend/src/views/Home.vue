@@ -7,6 +7,17 @@
         <span class="nav-brand">OBMIND<span class="brand-tm">TM</span></span>
       </div>
       <div class="nav-links">
+        <!-- Auth Button / User Pill -->
+        <div v-if="authStore.isAuthenticated.value" class="user-nav-pill" @click="authStore.openProfileModal">
+          <div class="user-avatar-small">{{ userInitials }}</div>
+          <span class="user-nav-name">{{ authStore.user.value?.full_name || 'My Account' }}</span>
+          <span v-if="authStore.isVerified.value" class="user-status-dot verified" title="Email Verified">●</span>
+          <span v-else class="user-status-dot unverified" title="Email Not Verified">●</span>
+        </div>
+        <button v-else class="sign-in-btn" @click="authStore.openAuthModal('login')">
+          Sign In
+        </button>
+
         <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="website-link">
           {{ $t('nav.visitWebsite') }} <span class="arrow">↗</span>
         </a>
@@ -224,8 +235,18 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
+import authStore from '../store/auth'
 
 const router = useRouter()
+
+const userInitials = computed(() => {
+  const name = authStore.user.value?.full_name || 'User'
+  const parts = name.trim().split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  return name.slice(0, 2).toUpperCase()
+})
 
 // 表单数据
 const formData = ref({
@@ -306,6 +327,11 @@ const scrollToBottom = () => {
 const startSimulation = () => {
   if (!canSubmit.value || loading.value) return
   
+  if (!authStore.isAuthenticated.value) {
+    authStore.openAuthModal('login')
+    return
+  }
+
   // 存储待上传的数据
   import('../store/pendingUpload.js').then(({ setPendingUpload }) => {
     setPendingUpload(files.value, formData.value.simulationRequirement)
@@ -400,7 +426,81 @@ const startSimulation = () => {
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+}
+
+.sign-in-btn {
+  background: #074139;
+  color: #A2F1DF;
+  border: 1px solid #074139;
+  border-radius: 9999px;
+  padding: 6px 18px;
+  font-size: 0.86rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.15);
+}
+
+.sign-in-btn:hover {
+  background: #052e28;
+  transform: translateY(-1px);
+}
+
+.user-nav-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(7, 65, 57, 0.25);
+  border-radius: 9999px;
+  padding: 4px 12px 4px 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(7, 65, 57, 0.08);
+}
+
+.user-nav-pill:hover {
+  background: #FFFFFF;
+  border-color: #074139;
+  box-shadow: 0 3px 10px rgba(7, 65, 57, 0.15);
+}
+
+.user-avatar-small {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #074139;
+  color: #A2F1DF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-nav-name {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #074139;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-status-dot {
+  font-size: 0.6rem;
+  line-height: 1;
+}
+
+.user-status-dot.verified {
+  color: #10B981;
+}
+
+.user-status-dot.unverified {
+  color: #F59E0B;
 }
 
 .website-link {

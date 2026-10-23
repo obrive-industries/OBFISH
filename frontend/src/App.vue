@@ -1,9 +1,41 @@
 <template>
   <router-view />
+  <!-- Global Modals -->
+  <AuthModal />
+  <UserProfileModal />
 </template>
 
 <script setup>
-// 使用 Vue Router 来管理页面
+import { onMounted, onUnmounted } from 'vue'
+import AuthModal from './components/AuthModal.vue'
+import UserProfileModal from './components/UserProfileModal.vue'
+import authStore from './store/auth'
+import authApi from './api/auth'
+
+const handleLogoutEvent = () => {
+  authStore.clearSession()
+}
+
+onMounted(async () => {
+  window.addEventListener('obmind-auth-logout', handleLogoutEvent)
+
+  // Sync profile if token exists
+  if (authStore.state.accessToken) {
+    try {
+      const res = await authApi.getMe()
+      if (res?.user) {
+        authStore.updateUser(res.user)
+      }
+    } catch (e) {
+      // If token expired, interceptor will try refresh or trigger logout
+      console.warn('Initial auth sync:', e.message)
+    }
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('obmind-auth-logout', handleLogoutEvent)
+})
 </script>
 
 <style>
