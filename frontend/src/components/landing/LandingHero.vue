@@ -147,27 +147,29 @@ const handleWishlist = () => {
 
 /* Main Heading matched to Owning the Future in Microgramma Bold font */
 .hero-title {
-  font-family: 'Microgramma', sans-serif !important;
-  font-size: clamp(2.4rem, 5vw, 4.4rem);
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
+  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
   font-weight: 800;
   line-height: 1.15;
   color: #074139;
   margin: 0 0 24px 0;
-  letter-spacing: -0.015em;
+  letter-spacing: 0;
   text-transform: none; /* Exact Title Case matching screenshot */
 }
 
-/* Subheading in Michroma font */
+/* Subheading in Michroma font matched to Obrive hero body */
 .hero-subtitle {
   font-family: 'Michroma', sans-serif !important;
-  font-size: clamp(0.82rem, 1.08vw, 0.98rem);
-  line-height: 1.85;
-  color: #074139;
-  opacity: 0.95;
-  max-width: 860px;
-  margin: 0 0 36px 0;
+  font-size: clamp(0.875rem, 1.1vw, 1rem);
+  line-height: 1.75;
+  color: #000000;
+  max-width: 896px;
+  padding: 0 16px;
+  margin: 0 auto 36px auto;
   font-weight: 400;
-  letter-spacing: 0.015em;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-wrap: balance;
 }
 
 /* CTAs centered pills */
@@ -182,8 +184,8 @@ const handleWishlist = () => {
 
 .hero-btn-pill {
   font-family: 'Michroma', sans-serif !important;
-  font-size: 11px !important;
-  letter-spacing: 0.08em !important;
+  font-size: 12px !important;
+  letter-spacing: 0.06em !important;
   padding: 13px 32px !important;
   text-transform: uppercase;
 }
