@@ -292,15 +292,9 @@
 
           <!-- Column 5: Contact & Offices (Matched to Obrive FooterContact.tsx) -->
           <div class="footer-column footer-column-contact">
-            <a
-              href="https://obrive.com/contact"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-col-header font-microgramma"
-            >
-              <span>Contact</span>
-              <span class="header-arrow">↗</span>
-            </a>
+            <div class="footer-col-header font-microgramma">
+              Contact
+            </div>
             <a
               href="tel:+918884774300"
               class="footer-cell obrive-cell"
@@ -411,15 +405,6 @@
               class="legal-item"
             >
               Privacy Policy
-            </a>
-            <span class="legal-sep">•</span>
-            <a
-              href="https://obrive.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="legal-item link-url"
-            >
-              obrive.com ↗
             </a>
           </div>
 
