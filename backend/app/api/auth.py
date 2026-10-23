@@ -566,7 +566,7 @@ def probe_key():
         model=model,
         hint_provider=hint_provider
     )
-    return _ok(result)
+    return jsonify(result), (200 if result.get("success") else 400)
 
 
 # ------------------------------------------------------------------ #

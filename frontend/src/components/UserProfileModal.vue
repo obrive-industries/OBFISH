@@ -488,20 +488,21 @@ const testAndVerifyKey = async () => {
       model: byokForm.modelName.trim() || undefined,
       hint_provider: selectedPreset.value !== 'auto' ? selectedPreset.value : undefined
     })
-    if (res.data?.success) {
-      successMsg.value = res.data.message || `✓ Verified active with ${res.data.provider_name}!`
-      if (res.data.base_url) byokForm.baseUrl = res.data.base_url
-      if (res.data.model) {
-        byokForm.modelName = res.data.model
-        selectedModelOption.value = res.data.model
+    const data = (res && res.data) ? res.data : res
+    if (data?.success) {
+      successMsg.value = data.message || `✓ Verified active with ${data.provider_name}!`
+      if (data.base_url) byokForm.baseUrl = data.base_url
+      if (data.model) {
+        byokForm.modelName = data.model
+        selectedModelOption.value = data.model
       }
-      if (res.data.provider) selectedPreset.value = res.data.provider
-      detectedBadge.value = `${res.data.provider_name} Live Verified • Model: ${res.data.model}`
+      if (data.provider) selectedPreset.value = data.provider
+      detectedBadge.value = `${data.provider_name} Live Verified • Model: ${data.model}`
     } else {
-      errorMsg.value = res.data?.error || 'Verification failed. Please check the key.'
+      errorMsg.value = data?.error || 'Verification failed. Please check the key.'
     }
   } catch (err) {
-    errorMsg.value = err.response?.data?.error || err.message || 'Key probe connection failed.'
+    errorMsg.value = err.message || err.response?.data?.error || 'Key probe connection failed.'
   } finally {
     probing.value = false
   }

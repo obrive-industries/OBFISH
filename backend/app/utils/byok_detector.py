@@ -315,17 +315,72 @@ def probe_llm_key(
                 "available_models": available_models[:15],
                 "message": f"Verified successfully with {detected['name']} using model {resolved_model}!"
             }
+
+        # OpenRouter fallback for 402 (Insufficient credits on paid models like gpt-4o-mini) or 404
+        if detected["provider"] == "openrouter" and chat_resp.status_code in (402, 404):
+            logger.info(f"OpenRouter returned {chat_resp.status_code} for {resolved_model}. Testing 100% Free models...")
+            free_candidates = [
+                "google/gemma-4-26b-a4b-it:free",
+                "google/gemma-4-31b-it:free",
+                "liquid/lfm-2.5-2.6b:free",
+                "nvidia/nemotron-3.5-lightning:free",
+                "meta-llama/llama-3.3-70b-instruct:free"
+            ]
+            for free_m in free_candidates:
+                try:
+                    fb_resp = requests.post(
+                        test_url,
+                        headers=req_headers,
+                        json={
+                            "model": free_m,
+                            "messages": [{"role": "user", "content": "Hi"}],
+                            "max_tokens": 1
+                        },
+                        timeout=timeout
+                    )
+                    if fb_resp.status_code == 200:
+                        return {
+                            "success": True,
+                            "provider": detected["provider"],
+                            "provider_name": detected["name"],
+                            "base_url": resolved_base_url,
+                            "model": free_m,
+                            "available_models": available_models[:15],
+                            "message": f"Verified with OpenRouter! Auto-configured 100% Free model '{free_m}' (account balance is $0)."
+                        }
+                except Exception:
+                    continue
+
+        # Extract structured error message if JSON
+        err_detail = chat_resp.text[:250]
+        try:
+            err_json = chat_resp.json()
+            if isinstance(err_json, dict) and "error" in err_json:
+                if isinstance(err_json["error"], dict) and "message" in err_json["error"]:
+                    err_detail = err_json["error"]["message"]
+                elif isinstance(err_json["error"], str):
+                    err_detail = err_json["error"]
+        except Exception:
+            pass
+
+        logger.warning(f"Probe chat failed with status {chat_resp.status_code}: {err_detail}")
+        if chat_resp.status_code == 401:
+            friendly_err = f"Invalid API key (Provider returned 401 Unauthorized: {err_detail})"
+        elif chat_resp.status_code == 402:
+            friendly_err = f"Insufficient credits on OpenRouter (Balance is $0). Please select a 100% Free model like google/gemma-4-26b-a4b-it:free."
+        elif chat_resp.status_code == 404:
+            friendly_err = f"Model '{resolved_model}' not found on this provider account."
         else:
-            err_text = chat_resp.text[:200]
-            logger.warning(f"Probe chat failed with status {chat_resp.status_code}: {err_text}")
-            return {
-                "success": False,
-                "provider": detected["provider"],
-                "provider_name": detected["name"],
-                "base_url": resolved_base_url,
-                "model": resolved_model,
-                "error": f"Provider responded with status {chat_resp.status_code}: {err_text}"
-            }
+            friendly_err = f"Provider returned {chat_resp.status_code}: {err_detail}"
+
+        return {
+            "success": False,
+            "provider": detected["provider"],
+            "provider_name": detected["name"],
+            "base_url": resolved_base_url,
+            "model": resolved_model,
+            "error": friendly_err
+        }
     except Exception as e:
         logger.error(f"Probe exception: {e}")
         return {
