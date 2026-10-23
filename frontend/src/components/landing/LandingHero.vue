@@ -2,29 +2,25 @@
   <section class="landing-hero" id="overview">
     <div class="hero-container">
       <div class="hero-content">
-        <!-- Brand category pill with Obrive 3-ball icon -->
-        <div class="brand-pill">
-          <RoundedBallIcon :width="14" :height="20" />
-          <span class="pill-text font-microgramma">PREDICTIVE INTELLIGENCE | POWERED BY OBRIVE</span>
-        </div>
-
-        <!-- Main Heading from docx & MiroFish in Microgramma Bold -->
-        <h1 class="hero-title font-microgramma">
-          OBMIND — <span class="title-sub">PREDICTIVE INTELLIGENCE</span>
+        <!-- Main Heading in Michroma font with Title Case matching Owning the Future -->
+        <h1 class="hero-title font-michroma">
+          Predictive Intelligence
         </h1>
 
-        <!-- Subheading from docx -->
-        <p class="hero-subtitle">
+        <!-- Subheading in Michroma font matching Obrive hero body -->
+        <p class="hero-subtitle font-michroma">
           Obmind helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
         </p>
 
-        <!-- Primary Dual CTAs centered (Matched to Obrive.com) -->
+        <!-- Primary Dual Pill Buttons (Matched to Obrive.com screenshot) -->
         <div class="hero-ctas">
           <AnimatedButton
             to="/console"
             variant="primary"
             size="lg"
+            :pill="true"
             :iconSize="16"
+            class="hero-btn-pill font-michroma"
           >
             Predict Now
           </AnimatedButton>
@@ -35,7 +31,9 @@
             rel="noopener noreferrer"
             variant="outline"
             size="lg"
+            :pill="true"
             :iconSize="16"
+            class="hero-btn-pill font-michroma"
           >
             Explore Obrive
           </AnimatedButton>
@@ -45,7 +43,7 @@
         <div class="wishlist-card">
           <div class="wishlist-header">
             <span class="wishlist-sparkle">✦</span>
-            <span class="wishlist-title font-microgramma">Join the Wishlist to get notified at launch !</span>
+            <span class="wishlist-title font-michroma">Join the Wishlist to get notified at launch !</span>
           </div>
 
           <form v-if="!submitted" @submit.prevent="handleWishlist" class="wishlist-form">
@@ -60,8 +58,10 @@
               type="submit"
               variant="primary"
               size="default"
+              :pill="true"
               :disabled="loading"
               :iconSize="13"
+              class="font-michroma text-[10px]"
             >
               {{ loading ? 'Joining...' : 'Join Wishlist' }}
             </AnimatedButton>
@@ -81,10 +81,10 @@
     <!-- Obrive.com Brand Divider Line (Matched to page.tsx) -->
     <div class="brand-line-wrapper">
       <div class="brand-line-inner">
-        <div class="brand-line-badge font-microgramma">
+        <div class="brand-line-badge font-michroma">
           <span>SYSTEM READY</span>
         </div>
-        <p class="brand-line-text font-microgramma">
+        <p class="brand-line-text font-michroma">
           TURNING COMPLEX UNCERTAINTIES INTO PREDICTIVE DECISIONS.
         </p>
       </div>
@@ -95,7 +95,6 @@
 <script setup>
 import { ref } from 'vue'
 import AnimatedButton from '../common/AnimatedButton.vue'
-import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 
 const email = ref('')
 const loading = ref(false)
@@ -114,12 +113,12 @@ const handleWishlist = () => {
 <style scoped>
 .landing-hero {
   position: relative;
-  min-height: 85vh;
+  min-height: 80vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 160px 24px 40px;
+  padding: 150px 24px 40px;
   background: linear-gradient(
     90deg,
     #caede5 0%,
@@ -132,7 +131,7 @@ const handleWishlist = () => {
 }
 
 .hero-container {
-  max-width: 1100px;
+  max-width: 1080px;
   margin: 0 auto;
   width: 100%;
   position: relative;
@@ -146,62 +145,47 @@ const handleWishlist = () => {
   text-align: center;
 }
 
-/* Category Pill */
-.brand-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 7px 18px;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(8px);
-  border: 1px solid rgba(7, 65, 57, 0.18);
-  border-radius: 9999px;
-  width: fit-content;
-  margin-bottom: 28px;
-  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.04);
-}
-
-.pill-text {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: #074139;
-}
-
-/* Main Titles */
+/* Main Heading matched to Owning the Future in Michroma font */
 .hero-title {
-  font-size: clamp(2.4rem, 4.8vw, 4.4rem);
+  font-family: 'Michroma', sans-serif !important;
+  font-size: clamp(2.4rem, 5vw, 4.4rem);
   font-weight: 700;
-  line-height: 1.1;
+  line-height: 1.16;
   color: #074139;
-  margin: 0 0 22px 0;
-  letter-spacing: -0.01em;
-  max-width: 980px;
+  margin: 0 0 24px 0;
+  letter-spacing: -0.015em;
+  text-transform: none; /* Exact Title Case matching screenshot */
 }
 
-.title-sub {
-  color: #0d5c52;
-  font-weight: 700;
-}
-
+/* Subheading in Michroma font */
 .hero-subtitle {
-  font-size: clamp(1.05rem, 1.35vw, 1.25rem);
-  line-height: 1.7;
+  font-family: 'Michroma', sans-serif !important;
+  font-size: clamp(0.82rem, 1.08vw, 0.98rem);
+  line-height: 1.85;
   color: #074139;
-  opacity: 0.92;
-  max-width: 820px;
+  opacity: 0.95;
+  max-width: 860px;
   margin: 0 0 36px 0;
-  font-weight: 450;
+  font-weight: 400;
+  letter-spacing: 0.015em;
 }
 
-/* CTAs centered */
+/* CTAs centered pills */
 .hero-ctas {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 18px;
+  gap: 20px;
   margin-bottom: 40px;
   flex-wrap: wrap;
+}
+
+.hero-btn-pill {
+  font-family: 'Michroma', sans-serif !important;
+  font-size: 11px !important;
+  letter-spacing: 0.08em !important;
+  padding: 13px 32px !important;
+  text-transform: uppercase;
 }
 
 /* Wishlist Centered Frosted Card */
@@ -209,7 +193,7 @@ const handleWishlist = () => {
   background: rgba(255, 255, 255, 0.82);
   backdrop-filter: blur(14px);
   border: 1px solid rgba(7, 65, 57, 0.22);
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 24px 30px;
   box-shadow: 0 10px 30px -4px rgba(7, 65, 57, 0.08);
   max-width: 620px;
@@ -230,10 +214,11 @@ const handleWishlist = () => {
 }
 
 .wishlist-title {
-  font-size: 12px;
+  font-family: 'Michroma', sans-serif !important;
+  font-size: 11px;
   font-weight: 700;
   color: #074139;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 .wishlist-form {
@@ -246,8 +231,8 @@ const handleWishlist = () => {
   flex: 1;
   background: #ffffff;
   border: 1px solid rgba(7, 65, 57, 0.25);
-  border-radius: 10px;
-  padding: 11px 16px;
+  border-radius: 9999px;
+  padding: 11px 20px;
   font-size: 13px;
   color: #074139;
   outline: none;
@@ -267,7 +252,7 @@ const handleWishlist = () => {
   padding: 12px 16px;
   background: rgba(7, 65, 57, 0.08);
   border: 1px solid rgba(7, 65, 57, 0.2);
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 12px;
   color: #074139;
   margin-bottom: 10px;
@@ -291,7 +276,7 @@ const handleWishlist = () => {
 /* Obrive Brand Divider Line (Matched to obrive.com page.tsx) */
 .brand-line-wrapper {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1180px;
   margin-top: 56px;
   padding: 0 20px;
   position: relative;
@@ -311,15 +296,15 @@ const handleWishlist = () => {
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(7, 65, 57, 0.25);
   color: #074139;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: 9999px;
 }
 
 .brand-line-text {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.06em;
   color: #074139;

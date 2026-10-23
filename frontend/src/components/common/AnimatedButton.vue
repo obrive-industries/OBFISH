@@ -11,6 +11,7 @@
     :class="[
       `btn-variant-${variant}`,
       `btn-size-${size}`,
+      { 'btn-pill': pill },
       customClass
     ]"
     @click="$emit('click', $event)"
@@ -88,6 +89,10 @@ const props = defineProps({
     default: null, // If null, auto-determined by variant
   },
   disabled: {
+    type: Boolean,
+    default: false,
+  },
+  pill: {
     type: Boolean,
     default: false,
   },
@@ -206,6 +211,10 @@ const resolvedArrowColor = computed(() => {
   padding: 14px 28px;
   font-size: 13px;
   border-radius: 12px;
+}
+
+.btn-pill {
+  border-radius: 9999px !important;
 }
 
 /* Disabled */

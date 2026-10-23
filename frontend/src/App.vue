@@ -103,6 +103,11 @@ body {
   text-transform: uppercase;
 }
 
+.font-michroma {
+  font-family: 'Michroma', sans-serif !important;
+  letter-spacing: 0.02em;
+}
+
 /* Obrive Gradients */
 .bg-gradient-accent {
   background: var(--obrive-accent-gradient);
