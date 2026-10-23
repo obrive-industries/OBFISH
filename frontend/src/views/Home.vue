@@ -3,8 +3,8 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
       <div class="nav-brand-container">
-        <img src="../assets/logo/obrive-logo.svg" alt="ObFish Logo" class="brand-logo-img" />
-        <span class="nav-brand">OBFISH<span class="brand-tm">TM</span></span>
+        <img src="../assets/logo/obrive-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
+        <span class="nav-brand">OBMIND<span class="brand-tm">TM</span></span>
       </div>
       <div class="nav-links">
         <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="website-link">
@@ -47,9 +47,9 @@
           <!-- Mascot & Brand Showcase directly embedded into Hero -->
           <div class="hero-brand-embedded">
             <div class="mascot-frame">
-              <img src="../assets/logo/obfish-mascot.png" alt="ObFish Swarm Mascot" class="hero-mascot-img" />
+              <img src="../assets/logo/obfish-mascot.png" alt="ObMind Swarm Mascot" class="hero-mascot-img" />
             </div>
-            <div class="hero-brand-name">OBFISH</div>
+            <div class="hero-brand-name">OBMIND</div>
             <div class="hero-brand-desc">Swarm Intelligence Simulation Platform</div>
             <div class="hero-brand-pill">
               <span class="pill-dot"></span> Powered by Obrive AI

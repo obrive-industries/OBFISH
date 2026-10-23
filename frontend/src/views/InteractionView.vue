@@ -4,8 +4,8 @@
     <header class="app-header">
       <div class="header-left">
         <div class="brand" @click="router.push('/')">
-          <img src="../assets/logo/obrive-logo.svg" alt="ObFish Logo" class="brand-header-icon" />
-          <span>OBFISH</span>
+          <img src="../assets/logo/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
+          <span>OBMIND</span>
         </div>
       </div>
       

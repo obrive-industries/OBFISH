@@ -3,8 +3,8 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
       <div class="nav-brand" @click="goHome">
-        <img src="../assets/logo/obrive-white-logo.svg" alt="ObFish Logo" class="nav-brand-icon" />
-        <span>OBFISH</span>
+        <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="nav-brand-icon" />
+        <span>OBMIND</span>
       </div>
       
       <!-- 中间步骤指示器 -->
