@@ -1,18 +1,18 @@
 #!/usr/bin/env bash
 # ==============================================================================
 # ObMind (Obrive) Production Setup Script for Hostinger VPS (Ubuntu/Debian)
-# Domain: obmind.obrive.com
+# Domain: brain.obrive.com
 # ==============================================================================
 
 set -euo pipefail
 
-DOMAIN="obmind.obrive.com"
+DOMAIN="brain.obrive.com"
 APP_DIR="/var/www/obmind"
 LOG_DIR="/var/log/obmind"
 SERVICE_NAME="obmind"
 
 echo "=========================================================="
-echo " Starting ObMind Production Deployment on Hostinger VPS   "
+echo " Starting Brain Production Deployment on Hostinger VPS    "
 echo " Target Domain: $DOMAIN                                   "
 echo " Installation Directory: $APP_DIR                        "
 echo "=========================================================="
@@ -110,11 +110,16 @@ systemctl restart obmind
 
 # 8. Setup Nginx and SSL
 echo "[7/7] Configuring Nginx reverse proxy..."
-cp "$APP_DIR/deploy/nginx/obmind.obrive.com.conf" /etc/nginx/sites-available/obmind.obrive.com.conf
+cp "$APP_DIR/deploy/nginx/brain.obrive.com.conf" /etc/nginx/sites-available/brain.obrive.com.conf
+
+# Clean up legacy site configs if they exist
+if [ -f /etc/nginx/sites-enabled/obmind.obrive.com.conf ]; then
+  rm -f /etc/nginx/sites-enabled/obmind.obrive.com.conf
+fi
 
 # Create symlink if not already present
-if [ ! -f /etc/nginx/sites-enabled/obmind.obrive.com.conf ]; then
-  ln -s /etc/nginx/sites-available/obmind.obrive.com.conf /etc/nginx/sites-enabled/
+if [ ! -f /etc/nginx/sites-enabled/brain.obrive.com.conf ]; then
+  ln -s /etc/nginx/sites-available/brain.obrive.com.conf /etc/nginx/sites-enabled/
 fi
 
 # Remove default site if present

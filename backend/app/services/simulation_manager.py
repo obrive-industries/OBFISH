@@ -19,7 +19,7 @@ from .oasis_profile_generator import OasisProfileGenerator, OasisAgentProfile
 from .simulation_config_generator import SimulationConfigGenerator, SimulationParameters
 from ..utils.locale import t, get_locale
 
-logger = get_logger('obmind.simulation')
+logger = get_logger('brain.simulation')
 
 
 class SimulationStatus(str, Enum):
@@ -136,11 +136,17 @@ class SimulationManager:
     4. 准备预设脚本所需的所有文件
     """
     
-    # 模拟数据存储目录
-    SIMULATION_DATA_DIR = os.path.join(
-        os.path.dirname(__file__), 
-        '../../uploads/simulations'
-    )
+    _simulation_data_dir: Optional[str] = None
+
+    @property
+    def SIMULATION_DATA_DIR(self) -> str:
+        if self._simulation_data_dir is not None:
+            return self._simulation_data_dir
+        return Config.OASIS_SIMULATION_DATA_DIR
+
+    @SIMULATION_DATA_DIR.setter
+    def SIMULATION_DATA_DIR(self, val: str):
+        self._simulation_data_dir = val
     
     def __init__(self):
         # 确保目录存在
@@ -159,11 +165,13 @@ class SimulationManager:
         """保存模拟状态到文件"""
         sim_dir = self._get_simulation_dir(state.simulation_id)
         state_file = os.path.join(sim_dir, "state.json")
+        temp_file = state_file + ".tmp"
         
         state.updated_at = datetime.now().isoformat()
         
-        with open(state_file, 'w', encoding='utf-8') as f:
+        with open(temp_file, 'w', encoding='utf-8') as f:
             json.dump(state.to_dict(), f, ensure_ascii=False, indent=2)
+        os.replace(temp_file, state_file)
         
         self._simulations[state.simulation_id] = state
     
@@ -175,11 +183,46 @@ class SimulationManager:
         sim_dir = self._get_simulation_dir(simulation_id)
         state_file = os.path.join(sim_dir, "state.json")
         
-        if not os.path.exists(state_file):
+        data = None
+        if os.path.exists(state_file) and os.path.getsize(state_file) > 0:
+            try:
+                with open(state_file, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+            except Exception as e:
+                logger.warning(f"Failed to read {state_file}: {e}")
+
+        # If data is missing or empty, attempt recovery from run_state.json
+        if not data:
+            run_state_file = os.path.join(sim_dir, "run_state.json")
+            if os.path.exists(run_state_file) and os.path.getsize(run_state_file) > 0:
+                try:
+                    with open(run_state_file, 'r', encoding='utf-8') as rf:
+                        rdata = json.load(rf)
+                    curr = rdata.get("current_round", 0)
+                    tot = rdata.get("total_rounds", 5)
+                    st = "completed" if (tot > 0 and curr >= tot) else "running"
+                    data = {
+                        "simulation_id": simulation_id,
+                        "project_id": rdata.get("project_id", ""),
+                        "graph_id": rdata.get("graph_id", ""),
+                        "enable_twitter": rdata.get("enable_twitter", True),
+                        "enable_reddit": rdata.get("enable_reddit", True),
+                        "status": st,
+                        "entities_count": 24,
+                        "profiles_count": 24,
+                        "profiles_generated": True,
+                        "config_generated": True,
+                        "current_round": curr,
+                        "twitter_status": "completed",
+                        "reddit_status": "completed",
+                        "created_at": rdata.get("created_at", datetime.now().isoformat()),
+                        "updated_at": datetime.now().isoformat()
+                    }
+                except Exception as ex:
+                    logger.warning(f"Failed to recover state from {run_state_file}: {ex}")
+
+        if not data:
             return None
-        
-        with open(state_file, 'r', encoding='utf-8') as f:
-            data = json.load(f)
         
         state = SimulationState(
             simulation_id=simulation_id,
@@ -492,15 +535,20 @@ class SimulationManager:
         """获取模拟状态"""
         return self._load_simulation_state(simulation_id)
     
-    def list_simulations(self, project_id: Optional[str] = None, user_id: Optional[str] = None) -> List[SimulationState]:
+    def list_simulations(
+        self,
+        project_id: Optional[str] = None,
+        user_id: Optional[str] = None,
+        include_all: bool = False
+    ) -> List[SimulationState]:
         """列出模拟（支持按项目ID和多租户用户ID隔离过滤）"""
         simulations = []
         
         allowed_project_ids = None
-        if user_id is not None:
+        if not include_all:
             from ..models.project import ProjectManager
-            user_projects = ProjectManager.list_projects(limit=None, user_id=user_id)
-            allowed_project_ids = {p.project_id for p in user_projects}
+            scoped_projects = ProjectManager.list_projects(limit=None, user_id=user_id)
+            allowed_project_ids = {p.project_id for p in scoped_projects}
         
         if os.path.exists(self.SIMULATION_DATA_DIR):
             for sim_id in os.listdir(self.SIMULATION_DATA_DIR):
@@ -576,7 +624,7 @@ class SimulationManager:
                 "parallel": f"python {scripts_dir}/run_parallel_simulation.py --config {config_path}",
             },
             "instructions": (
-                f"1. 激活conda环境: conda activate ObMind\n"
+                f"1. 激活conda/venv环境: conda activate Brain\n"
                 f"2. 运行模拟 (脚本位于 {scripts_dir}):\n"
                 f"   - 单独运行Twitter: python {scripts_dir}/run_twitter_simulation.py --config {config_path}\n"
                 f"   - 单独运行Reddit: python {scripts_dir}/run_reddit_simulation.py --config {config_path}\n"

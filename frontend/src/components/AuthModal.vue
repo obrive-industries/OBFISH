@@ -6,13 +6,13 @@
 
       <!-- Header -->
       <div class="modal-header">
-        <img src="../assets/logo/obrive-logo.svg" alt="ObMind" class="modal-logo" />
-        <h2 class="modal-brand">OBMIND</h2>
+        <img src="../assets/logo/obrive-logo.svg" alt="Brain" class="modal-logo" />
+        <h2 class="modal-brand">BRAIN</h2>
         <p class="modal-subtitle">Swarm Intelligence Platform</p>
       </div>
 
       <!-- Tab Switcher (Login / Register) -->
-      <div v-if="authStore.state.authModalTab !== 'forgot'" class="tabs">
+      <div v-if="authStore.state.authModalTab !== 'forgot' && authStore.state.authModalTab !== 'verify-otp'" class="tabs">
         <button
           :class="['tab-btn', { active: authStore.state.authModalTab === 'login' }]"
           @click="switchTab('login')"
@@ -163,18 +163,73 @@
           </button>
         </p>
       </form>
+
+      <!-- 4. OTP VERIFICATION FORM -->
+      <form v-else-if="authStore.state.authModalTab === 'verify-otp'" @submit.prevent="handleVerifyOtp" class="auth-form">
+        <div class="otp-header">
+          <div class="otp-icon-wrap">✉️</div>
+          <h3 class="otp-title font-microgramma">Verify Email</h3>
+          <p class="otp-desc">
+            We sent a 6-digit verification code to<br/>
+            <strong>{{ displayTargetEmail }}</strong>
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" style="text-align: center;">Enter 6-Digit Code</label>
+          <input
+            v-model="otpCode"
+            type="text"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            inputmode="numeric"
+            placeholder="••••••"
+            class="input-field otp-input"
+            required
+            autocomplete="one-time-code"
+            :disabled="loading"
+            @input="handleOtpInput"
+          />
+        </div>
+
+        <button type="submit" class="submit-btn" :disabled="loading || otpCode.trim().length < 6">
+          {{ loading ? 'Verifying Code...' : 'Verify Email & Activate →' }}
+        </button>
+
+        <div class="otp-actions">
+          <button 
+            type="button" 
+            class="resend-btn" 
+            :disabled="resendCooldown > 0 || resending"
+            @click="handleResendOtp"
+          >
+            {{ resending ? 'Sending...' : resendCooldown > 0 ? `Resend code in ${resendCooldown}s` : 'Resend Code' }}
+          </button>
+        </div>
+
+        <p class="switch-prompt">
+          Want to use a different account?
+          <button type="button" class="switch-link" @click="switchTab('login')">
+            Back to Sign In
+          </button>
+        </p>
+      </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, onUnmounted } from 'vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
 
 const loading = ref(false)
+const resending = ref(false)
+const resendCooldown = ref(0)
 const errorMsg = ref('')
 const successMsg = ref('')
+const otpCode = ref('')
+let timerInterval = null
 
 const loginForm = reactive({
   email: '',
@@ -188,6 +243,35 @@ const registerForm = reactive({
 })
 
 const forgotEmail = ref('')
+
+const displayTargetEmail = computed(() => {
+  return authStore.state.verifyEmailTarget || registerForm.email || authStore.user.value?.email || 'your email'
+})
+
+const startResendTimer = (seconds = 60) => {
+  resendCooldown.value = seconds
+  if (timerInterval) clearInterval(timerInterval)
+  timerInterval = setInterval(() => {
+    if (resendCooldown.value > 0) {
+      resendCooldown.value--
+    } else {
+      clearInterval(timerInterval)
+      timerInterval = null
+    }
+  }, 1000)
+}
+
+onUnmounted(() => {
+  if (timerInterval) clearInterval(timerInterval)
+})
+
+const handleOtpInput = (e) => {
+  // Only keep numbers
+  otpCode.value = e.target.value.replace(/\D/g, '').slice(0, 6)
+  if (otpCode.value.length === 6) {
+    handleVerifyOtp()
+  }
+}
 
 const switchTab = (tab) => {
   errorMsg.value = ''
@@ -227,24 +311,85 @@ const handleRegister = async () => {
   successMsg.value = ''
 
   try {
+    const emailToVerify = registerForm.email.trim()
     const res = await authApi.register({
-      email: registerForm.email.trim(),
+      email: emailToVerify,
       password: registerForm.password,
       full_name: registerForm.fullName.trim()
     })
 
     authStore.setSession(res.access_token, res.refresh_token, res.user)
-    successMsg.value = 'Account created! Please check your email to verify your account.'
-    setTimeout(() => {
-      authStore.closeAuthModal()
-      registerForm.fullName = ''
-      registerForm.email = ''
-      registerForm.password = ''
-    }, 2500)
+    authStore.state.verifyEmailTarget = emailToVerify
+    otpCode.value = ''
+    successMsg.value = 'Account created! Enter the 6-digit code sent to your email.'
+    authStore.state.authModalTab = 'verify-otp'
+    startResendTimer(60)
   } catch (err) {
     errorMsg.value = err.message || 'Failed to create account.'
   } finally {
     loading.value = false
+  }
+}
+
+const handleVerifyOtp = async () => {
+  const code = otpCode.value.trim()
+  if (code.length < 6) {
+    errorMsg.value = 'Please enter the complete 6-digit verification code.'
+    return
+  }
+
+  loading.value = true
+  errorMsg.value = ''
+  successMsg.value = ''
+
+  try {
+    const res = await authApi.verifyOtp({
+      email: displayTargetEmail.value,
+      otp: code
+    })
+
+    if (res.access_token) {
+      authStore.setSession(res.access_token, authStore.state.refreshToken, res.user)
+    } else if (res.user) {
+      authStore.state.user = res.user
+      localStorage.setItem('brain_user', JSON.stringify(res.user))
+      localStorage.setItem('obmind_user', JSON.stringify(res.user))
+    }
+
+    successMsg.value = 'Email verified successfully! Welcome to Brain.'
+    setTimeout(() => {
+      authStore.closeAuthModal()
+      otpCode.value = ''
+      successMsg.value = ''
+      registerForm.fullName = ''
+      registerForm.email = ''
+      registerForm.password = ''
+    }, 1000)
+  } catch (err) {
+    errorMsg.value = err.message || 'Invalid or expired code. Please try again.'
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleResendOtp = async () => {
+  if (resendCooldown.value > 0 || resending.value) return
+  const email = displayTargetEmail.value
+  if (!email || email === 'your email') {
+    errorMsg.value = 'Email address not found. Please sign in again.'
+    return
+  }
+
+  resending.value = true
+  errorMsg.value = ''
+  try {
+    await authApi.resendVerification(email)
+    successMsg.value = 'A new 6-digit verification code has been sent!'
+    startResendTimer(60)
+  } catch (err) {
+    errorMsg.value = err.message || 'Failed to resend code.'
+  } finally {
+    resending.value = false
   }
 }
 
@@ -483,5 +628,63 @@ const handleForgot = async () => {
   color: #526361;
   line-height: 1.5;
   margin: 0;
+}
+
+.otp-header {
+  text-align: center;
+  margin-bottom: 4px;
+}
+
+.otp-icon-wrap {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.otp-title {
+  margin: 0 0 6px 0;
+  font-size: 1.25rem;
+  color: #074139;
+  font-weight: 800;
+}
+
+.otp-desc {
+  font-size: 0.85rem;
+  color: #526361;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.otp-input {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: 10px;
+  padding: 12px;
+  color: #074139;
+  background: #F9FCFB;
+  font-family: 'Courier New', monospace;
+}
+
+.otp-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 4px;
+}
+
+.resend-btn {
+  background: transparent;
+  border: none;
+  color: #074139;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 4px 8px;
+}
+
+.resend-btn:disabled {
+  color: #94a3b8;
+  cursor: not-allowed;
+  text-decoration: none;
 }
 </style>

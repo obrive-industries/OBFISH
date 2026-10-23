@@ -6,6 +6,8 @@ from app.models.project import ProjectManager, ProjectStatus
 from app.utils.llm_client import LLMResponseError
 
 
+from unittest.mock import MagicMock
+
 def _post_ontology(client):
     return client.post(
         "/api/graph/ontology/generate",
@@ -15,6 +17,7 @@ def _post_ontology(client):
         },
         content_type="multipart/form-data",
     )
+
 
 
 def test_ontology_api_returns_safe_truncation_error_and_failed_project(
@@ -28,6 +31,8 @@ def test_ontology_api_returns_safe_truncation_error_and_failed_project(
                 finish_reason="length",
             )
 
+    mock_user = MagicMock(id="test-user-id", is_verified=True, custom_llm_api_key="sk-test-key")
+    monkeypatch.setattr("app.utils.auth_middleware.get_current_user", lambda: mock_user)
     monkeypatch.setattr(ProjectManager, "PROJECTS_DIR", str(tmp_path))
     monkeypatch.setattr(graph_api, "OntologyGenerator", FailingGenerator)
 
@@ -56,6 +61,8 @@ def test_ontology_api_does_not_expose_provider_error_body(tmp_path, monkeypatch)
         def generate(self, **kwargs):
             raise ProviderError("SECRET-PROVIDER-BODY")
 
+    mock_user = MagicMock(id="test-user-id", is_verified=True, custom_llm_api_key="sk-test-key")
+    monkeypatch.setattr("app.utils.auth_middleware.get_current_user", lambda: mock_user)
     monkeypatch.setattr(ProjectManager, "PROJECTS_DIR", str(tmp_path))
     monkeypatch.setattr(graph_api, "OntologyGenerator", FailingGenerator)
 

@@ -1,12 +1,12 @@
 """
-ObMind Email Service
+Brain Email Service
 Sends transactional emails (verification, password reset) via SMTP.
 Reads config from environment variables — no credentials in code.
 
 Required env vars:
   SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD
   SMTP_FROM_NAME, SMTP_FROM_EMAIL
-  APP_BASE_URL  (e.g. https://obfish.obrive.com)
+  APP_BASE_URL  (e.g. https://brain.obrive.com)
 """
 
 import os
@@ -16,7 +16,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from typing import Optional
 
-logger = logging.getLogger("obmind.email")
+logger = logging.getLogger("brain.email")
 
 
 def _get_smtp_config():
@@ -25,9 +25,9 @@ def _get_smtp_config():
     port = int(os.environ.get("SMTP_PORT", "587"))
     user = os.environ.get("SMTP_USER", "")
     password = os.environ.get("SMTP_PASSWORD", "")
-    from_name = os.environ.get("SMTP_FROM_NAME", "Obmind")
+    from_name = os.environ.get("SMTP_FROM_NAME", "Brain")
     from_email = os.environ.get("SMTP_FROM_EMAIL", "ai@obrive.com") or user
-    app_base_url = os.environ.get("APP_BASE_URL", "https://obmind.obrive.com").rstrip("/")
+    app_base_url = os.environ.get("APP_BASE_URL", "https://brain.obrive.com").rstrip("/")
     return host, port, user, password, from_name, from_email, app_base_url
 
 
@@ -77,7 +77,7 @@ def _send(to_email: str, subject: str, html_body: str, text_body: str) -> bool:
 # ------------------------------------------------------------------ #
 
 def _base_html(title: str, content: str) -> str:
-    """Minimal, inline-styled HTML wrapper matching ObMind brand."""
+    """Minimal, inline-styled HTML wrapper matching Brain brand."""
     return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -95,7 +95,7 @@ def _base_html(title: str, content: str) -> str:
           <tr>
             <td style="background:#074139;padding:28px 40px;">
               <p style="margin:0;font-size:22px;font-weight:700;color:#A2F1DF;letter-spacing:3px;">
-                OBMIND
+                BRAIN
               </p>
               <p style="margin:4px 0 0;font-size:11px;color:rgba(162,241,223,0.7);letter-spacing:1px;text-transform:uppercase;">
                 by Obrive
@@ -114,7 +114,7 @@ def _base_html(title: str, content: str) -> str:
           <tr>
             <td style="padding:20px 40px;border-top:1px solid #E0F7F2;background:#F8FDFC;">
               <p style="margin:0;font-size:12px;color:#526361;line-height:1.6;">
-                This email was sent by ObMind · Obrive Technologies<br/>
+                This email was sent by Brain · Obrive Technologies<br/>
                 If you didn't request this, you can safely ignore this email.
               </p>
             </td>
@@ -132,54 +132,45 @@ def _base_html(title: str, content: str) -> str:
 # Public API
 # ------------------------------------------------------------------ #
 
-def send_verification_email(to_email: str, full_name: str, token: str) -> bool:
+def send_verification_email(to_email: str, full_name: str, otp: str) -> bool:
     """
-    Send an email address verification link to the user.
-    The link points to: /verify-email?token=<token>
+    Send a 6-digit OTP verification code to the user's email.
     """
-    _, _, _, _, _, _, app_base_url = _get_smtp_config()
-    verify_url = f"{app_base_url}/verify-email?token={token}"
-
     content = f"""
-      <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">Welcome to ObMind!</h2>
+      <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">Welcome to Brain!</h2>
       <p style="margin:0 0 20px;color:#526361;font-size:14px;line-height:1.6;">
         Hi <strong>{full_name}</strong>,<br/>
-        Thank you for signing up. Please verify your email address to activate your account.
+        Please use the 6-digit verification code below to activate your account and start your simulation engines:
       </p>
 
-      <p style="margin:0 0 28px;">
-        <a href="{verify_url}"
-           style="display:inline-block;background:#074139;color:#A2F1DF;text-decoration:none;
-                  padding:14px 32px;border-radius:8px;font-weight:700;font-size:15px;
-                  letter-spacing:0.5px;">
-          Verify My Email →
-        </a>
+      <div style="margin:24px 0 28px;text-align:center;">
+        <div style="display:inline-block;background:#EBF7F4;border:2px dashed #074139;border-radius:12px;padding:16px 36px;">
+          <span style="font-family:'Courier New', monospace, sans-serif;font-size:36px;font-weight:800;letter-spacing:10px;color:#074139;">
+            {otp}
+          </span>
+        </div>
+      </div>
+
+      <p style="margin:0 0 8px;font-size:13px;color:#526361;text-align:center;">
+        Enter this code in Brain to complete verification.
       </p>
 
-      <p style="margin:0 0 8px;font-size:13px;color:#526361;">
-        Or copy this link into your browser:
-      </p>
-      <p style="margin:0;font-size:12px;word-break:break-all;color:#074139;
-                background:#E0F7F2;padding:10px 14px;border-radius:6px;font-family:monospace;">
-        {verify_url}
-      </p>
-
-      <p style="margin:24px 0 0;font-size:12px;color:#9CA3AF;">
-        This link expires in <strong>24 hours</strong>.
+      <p style="margin:24px 0 0;font-size:12px;color:#9CA3AF;text-align:center;">
+        This code expires in <strong>15 minutes</strong>. If you did not request this, you can safely ignore this email.
       </p>
     """
 
     text_body = (
         f"Hi {full_name},\n\n"
-        "Please verify your ObMind email address by visiting the link below:\n\n"
-        f"{verify_url}\n\n"
-        "This link expires in 24 hours.\n\n"
-        "— ObMind by Obrive"
+        f"Your Brain verification code is: {otp}\n\n"
+        "Enter this 6-digit code in Brain to activate your account.\n"
+        "This code expires in 15 minutes.\n\n"
+        "— Brain by Obrive"
     )
 
     return _send(
         to_email=to_email,
-        subject="Verify your ObMind email address",
+        subject=f"{otp} is your Brain verification code",
         html_body=_base_html("Verify your email", content),
         text_body=text_body,
     )
@@ -196,7 +187,7 @@ def send_password_reset_email(to_email: str, full_name: str, token: str) -> bool
       <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">Reset your password</h2>
       <p style="margin:0 0 20px;color:#526361;font-size:14px;line-height:1.6;">
         Hi <strong>{full_name}</strong>,<br/>
-        We received a request to reset your ObMind password.
+        We received a request to reset your Brain password.
         Click the button below to choose a new one.
       </p>
 
@@ -225,16 +216,16 @@ def send_password_reset_email(to_email: str, full_name: str, token: str) -> bool
 
     text_body = (
         f"Hi {full_name},\n\n"
-        "Reset your ObMind password using the link below:\n\n"
+        "Reset your Brain password using the link below:\n\n"
         f"{reset_url}\n\n"
         "This link expires in 30 minutes.\n"
         "If you did not request this, you can safely ignore this email.\n\n"
-        "— ObMind by Obrive"
+        "— Brain by Obrive"
     )
 
     return _send(
         to_email=to_email,
-        subject="Reset your ObMind password",
+        subject="Reset your Brain password",
         html_body=_base_html("Reset your password", content),
         text_body=text_body,
     )
@@ -249,26 +240,26 @@ def send_welcome_email(to_email: str, full_name: str) -> bool:
       <h2 style="margin:0 0 8px;font-size:24px;color:#074139;">You're in! 🎉</h2>
       <p style="margin:0 0 20px;color:#526361;font-size:14px;line-height:1.6;">
         Hi <strong>{full_name}</strong>,<br/>
-        Your ObMind account is now verified and ready to use.
+        Your Brain account is now verified and ready to use.
         Upload a seed dossier and let our swarm intelligence engine predict the future for you.
       </p>
       <p style="margin:0 0 28px;">
         <a href="{app_base_url}/"
            style="display:inline-block;background:#074139;color:#A2F1DF;text-decoration:none;
                   padding:14px 32px;border-radius:8px;font-weight:700;font-size:15px;">
-          Launch ObMind →
+          Launch Brain →
         </a>
       </p>
     """
 
     text_body = (
-        f"Hi {full_name},\n\nYour ObMind account is verified!\n\n"
-        f"Launch the platform: {app_base_url}/\n\n— ObMind by Obrive"
+        f"Hi {full_name},\n\nYour Brain account is verified!\n\n"
+        f"Launch the platform: {app_base_url}/\n\n— Brain by Obrive"
     )
 
     return _send(
         to_email=to_email,
-        subject="Welcome to ObMind — Your account is ready!",
-        html_body=_base_html("Welcome to ObMind", content),
+        subject="Welcome to Brain — Your account is ready!",
+        html_body=_base_html("Welcome to Brain", content),
         text_body=text_body,
     )

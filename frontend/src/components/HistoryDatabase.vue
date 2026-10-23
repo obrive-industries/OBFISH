@@ -127,13 +127,28 @@
     </div>
 
     <!-- Empty State -->
-    <div v-if="projects.length === 0 && !loading" class="empty-state">
+    <!-- Empty State for Unauthenticated User -->
+    <div v-if="!authStore.isAuthenticated.value && !loading" class="empty-state">
+      <div class="empty-icon-wrap">
+        <RoundedBallIcon :width="20" :height="26" />
+      </div>
+      <h4 class="empty-title font-microgramma">SIGN IN TO ACCESS HISTORY</h4>
+      <p class="empty-text">
+        Simulation history is private to your account. Please sign in to view your past simulation runs, agent logs, and intelligence reports.
+      </p>
+      <button class="sign-in-history-btn font-microgramma" @click="authStore.openAuthModal('login')">
+        Sign In
+      </button>
+    </div>
+
+    <!-- Empty State for Authenticated User with 0 simulations -->
+    <div v-else-if="projects.length === 0 && !loading" class="empty-state">
       <div class="empty-icon-wrap">
         <RoundedBallIcon :width="20" :height="26" />
       </div>
       <h4 class="empty-title font-microgramma">NO RECENT SIMULATIONS</h4>
       <p class="empty-text">
-        Upload reality seed documents and launch a multi-agent simulation swarm above to populate your history.
+        Upload reality seed documents or enter a hypothesis scenario above to launch your first multi-agent simulation.
       </p>
     </div>
 
@@ -229,6 +244,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { getSimulationHistory } from '../api/simulation'
 import RoundedBallIcon from './common/RoundedBallIcon.vue'
+import authStore from '../store/auth'
 
 const router = useRouter()
 const route = useRoute()
@@ -389,6 +405,11 @@ const goToReport = () => {
 
 // Load history items
 const loadHistory = async () => {
+  if (!authStore.isAuthenticated.value) {
+    projects.value = []
+    loading.value = false
+    return
+  }
   try {
     loading.value = true
     const response = await getSimulationHistory(20)
@@ -401,6 +422,15 @@ const loadHistory = async () => {
     loading.value = false
   }
 }
+
+watch(() => authStore.isAuthenticated.value, (isAuth) => {
+  if (isAuth) {
+    loadHistory()
+  } else {
+    projects.value = []
+    loading.value = false
+  }
+})
 
 watch(() => route.path, (newPath) => {
   if (newPath === '/console' || newPath === '/') {
@@ -1152,5 +1182,26 @@ onActivated(() => {
   .modal-actions {
     flex-direction: column;
   }
+}
+
+.sign-in-history-btn {
+  margin-top: 14px;
+  background: #074139;
+  color: #A2F1DF;
+  border: 1px solid rgba(162, 241, 223, 0.3);
+  padding: 8px 22px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.2s ease;
+}
+
+.sign-in-history-btn:hover {
+  background: #0b5c51;
+  color: #ffffff;
+  border-color: rgba(162, 241, 223, 0.6);
+  transform: translateY(-1px);
 }
 </style>

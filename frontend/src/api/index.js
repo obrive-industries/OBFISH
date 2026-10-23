@@ -1,5 +1,6 @@
 import axios from 'axios'
 import i18n from '../i18n'
+import authStore from '../store/auth'
 
 // Create Axios instance
 const service = axios.create({
@@ -26,7 +27,7 @@ function addRefreshSubscriber(cb) {
 service.interceptors.request.use(
   config => {
     config.headers['Accept-Language'] = i18n.global.locale.value
-    const token = localStorage.getItem('obmind_access_token')
+    const token = localStorage.getItem('brain_access_token') || localStorage.getItem('obmind_access_token') || localStorage.getItem('token') || authStore.state.accessToken
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -56,9 +57,9 @@ service.interceptors.response.use(
     const errorCode = error.response?.data?.code
 
     // Handle token expiration: attempt transparent refresh
-    if (responseStatus === 401 && errorCode === 'TOKEN_EXPIRED' && !originalRequest._retry) {
-      const refreshToken = localStorage.getItem('obmind_refresh_token')
-      if (refreshToken) {
+    if (responseStatus === 401 && (errorCode === 'TOKEN_EXPIRED' || !originalRequest._retry)) {
+      const refreshToken = localStorage.getItem('brain_refresh_token') || localStorage.getItem('obmind_refresh_token')
+      if (refreshToken && !originalRequest._retry) {
         if (!isRefreshing) {
           isRefreshing = true
           originalRequest._retry = true
@@ -69,11 +70,21 @@ service.interceptors.response.use(
             })
 
             const newAccessToken = refreshRes.data?.access_token
+            const newRefreshToken = refreshRes.data?.refresh_token || refreshToken
+            const updatedUser = refreshRes.data?.user
             if (newAccessToken) {
-              localStorage.setItem('obmind_access_token', newAccessToken)
-              if (refreshRes.data?.user) {
-                localStorage.setItem('obmind_user', JSON.stringify(refreshRes.data.user))
+              localStorage.setItem('brain_access_token', newAccessToken)
+              localStorage.setItem('token', newAccessToken)
+              if (newRefreshToken) {
+                localStorage.setItem('brain_refresh_token', newRefreshToken)
               }
+              if (updatedUser) {
+                localStorage.setItem('brain_user', JSON.stringify(updatedUser))
+                localStorage.setItem('user', JSON.stringify(updatedUser))
+              }
+              // Sync with authStore to prevent user session desync
+              authStore.setSession(newAccessToken, newRefreshToken, updatedUser || authStore.state.user)
+
               onRefreshed(newAccessToken)
               isRefreshing = false
 
@@ -82,9 +93,16 @@ service.interceptors.response.use(
             }
           } catch (refreshErr) {
             isRefreshing = false
+            localStorage.removeItem('brain_access_token')
             localStorage.removeItem('obmind_access_token')
+            localStorage.removeItem('token')
+            localStorage.removeItem('brain_refresh_token')
             localStorage.removeItem('obmind_refresh_token')
+            localStorage.removeItem('brain_user')
             localStorage.removeItem('obmind_user')
+            localStorage.removeItem('user')
+            authStore.clearSession()
+            window.dispatchEvent(new CustomEvent('brain-auth-logout'))
             window.dispatchEvent(new CustomEvent('obmind-auth-logout'))
             return Promise.reject(refreshErr)
           }
@@ -97,6 +115,19 @@ service.interceptors.response.use(
             })
           })
         }
+      }
+    }
+
+    // Handle blob error responses (e.g. from failed downloads)
+    if (error.response?.data instanceof Blob) {
+      try {
+        const text = await error.response.data.text()
+        const parsed = JSON.parse(text)
+        if (parsed.error || parsed.message) {
+          error.message = parsed.error || parsed.message
+        }
+      } catch (e) {
+        // Not a JSON blob, keep standard error
       }
     }
 

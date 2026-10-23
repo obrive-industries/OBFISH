@@ -3,8 +3,8 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
       <div class="nav-brand" @click="goHome">
-        <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="nav-brand-icon" />
-        <span>OBMIND</span>
+        <img src="../assets/logo/obrive-white-logo.svg" alt="Brain Logo" class="nav-brand-icon" />
+        <span>BRAIN</span>
       </div>
       
       <!-- 中间步骤指示器 -->
@@ -568,10 +568,12 @@ const initProject = async () => {
 
 // Handle new project - call ontology/generate API
 const handleNewProject = async () => {
-  const pending = getPendingUpload()
+  const pending = await getPendingUpload()
+  const hasFiles = Boolean(pending && pending.files && pending.files.length > 0)
+  const hasHypothesis = Boolean(pending && pending.simulationRequirement && pending.simulationRequirement.trim().length > 0)
   
-  if (!pending.isPending || pending.files.length === 0) {
-    error.value = 'No files pending upload, please return to home page'
+  if (!hasFiles && !hasHypothesis) {
+    error.value = 'No documents or scenario hypothesis found. Please return to console or home page.'
     loading.value = false
     return
   }
@@ -579,20 +581,26 @@ const handleNewProject = async () => {
   try {
     loading.value = true
     currentPhase.value = 0 // Ontology generation phase
-    ontologyProgress.value = { message: 'Uploading files and analyzing documents...' }
+    ontologyProgress.value = { 
+      message: hasFiles 
+        ? 'Uploading files and analyzing documents...' 
+        : 'Ingesting scenario hypothesis and analyzing context...' 
+    }
     
     // Build FormData
     const formDataObj = new FormData()
-    pending.files.forEach(file => {
-      formDataObj.append('files', file)
-    })
-    formDataObj.append('simulation_requirement', pending.simulationRequirement)
+    if (hasFiles) {
+      pending.files.forEach(file => {
+        formDataObj.append('files', file)
+      })
+    }
+    formDataObj.append('simulation_requirement', pending.simulationRequirement || '')
     
     // Call ontology generation API
     const response = await generateOntology(formDataObj)
     
     if (response.success) {
-      clearPendingUpload()
+      await clearPendingUpload()
       
       currentProjectId.value = response.data.project_id
       projectData.value = response.data

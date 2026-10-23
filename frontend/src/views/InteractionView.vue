@@ -3,9 +3,9 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to ObMind Console">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
-          <span>OBMIND</span>
+        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to Brain Console">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-header-icon" />
+          <span>BRAIN</span>
         </div>
       </div>
       
@@ -25,8 +25,8 @@
 
       <div class="header-right">
         <div class="workflow-step">
-          <span class="step-num">Step 5/5</span>
-          <span class="step-name">{{ $tm('main.stepNames')[4] }}</span>
+          <span class="step-num">Step 4/4</span>
+          <span class="step-name">{{ $tm('main.stepNames')[3] }}</span>
         </div>
         <div class="step-divider"></div>
         <span class="status-indicator" :class="statusClass">

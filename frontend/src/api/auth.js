@@ -21,6 +21,11 @@ export const authApi = {
     return service.get('/api/auth/verify-email', { params: { token } })
   },
 
+  // Verify email using 6-digit OTP code
+  verifyOtp(data) {
+    return service.post('/api/auth/verify-otp', data)
+  },
+
   // Resend verification email
   resendVerification(email) {
     return service.post('/api/auth/resend-verification', { email })
@@ -49,6 +54,11 @@ export const authApi = {
   // Change password while logged in
   changePassword(data) {
     return service.post('/api/auth/change-password', data)
+  },
+
+  // Probe & auto-detect BYOK API key
+  probeLlmKey(data) {
+    return service.post('/api/auth/probe-llm-key', data)
   }
 }
 

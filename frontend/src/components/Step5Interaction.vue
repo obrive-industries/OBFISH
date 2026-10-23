@@ -7,9 +7,18 @@
         <div v-if="reportOutline" class="report-content-wrapper">
           <!-- Report Header -->
           <div class="report-header-block">
-            <div class="report-meta">
-              <span class="report-tag">Prediction Report</span>
-              <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
+            <div class="report-meta" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+              <div>
+                <span class="report-tag">Prediction Report</span>
+                <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
+              </div>
+              <button 
+                @click="handleBackToReport" 
+                class="back-to-report-btn"
+                style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;"
+              >
+                ← Back to Report
+              </button>
             </div>
             <h1 class="main-title">{{ reportOutline.title }}</h1>
             <p class="sub-title">{{ reportOutline.summary }}</p>
@@ -80,14 +89,23 @@
       <div class="right-panel" ref="rightPanel">
         <!-- Unified Action Bar - Professional Design -->
         <div class="action-bar">
-        <div class="action-bar-header">
-          <svg class="action-bar-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-          </svg>
-          <div class="action-bar-text">
-            <span class="action-bar-title">{{ $t('step5.interactiveTools') }}</span>
-            <span class="action-bar-subtitle mono">{{ $t('step5.agentsAvailable', { count: profiles.length }) }}</span>
+        <div class="action-bar-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <svg class="action-bar-icon" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+            </svg>
+            <div class="action-bar-text">
+              <span class="action-bar-title">{{ $t('step5.interactiveTools') }}</span>
+              <span class="action-bar-subtitle mono">{{ $t('step5.agentsAvailable', { count: profiles.length }) }}</span>
+            </div>
           </div>
+          <button 
+            @click="handleBackToReport" 
+            class="back-to-report-btn"
+            style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;"
+          >
+            ← Back to Report
+          </button>
         </div>
           <div class="action-bar-tabs">
             <button 
@@ -371,6 +389,19 @@
               <span v-if="isSurveying" class="loading-spinner"></span>
               <span v-else>{{ $t('step5.submitSurvey') }}</span>
             </button>
+
+            <!-- Survey Error Banner (ENG-07) -->
+            <div v-if="surveyError" class="survey-error-banner" style="margin-top: 14px; padding: 10px 14px; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 8px; color: #ef4444; font-size: 13px; display: flex; align-items: center; justify-content: space-between; gap: 10px;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink: 0;">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+                <span>{{ surveyError }}</span>
+              </div>
+              <button @click="surveyError = ''" style="background: none; border: none; color: #ef4444; cursor: pointer; font-size: 18px; line-height: 1;" title="Dismiss error">×</button>
+            </div>
           </div>
 
           <!-- Survey Results -->
@@ -412,10 +443,12 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { chatWithReport, getReport, getAgentLog } from '../api/report'
 import { interviewAgents, getSimulationProfilesRealtime } from '../api/simulation'
 
+const router = useRouter()
 const { t } = useI18n()
 
 const props = defineProps({
@@ -424,6 +457,14 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['add-log', 'update-status'])
+
+const handleBackToReport = () => {
+  if (props.reportId) {
+    router.push({ name: 'Report', params: { reportId: props.reportId } })
+  } else {
+    router.back()
+  }
+}
 
 // State
 const activeTab = ref('chat')
@@ -447,6 +488,13 @@ const selectedAgents = ref(new Set())
 const surveyQuestion = ref('')
 const surveyResults = ref([])
 const isSurveying = ref(false)
+const surveyError = ref('')
+
+watch(surveyQuestion, () => {
+  if (surveyError.value) {
+    surveyError.value = ''
+  }
+})
 
 // Report Data
 const reportOutline = ref(null)
@@ -806,6 +854,7 @@ const submitSurvey = async () => {
   if (selectedAgents.value.size === 0 || !surveyQuestion.value.trim()) return
   
   isSurveying.value = true
+  surveyError.value = ''
   addLog(t('log.sendSurvey', { count: selectedAgents.value.size }))
   
   try {
@@ -865,6 +914,7 @@ const submitSurvey = async () => {
       throw new Error(res.error || t('step5.requestFailed'))
     }
   } catch (err) {
+    surveyError.value = err.message || t('step5.requestFailed')
     addLog(t('log.surveySendFailed', { error: err.message }))
   } finally {
     isSurveying.value = false

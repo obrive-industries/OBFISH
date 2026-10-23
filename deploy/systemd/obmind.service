@@ -1,5 +1,5 @@
 [Unit]
-Description=ObMind Multi-Agent Simulation Engine (Obrive)
+Description=Brain Multi-Agent Simulation Engine (Obrive)
 After=network.target
 
 [Service]

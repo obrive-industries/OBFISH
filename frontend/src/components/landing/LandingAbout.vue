@@ -5,7 +5,7 @@
       <div class="section-header">
         <div class="category-pill">
           <RoundedBallIcon :width="14" :height="20" />
-          <span class="pill-text font-microgramma">ABOUT US: SIMULATE POSSIBILITIES. MAKE SMARTER DECISIONS.</span>
+          <span class="pill-text font-microgramma">ABOUT BRAIN</span>
         </div>
 
         <h2 class="section-title font-microgramma">
@@ -18,10 +18,10 @@
       <div class="narrative-grid">
         <div class="narrative-card">
           <p class="narrative-lead">
-            OBMIND is an AI-powered simulation and predictive intelligence platform designed to explore possibilities, understand complex behaviours, and evaluate potential outcomes.
+            BRAIN is an AI-powered simulation and predictive intelligence platform designed to explore possibilities, understand complex behaviours, and evaluate potential outcomes.
           </p>
           <p class="narrative-text">
-            By transforming real-world information, business challenges, research materials, and creative ideas into interactive scenarios, OBMIND helps users examine how different factors, decisions, and interactions could shape future outcomes.
+            By transforming real-world information, business challenges, research materials, and creative ideas into interactive scenarios, BRAIN helps users examine how different factors, decisions, and interactions could shape future outcomes.
           </p>
         </div>
 
@@ -30,7 +30,7 @@
             Through AI-driven simulations, users can explore multiple perspectives, test assumptions, analyse stakeholder behaviour, and discover alternative pathways.
           </p>
           <p class="narrative-highlight">
-            OBMIND creates a virtual environment where possibilities can be explored before decisions are made in the real world.
+            BRAIN creates a virtual environment where possibilities can be explored before decisions are made in the real world.
           </p>
         </div>
       </div>
@@ -87,12 +87,12 @@
       <div class="quote-card">
         <div class="quote-content">
           <p class="quote-body font-microgramma">
-            “Every possibility begins with a question. OBMIND helps you explore what comes next.”
+            “Every possibility begins with a question. BRAIN helps you explore what comes next.”
           </p>
           <div class="quote-author">
             <img src="../../assets/icons/obrive-white-logo.svg" alt="Obrive" class="quote-logo" />
             <div class="quote-author-meta">
-              <span class="author-name font-microgramma">OBMIND by Obrive Industries</span>
+              <span class="author-name font-microgramma">BRAIN by Obrive Industries</span>
               <span class="author-tag">Predictive Intelligence Architecture</span>
             </div>
           </div>

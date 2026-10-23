@@ -14,7 +14,7 @@ export default defineConfig({
   server: {
     port: 3000,
     open: true,
-    allowedHosts: ['obmind.obrive.com', 'obfish.obrive.com'],
+    allowedHosts: ['brain.obrive.com', 'obmind.obrive.com', 'obfish.obrive.com'],
     proxy: {
       '/api': {
         target: 'http://localhost:5001',

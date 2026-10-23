@@ -3,10 +3,10 @@
     <div class="verify-card">
       <!-- Brand Header -->
       <div class="verify-header">
-        <router-link to="/" class="brand-link" title="Return to ObMind Home">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-logo" />
+        <router-link to="/" class="brand-link" title="Return to Brain Home">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-logo" />
         </router-link>
-        <h1 class="brand-title font-microgramma">OBMIND</h1>
+        <h1 class="brand-title font-microgramma">BRAIN</h1>
         <p class="brand-sub font-microgramma">Predictive Intelligence Platform</p>
       </div>
 
@@ -14,16 +14,16 @@
       <div v-if="loading" class="state-container">
         <div class="spinner"></div>
         <h2 class="state-title font-microgramma">Verifying your email...</h2>
-        <p class="state-desc">Please wait while we confirm your account with ObMind.</p>
+        <p class="state-desc">Please wait while we confirm your account with Brain.</p>
       </div>
 
       <!-- State: Success -->
       <div v-else-if="success" class="state-container">
         <div class="status-icon success-icon">✓</div>
         <h2 class="state-title font-microgramma">Email Verified!</h2>
-        <p class="state-desc">{{ message || 'Your ObMind account is now fully active.' }}</p>
+        <p class="state-desc">{{ message || 'Your Brain account is now fully active.' }}</p>
         <button class="primary-btn font-microgramma" @click="goToDashboard">
-          <span>Launch ObMind Platform</span>
+          <span>Launch Brain Platform</span>
           <span class="btn-arrow">→</span>
         </button>
       </div>
@@ -34,9 +34,32 @@
         <h2 class="state-title font-microgramma">Verification Failed</h2>
         <p class="error-desc">{{ errorMessage }}</p>
 
+        <!-- OTP Entry Section -->
+        <div class="resend-box" style="margin-bottom: 20px;">
+          <p class="resend-label font-microgramma">Enter 6-Digit Verification Code</p>
+          <div class="resend-form">
+            <input
+              v-model="otpInput"
+              type="text"
+              maxlength="6"
+              placeholder="000000"
+              class="input-field"
+              style="text-align: center; letter-spacing: 6px; font-weight: 800; font-size: 1.1rem;"
+              :disabled="otpVerifying"
+            />
+            <button
+              class="secondary-btn font-microgramma"
+              @click="handleVerifyOtpManual"
+              :disabled="otpVerifying || otpInput.trim().length < 6"
+            >
+              {{ otpVerifying ? 'Verifying...' : 'Verify Code' }}
+            </button>
+          </div>
+        </div>
+
         <!-- Resend Section -->
         <div class="resend-box">
-          <p class="resend-label font-microgramma">Need a new verification link?</p>
+          <p class="resend-label font-microgramma">Need a new verification code?</p>
           <div class="resend-form">
             <input
               v-model="resendEmail"
@@ -50,11 +73,11 @@
               @click="handleResend"
               :disabled="resending || !resendEmail"
             >
-              {{ resending ? 'Sending...' : 'Resend Link' }}
+              {{ resending ? 'Sending...' : 'Resend Code' }}
             </button>
           </div>
           <p v-if="resendSuccess" class="resend-success-msg font-microgramma">
-            ✓ A new verification link has been sent to your email.
+            ✓ A new 6-digit verification code has been sent to your email.
           </p>
         </div>
 
@@ -82,17 +105,19 @@ const errorMessage = ref('')
 const resendEmail = ref('')
 const resending = ref(false)
 const resendSuccess = ref(false)
+const otpInput = ref('')
+const otpVerifying = ref(false)
 
 onMounted(async () => {
-  const token = route.query.token
+  const token = route.query.token || route.query.otp
   if (!token) {
     loading.value = false
-    errorMessage.value = 'Verification token is missing from the link.'
+    errorMessage.value = 'Please enter your 6-digit verification code below.'
     return
   }
 
   try {
-    const res = await authApi.verifyEmail(token)
+    const res = await authApi.verifyOtp({ otp: token })
     success.value = true
     message.value = res.message || 'Email verified successfully.'
     if (res.access_token && res.user) {
@@ -100,11 +125,34 @@ onMounted(async () => {
     }
   } catch (err) {
     success.value = false
-    errorMessage.value = err.message || 'This verification link is invalid or has expired.'
+    errorMessage.value = err.message || 'This verification code is invalid or has expired.'
   } finally {
     loading.value = false
   }
 })
+
+const handleVerifyOtpManual = async () => {
+  const code = otpInput.value.trim()
+  if (code.length < 6) return
+  otpVerifying.value = true
+  errorMessage.value = ''
+
+  try {
+    const res = await authApi.verifyOtp({
+      email: resendEmail.value.trim() || undefined,
+      otp: code
+    })
+    success.value = true
+    message.value = res.message || 'Email verified successfully.'
+    if (res.access_token && res.user) {
+      authStore.setSession(res.access_token, null, res.user)
+    }
+  } catch (err) {
+    errorMessage.value = err.message || 'Invalid or expired code. Please try again.'
+  } finally {
+    otpVerifying.value = false
+  }
+}
 
 const handleResend = async () => {
   if (!resendEmail.value || resending.value) return
@@ -115,7 +163,7 @@ const handleResend = async () => {
     await authApi.resendVerification(resendEmail.value.trim())
     resendSuccess.value = true
   } catch (err) {
-    errorMessage.value = err.message || 'Failed to resend verification email.'
+    errorMessage.value = err.message || 'Failed to resend verification code.'
   } finally {
     resending.value = false
   }

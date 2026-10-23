@@ -1,6 +1,6 @@
-# ObMind (Obrive) - Hostinger VPS Deployment Guide
+# Brain (Obrive) - Hostinger VPS Deployment Guide
 
-Ye guide step-by-step batati hai ki **ObMind** (`obmind.obrive.com`) ko Hostinger VPS (Ubuntu 22.04 / 24.04) par kaise deploy karna hai.
+Ye guide step-by-step batati hai ki **Brain** (`brain.obrive.com`, formerly `obmind.obrive.com`) ko Hostinger VPS (Ubuntu 22.04 / 24.04) par kaise deploy karna hai.
 
 ---
 
@@ -10,12 +10,12 @@ Pehle `obrive.com` ke DNS Management (Hostinger Panel) me jaakar ek naya **A Rec
 
 | Type | Name / Host | Points to (Value) | TTL |
 | :--- | :--- | :--- | :--- |
-| **A** | `obmind` | `<Your_Hostinger_VPS_Public_IP>` | `300` (ya 1/2 Hour) |
+| **A** | `brain` | `<Your_Hostinger_VPS_Public_IP>` | `300` (ya 1/2 Hour) |
 
 > [!NOTE]
 > DNS propagate hone me 5 se 15 minute lagte hain. Aap apne local terminal se check kar sakte hain:
 > ```bash
-> ping obmind.obrive.com
+> ping brain.obrive.com
 > ```
 > Jab VPS ki IP ping hone lage, tab aage badhein.
 
@@ -59,7 +59,7 @@ Server par `/var/www/obmind/.env` create karein:
 
 ```env
 # Application Base URL (Verification & Reset email links ke liye)
-APP_BASE_URL=https://obmind.obrive.com
+APP_BASE_URL=https://brain.obrive.com
 
 # JWT Authentication
 JWT_SECRET_KEY=generate_a_random_64_char_string_here_with_openssl_rand_hex_32
@@ -73,7 +73,7 @@ SMTP_PORT=587
 SMTP_USER=bea186001@smtp-brevo.com
 SMTP_PASS=your-brevo-smtp-key
 SMTP_FROM_EMAIL=ai@obrive.com
-SMTP_FROM_NAME=Obmind
+SMTP_FROM_NAME=Brain
 
 # Default Platform LLM (Fallback if user does not provide custom BYOK key)
 LLM_API_KEY=your-default-llm-key
@@ -112,7 +112,7 @@ Ye script automatically:
 3. Frontend Vue 3 app build karke `/var/www/obmind/frontend/dist` me compile karegi.
 4. Systemd service (`obmind.service`) setup karegi jo auto-restart ke saath 4 threaded workers chalata hai.
 5. Nginx reverse proxy configure karegi with SSE buffering disabled (simulation streaming ke liye zaroori).
-6. Let's Encrypt SSL certificate issue karegi (`https://obmind.obrive.com`).
+6. Let's Encrypt SSL certificate issue karegi (`https://brain.obrive.com`).
 7. UFW firewall enable karegi.
 
 ---
@@ -143,9 +143,9 @@ sudo systemctl reload nginx
 
 ## 6. How Customer Flow Works
 
-1. Customer visits `https://obmind.obrive.com`.
+1. Customer visits `https://brain.obrive.com`.
 2. Customer clicks **Sign Up** -> Enters Name, Email, Password.
-3. Brevo SMTP sends branded HTML verification link: `https://obmind.obrive.com/verify-email?token=...`.
+3. Brevo SMTP sends branded HTML verification link: `https://brain.obrive.com/verify-email?token=...`.
 4. Customer verifies email -> Verification badge unlocks simulation & ontology builder features.
 5. Customer can optionally open **Profile Modal** -> **BYOK (Bring Your Own Key)** section to enter their own OpenAI / Claude / DeepSeek API key.
 6. The entire agent swarm and OASIS engine runs using their custom key without any server credit consumption!

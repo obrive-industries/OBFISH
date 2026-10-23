@@ -1,5 +1,5 @@
 """
-ObMind User Model
+Brain User Model
 SQLAlchemy ORM model for user accounts.
 Stores credentials, verification state, and profile info.
 """
@@ -8,8 +8,22 @@ import uuid
 import secrets
 from datetime import datetime, timedelta, timezone
 
+import logging
+import base64
+import hashlib
 import bcrypt
 from flask_sqlalchemy import SQLAlchemy
+from cryptography.fernet import Fernet
+
+logger = logging.getLogger("brain.models.user")
+
+
+def _get_fernet(secret: str | None = None) -> Fernet:
+    from ..config import Config
+    key_material = (secret or Config.SECRET_KEY or "brain-secret-key").encode("utf-8")
+    derived = base64.urlsafe_b64encode(hashlib.sha256(key_material).digest())
+    return Fernet(derived)
+
 
 db = SQLAlchemy()
 
@@ -55,10 +69,47 @@ class User(db.Model):
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow)
     last_login_at = db.Column(db.DateTime(timezone=True), nullable=True)
 
-    # BYOK (Bring Your Own Key) Settings
-    custom_llm_api_key = db.Column(db.String(255), nullable=True)
+    # Session and Token invalidation version
+    token_version = db.Column(db.Integer, nullable=False, default=1)
+
+    # BYOK (Bring Your Own Key) Settings - encrypted at rest
+    _custom_llm_api_key = db.Column("custom_llm_api_key", db.Text, nullable=True)
     custom_llm_base_url = db.Column(db.String(255), nullable=True)
     custom_llm_model_name = db.Column(db.String(255), nullable=True)
+
+    @property
+    def custom_llm_api_key(self) -> str | None:
+        """Decrypts and returns custom LLM API key, with transparent plaintext migration fallback."""
+        if not self._custom_llm_api_key:
+            return None
+        val = self._custom_llm_api_key
+        if val.startswith("gAAAAA"):
+            try:
+                f = _get_fernet()
+                return f.decrypt(val.encode("utf-8")).decode("utf-8")
+            except Exception:
+                try:
+                    f_legacy = _get_fernet("obmind-secret-key")
+                    return f_legacy.decrypt(val.encode("utf-8")).decode("utf-8")
+                except Exception as e:
+                    logger.warning(f"Failed to decrypt custom_llm_api_key: {e}")
+                    return val
+        return val
+
+    @custom_llm_api_key.setter
+    def custom_llm_api_key(self, val: str | None):
+        """Encrypts custom LLM API key before persisting."""
+        if not val or not str(val).strip():
+            self._custom_llm_api_key = None
+        else:
+            val_clean = str(val).strip()
+            try:
+                f = _get_fernet()
+                self._custom_llm_api_key = f.encrypt(val_clean.encode("utf-8")).decode("utf-8")
+            except Exception as e:
+                logger.warning(f"Encryption failed, saving as is: {e}")
+                self._custom_llm_api_key = val_clean
+
 
     # ------------------------------------------------------------------ #
     # Password helpers
@@ -74,24 +125,29 @@ class User(db.Model):
         return bcrypt.checkpw(plaintext.encode(), self.password_hash.encode())
 
     # ------------------------------------------------------------------ #
-    # Email verification
+    # Email verification (6-digit numeric OTP)
     # ------------------------------------------------------------------ #
 
+    def generate_verification_otp(self, ttl_minutes: int = 15) -> str:
+        """Create a secure 6-digit numeric OTP for email verification."""
+        otp = f"{secrets.randbelow(900000) + 100000}"
+        self.verification_token = otp
+        self.verification_token_expires_at = _utcnow() + timedelta(minutes=ttl_minutes)
+        return otp
+
     def generate_verification_token(self, ttl_hours: int = 24) -> str:
-        """Create a secure URL-safe token for email verification."""
-        token = secrets.token_urlsafe(48)
-        self.verification_token = token
-        self.verification_token_expires_at = _utcnow() + timedelta(hours=ttl_hours)
-        return token
+        """Create a 6-digit verification OTP for email verification."""
+        # Standard OTP lifespan is 60 minutes
+        return self.generate_verification_otp(ttl_minutes=min(ttl_hours * 60, 60))
 
     def verify_email(self, token: str) -> bool:
         """
-        Validate the email verification token.
+        Validate the email verification OTP/token.
         Returns True and marks the account verified if the token is valid and unexpired.
         """
-        if not self.verification_token:
+        if not self.verification_token or not token:
             return False
-        if self.verification_token != token:
+        if str(self.verification_token).strip() != str(token).strip():
             return False
         exp = _normalize_dt(self.verification_token_expires_at)
         if exp and _utcnow() > exp:

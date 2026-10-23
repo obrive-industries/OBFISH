@@ -12,12 +12,28 @@
                 <span class="report-tag">Prediction Report</span>
                 <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
               </div>
-              <div style="display: flex; gap: 10px; align-items: center;">
-                <a :href="`/api/report/${reportId}/download`" download style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                  📥 Download Report (.md)
-                </a>
+              <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <button @click="handleBackToSimulation" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
+                  ← Back to Simulation
+                </button>
+                <button 
+                  v-if="hasError || (!isComplete && agentLogs.length > 0)"
+                  @click="handleRetry" 
+                  :disabled="isRetrying" 
+                  style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); transition: all 0.2s ease;"
+                  :title="'Resume report generation from the failed section without losing previous work'"
+                >
+                  <span v-if="isRetrying">⏳</span>
+                  <span v-else>▶</span>
+                  {{ isRetrying ? 'Resuming...' : 'Resume Generation' }}
+                </button>
+                <button @click="downloadMarkdownReport" :disabled="isDownloading" style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                  <span v-if="isDownloading">⏳</span>
+                  <span v-else>📥</span>
+                  {{ isDownloading ? 'Downloading...' : 'Download Report (.md)' }}
+                </button>
                 <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                  💬 Step 5: Chat with Report →
+                  💬 Step 4: Chat with Report →
                 </button>
               </div>
             </div>
@@ -337,6 +353,35 @@
                     </div>
                   </template>
 
+                  <!-- Report Error -->
+                  <template v-if="log.action === 'error'">
+                    <div class="error-banner" style="background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.35); border-radius: 8px; padding: 14px; margin-top: 6px;">
+                      <div style="display: flex; align-items: flex-start; gap: 10px;">
+                        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ef4444" stroke-width="2" style="flex-shrink: 0; margin-top: 2px;">
+                          <circle cx="12" cy="12" r="10"></circle>
+                          <line x1="12" y1="8" x2="12" y2="12"></line>
+                          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <div style="flex: 1;">
+                          <div style="font-weight: 600; color: #ef4444; font-size: 13px; margin-bottom: 4px;">Report Generation Failed</div>
+                          <div style="color: #cbd5e1; font-size: 12px; line-height: 1.5; word-break: break-word;">
+                            {{ log.details?.error || log.details?.message || errorMessage || 'An unexpected error occurred during report generation.' }}
+                          </div>
+                        </div>
+                      </div>
+                      <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
+                        <button @click="handleBackToSimulation" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 12px; font-weight: 600;">
+                          ← Back to Simulation
+                        </button>
+                        <button @click="handleRetry" :disabled="isRetrying" style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);">
+                          <span v-if="isRetrying">⏳</span>
+                          <span v-else>▶</span>
+                          {{ isRetrying ? 'Resuming...' : 'Resume Generation' }}
+                        </button>
+                      </div>
+                    </div>
+                  </template>
+
                   <!-- Report Complete -->
                   <template v-if="log.action === 'report_complete'">
                     <div class="complete-banner" style="display: flex; flex-direction: column; gap: 8px; align-items: center; padding: 12px;">
@@ -347,12 +392,15 @@
                         </svg>
                         <span>Report Generation Complete</span>
                       </div>
-                      <div style="display: flex; gap: 8px; margin-top: 4px;">
-                        <a :href="`/api/report/${reportId}/download`" download style="background: #2563eb; color: #fff; padding: 5px 10px; border-radius: 4px; text-decoration: none; font-size: 11px; font-weight: bold;">
-                          📥 Download (.md)
-                        </a>
+                      <div style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; justify-content: center;">
+                        <button @click="handleBackToSimulation" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 5px 10px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 11px; font-weight: bold;">
+                          ← Back to Simulation
+                        </button>
+                        <button @click="downloadMarkdownReport" :disabled="isDownloading" style="background: #2563eb; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold;">
+                          {{ isDownloading ? '⏳ Downloading...' : '📥 Download (.md)' }}
+                        </button>
                         <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold;">
-                          💬 Go to Step 5 →
+                          💬 Go to Step 4 →
                         </button>
                       </div>
                     </div>
@@ -413,7 +461,7 @@
 import { ref, computed, watch, onMounted, onUnmounted, nextTick, h, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
-import { getAgentLog, getConsoleLog } from '../api/report'
+import { getAgentLog, getConsoleLog, downloadReport, generateReport } from '../api/report'
 
 const router = useRouter()
 const { t } = useI18n()
@@ -426,10 +474,84 @@ const props = defineProps({
 
 const emit = defineEmits(['add-log', 'update-status'])
 
+// Error and Retry State
+const hasError = ref(false)
+const errorMessage = ref('')
+const isRetrying = ref(false)
+
+const effectiveSimulationId = computed(() => {
+  if (props.simulationId) return props.simulationId
+  const startLog = agentLogs.value.find(l => l.action === 'report_start')
+  return startLog?.details?.simulation_id || null
+})
+
 // Navigation
 const goToInteraction = () => {
   if (props.reportId) {
     router.push({ name: 'Interaction', params: { reportId: props.reportId } })
+  }
+}
+
+const handleBackToSimulation = () => {
+  const simId = props.simulationId || effectiveSimulationId.value
+  if (simId) {
+    router.push({ name: 'SimulationRun', params: { simulationId: simId } })
+  } else {
+    router.push('/console')
+  }
+}
+
+const handleRetry = async () => {
+  const simId = props.simulationId || effectiveSimulationId.value
+  if (!simId) {
+    alert('Simulation ID not found. Returning to simulation.')
+    handleBackToSimulation()
+    return
+  }
+  try {
+    isRetrying.value = true
+    const res = await generateReport({
+      simulation_id: simId,
+      report_id: props.reportId,
+      force_regenerate: true
+    })
+    if (res.success && res.data) {
+      hasError.value = false
+      errorMessage.value = ''
+      stopPolling()
+      startPolling()
+    } else {
+      alert(res.error || 'Failed to resume report generation')
+    }
+  } catch (err) {
+    alert(err.message || 'Error resuming report generation')
+  } finally {
+    isRetrying.value = false
+  }
+}
+
+// Download Markdown Report via authenticated blob request (ENG-02)
+const isDownloading = ref(false)
+
+const downloadMarkdownReport = async () => {
+  if (!props.reportId) return
+  try {
+    isDownloading.value = true
+    const blob = await downloadReport(props.reportId)
+    const blobData = blob instanceof Blob ? blob : new Blob([blob], { type: 'text/markdown;charset=utf-8' })
+    const url = window.URL.createObjectURL(blobData)
+    const link = document.createElement('a')
+    link.href = url
+    link.setAttribute('download', `${props.reportId}.md`)
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  } catch (err) {
+    console.error('Download report failed:', err)
+    alert(err.message || 'Failed to download report markdown')
+  } finally {
+    isDownloading.value = false
   }
 }
 
@@ -1707,12 +1829,14 @@ const QuickSearchDisplay = {
 
 // Computed
 const statusClass = computed(() => {
+  if (hasError.value) return 'error'
   if (isComplete.value) return 'completed'
   if (agentLogs.value.length > 0) return 'processing'
   return 'pending'
 })
 
 const statusText = computed(() => {
+  if (hasError.value) return 'Error'
   if (isComplete.value) return 'Completed'
   if (agentLogs.value.length > 0) return 'Generating...'
   return 'Waiting'
@@ -2005,7 +2129,8 @@ const getActionLabel = (action) => {
     'tool_call': 'Tool Call',
     'tool_result': 'Tool Result',
     'llm_response': 'LLM Response',
-    'report_complete': 'Complete'
+    'report_complete': 'Complete',
+    'error': 'Generation Error'
   }
   return labels[action] || action
 }
@@ -2054,10 +2179,19 @@ const fetchAgentLog = async () => {
           
           if (log.action === 'report_complete') {
             isComplete.value = true
+            hasError.value = false
             currentSectionIndex.value = null  // 确保清除 loading 状态
             emit('update-status', 'completed')
             stopPolling()
             // 滚动逻辑统一在循环结束后的 nextTick 中处理
+          }
+
+          if (log.action === 'error') {
+            hasError.value = true
+            errorMessage.value = log.details?.error || log.details?.message || 'Report generation failed'
+            currentSectionIndex.value = null
+            emit('update-status', 'error')
+            stopPolling()
           }
           
           if (log.action === 'report_start') {
@@ -2200,6 +2334,9 @@ watch(() => props.reportId, (newId) => {
     expandedLogs.value = new Set()
     collapsedSections.value = new Set()
     isComplete.value = false
+    hasError.value = false
+    errorMessage.value = ''
+    isRetrying.value = false
     startTime.value = null
     
     startPolling()

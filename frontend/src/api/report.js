@@ -49,3 +49,13 @@ export const getReport = (reportId) => {
 export const chatWithReport = (data) => {
   return service.post('/api/report/chat', data)
 }
+
+/**
+ * 下载报告 Markdown 文件
+ * @param {string} reportId
+ */
+export const downloadReport = (reportId) => {
+  return service.get(`/api/report/${reportId}/download`, {
+    responseType: 'blob'
+  })
+}

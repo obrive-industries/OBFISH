@@ -19,7 +19,7 @@ from ..utils.zep import (
     get_zep_client,
 )
 
-logger = get_logger('obmind.zep_graph_memory_updater')
+logger = get_logger('brain.zep_graph_memory_updater')
 
 
 @dataclass
@@ -443,7 +443,7 @@ class ZepGraphMemoryUpdater:
         for activity in activities:
             text = activity.to_episode_text()
             if len(text) > self.MAX_EPISODE_CHARS:
-                marker = "... [truncated by ObMind]"
+                marker = "... [truncated by Brain]"
                 text = text[: self.MAX_EPISODE_CHARS - len(marker)] + marker
             projected_length = current_length + (1 if current_lines else 0) + len(text)
             if current_lines and projected_length > self.MAX_EPISODE_CHARS:
@@ -486,9 +486,9 @@ class ZepGraphMemoryUpdater:
                     type="text",
                     data=combined_text,
                     created_at=self._to_rfc3339(payload_activities[-1].timestamp),
-                    source_description="ObMind simulation activity batch",
+                    source_description="Brain simulation activity batch",
                     metadata={
-                        "source": "obmind_simulation",
+                        "source": "brain_simulation",
                         "simulation_id": self.simulation_id,
                         "platform": platform,
                         "activity_count": len(payload_activities),

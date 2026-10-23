@@ -28,7 +28,7 @@ from ..utils.zep import (
 from .zep_graph_memory_updater import ZepGraphMemoryManager
 from .simulation_ipc import SimulationIPCClient, CommandType, IPCResponse
 
-logger = get_logger('obmind.simulation_runner')
+logger = get_logger('brain.simulation_runner')
 
 # 标记是否已注册清理函数
 _cleanup_registered = False
@@ -166,17 +166,29 @@ class SimulationRunState:
         self.updated_at = datetime.now().isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
+        effective_current_round = self.current_round
+        if self.runner_status == RunnerStatus.COMPLETED and self.total_rounds > 0:
+            effective_current_round = max(self.current_round, self.total_rounds)
+            
+        twitter_round = self.twitter_current_round
+        if (self.twitter_completed or self.runner_status == RunnerStatus.COMPLETED) and self.total_rounds > 0:
+            twitter_round = max(self.twitter_current_round, effective_current_round)
+            
+        reddit_round = self.reddit_current_round
+        if (self.reddit_completed or self.runner_status == RunnerStatus.COMPLETED) and self.total_rounds > 0:
+            reddit_round = max(self.reddit_current_round, effective_current_round)
+
         return {
             "simulation_id": self.simulation_id,
             "runner_status": self.runner_status.value,
-            "current_round": self.current_round,
+            "current_round": effective_current_round,
             "total_rounds": self.total_rounds,
             "simulated_hours": self.simulated_hours,
             "total_simulation_hours": self.total_simulation_hours,
-            "progress_percent": round(self.current_round / max(self.total_rounds, 1) * 100, 1),
+            "progress_percent": round(effective_current_round / max(self.total_rounds, 1) * 100, 1),
             # 各平台独立轮次和时间
-            "twitter_current_round": self.twitter_current_round,
-            "reddit_current_round": self.reddit_current_round,
+            "twitter_current_round": twitter_round,
+            "reddit_current_round": reddit_round,
             "twitter_simulated_hours": self.twitter_simulated_hours,
             "reddit_simulated_hours": self.reddit_simulated_hours,
             "twitter_running": self.twitter_running,
@@ -348,6 +360,52 @@ class SimulationRunner:
                     success=a.get("success", True),
                 ))
             
+            active_statuses = {
+                RunnerStatus.STARTING,
+                RunnerStatus.RUNNING,
+                RunnerStatus.PAUSED,
+                RunnerStatus.STOPPING,
+            }
+            if state.runner_status in active_statuses and simulation_id not in cls._processes:
+                is_alive = False
+                if state.process_pid:
+                    try:
+                        os.kill(state.process_pid, 0)
+                        is_alive = True
+                    except (OSError, ProcessLookupError):
+                        is_alive = False
+                if not is_alive:
+                    log_file = os.path.join(cls.RUN_STATE_DIR, simulation_id, "simulation.log")
+                    has_completed_marker = False
+                    if os.path.exists(log_file):
+                        try:
+                            with open(log_file, 'r', encoding='utf-8', errors='ignore') as lf:
+                                content = lf.read()
+                                if "全部完成!" in content or "模拟循环完成!" in content:
+                                    has_completed_marker = True
+                        except Exception:
+                            pass
+                    
+                    if has_completed_marker or (state.total_rounds > 0 and state.current_round >= state.total_rounds):
+                        state.runner_status = RunnerStatus.COMPLETED
+                        state.twitter_running = False
+                        state.reddit_running = False
+                        state.twitter_completed = True
+                        state.reddit_completed = True
+                        if state.total_rounds:
+                            state.current_round = state.total_rounds
+                            if state.twitter_current_round < state.total_rounds:
+                                state.twitter_current_round = state.total_rounds
+                            if state.reddit_current_round < state.total_rounds:
+                                state.reddit_current_round = state.total_rounds
+                    else:
+                        state.runner_status = RunnerStatus.STOPPED
+                        state.twitter_running = False
+                        state.reddit_running = False
+                    
+                    cls._save_run_state(state)
+                    cls._sync_simulation_status(simulation_id, state.runner_status)
+            
             return state
         except Exception as e:
             logger.error(f"加载运行状态失败: {str(e)}")
@@ -359,11 +417,13 @@ class SimulationRunner:
         sim_dir = os.path.join(cls.RUN_STATE_DIR, state.simulation_id)
         os.makedirs(sim_dir, exist_ok=True)
         state_file = os.path.join(sim_dir, "run_state.json")
+        temp_file = state_file + ".tmp"
         
         data = state.to_detail_dict()
         
-        with open(state_file, 'w', encoding='utf-8') as f:
+        with open(temp_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, ensure_ascii=False, indent=2)
+        os.replace(temp_file, state_file)
         
         cls._run_states[state.simulation_id] = state
     
@@ -753,15 +813,28 @@ class SimulationRunner:
                         )
                         try:
                             ZepGraphMemoryManager.stop_updater(simulation_id)
-                            cls._graph_memory_enabled.pop(simulation_id, None)
                             logger.info(
                                 "已停止图谱记忆更新: simulation_id=%s",
                                 simulation_id,
                             )
                         except Exception as error:
-                            logger.error(f"停止图谱记忆更新器失败: {error}")
-                            desired_status = RunnerStatus.FAILED
-                            error_message = f"Zep图谱写入未完整完成: {error}"
+                            logger.warning(f"Zep图谱记忆更新完成时有部分异常: {error}")
+                            try:
+                                ZepGraphMemoryManager.discard_inactive_updater(simulation_id)
+                            except Exception:
+                                pass
+                        finally:
+                            cls._graph_memory_enabled.pop(simulation_id, None)
+
+                    if desired_status == RunnerStatus.COMPLETED:
+                        state.twitter_completed = True
+                        state.reddit_completed = True
+                        if state.total_rounds:
+                            state.current_round = state.total_rounds
+                            if state.twitter_current_round < state.total_rounds:
+                                state.twitter_current_round = state.total_rounds
+                            if state.reddit_current_round < state.total_rounds:
+                                state.reddit_current_round = state.total_rounds
 
                     state.runner_status = desired_status
                     state.error = error_message

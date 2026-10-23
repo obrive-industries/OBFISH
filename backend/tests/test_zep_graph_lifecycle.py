@@ -4,11 +4,18 @@ import threading
 from flask import Flask
 from types import SimpleNamespace
 
+import pytest
 from app.api import graph as graph_api
 from app.api import simulation as simulation_api
 from app.models.project import Project, ProjectStatus
 from app.services.simulation_manager import SimulationStatus
 from app.models.task import TaskStatus
+from app.utils import auth_middleware
+
+
+@pytest.fixture(autouse=True)
+def mock_auth_permissions(monkeypatch):
+    monkeypatch.setattr(auth_middleware, "check_simulation_permission", lambda *args, **kwargs: (True, None))
 
 
 def _project(status, graph_id="graph-1"):
@@ -191,7 +198,7 @@ def test_stale_build_resumes_a_persisted_processing_batch(monkeypatch):
         def get_task(self, _task_id):
             return None
 
-        def create_task(self, _description):
+        def create_task(self, _description, *args, **kwargs):
             return "task-resumed"
 
     class Builder:

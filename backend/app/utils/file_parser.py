@@ -142,20 +142,34 @@ class FileParser:
         try:
             import docx
         except ImportError:
-            raise ImportError("需要安装python-docx: uv pip install python-docx")
+            raise ImportError("需要安装python-docx: pip install python-docx")
         
-        doc = docx.Document(file_path)
-        parts = []
-        for p in doc.paragraphs:
-            text = p.text.strip()
-            if text:
-                parts.append(text)
-        for table in doc.tables:
-            for row in table.rows:
-                row_text = " | ".join(cell.text.strip() for cell in row.cells if cell.text.strip())
-                if row_text:
-                    parts.append(row_text)
-        return "\n\n".join(parts)
+        try:
+            doc = docx.Document(file_path)
+            parts = []
+            for p in doc.paragraphs:
+                text = p.text.strip()
+                if text:
+                    parts.append(text)
+            for table in doc.tables:
+                for row in table.rows:
+                    seen_tcs = set()
+                    row_cells = []
+                    for cell in row.cells:
+                        tc_id = id(cell._tc)
+                        if tc_id in seen_tcs:
+                            continue
+                        seen_tcs.add(tc_id)
+                        cell_text = cell.text.strip()
+                        if cell_text:
+                            row_cells.append(cell_text)
+                    if row_cells:
+                        parts.append(" | ".join(row_cells))
+            return "\n\n".join(parts)
+        except Exception as e:
+            if isinstance(e, ImportError):
+                raise
+            raise ValueError(f"DOCX 文件解析失败 ({file_path}): {str(e)}")
     
     @classmethod
     def extract_from_multiple(cls, file_paths: List[str]) -> str:

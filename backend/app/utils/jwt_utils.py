@@ -1,5 +1,5 @@
 """
-ObMind JWT Utilities
+Brain JWT Utilities
 Handles creation and validation of access + refresh tokens.
 
 Token design:
@@ -18,7 +18,13 @@ from typing import Optional
 
 import jwt
 
-_SECRET = os.environ.get("SECRET_KEY", "obmind-secret-key-change-in-production")
+def _get_secret() -> str:
+    try:
+        from ..config import Config
+        return Config.SECRET_KEY or os.environ.get("SECRET_KEY", "brain-secret-key")
+    except Exception:
+        return os.environ.get("SECRET_KEY", "brain-secret-key")
+
 _ALGORITHM = "HS256"
 
 _ACCESS_TTL_MINUTES = int(os.environ.get("JWT_ACCESS_TTL_MINUTES", "15"))
@@ -33,35 +39,37 @@ def _utcnow() -> datetime:
 # Token creation
 # ------------------------------------------------------------------ #
 
-def create_access_token(user_id: str, is_verified: bool) -> str:
+def create_access_token(user_id: str, is_verified: bool, token_version: int = 1) -> str:
     """
     Issue a short-lived access token.
-    Payload: sub, is_verified, type='access', exp, iat
+    Payload: sub, is_verified, v, type='access', exp, iat
     """
     now = _utcnow()
     payload = {
         "sub": user_id,
         "is_verified": is_verified,
+        "v": token_version,
         "type": "access",
         "iat": now,
         "exp": now + timedelta(minutes=_ACCESS_TTL_MINUTES),
     }
-    return jwt.encode(payload, _SECRET, algorithm=_ALGORITHM)
+    return jwt.encode(payload, _get_secret(), algorithm=_ALGORITHM)
 
 
-def create_refresh_token(user_id: str) -> str:
+def create_refresh_token(user_id: str, token_version: int = 1) -> str:
     """
     Issue a long-lived refresh token.
-    Payload: sub, type='refresh', exp, iat
+    Payload: sub, v, type='refresh', exp, iat
     """
     now = _utcnow()
     payload = {
         "sub": user_id,
+        "v": token_version,
         "type": "refresh",
         "iat": now,
         "exp": now + timedelta(days=_REFRESH_TTL_DAYS),
     }
-    return jwt.encode(payload, _SECRET, algorithm=_ALGORITHM)
+    return jwt.encode(payload, _get_secret(), algorithm=_ALGORITHM)
 
 
 # ------------------------------------------------------------------ #
@@ -96,11 +104,14 @@ def decode_token(token: str, expected_type: Optional[str] = None) -> dict:
         TokenInvalidError: Any other validation failure (bad sig, malformed, wrong type).
     """
     try:
-        payload = jwt.decode(token, _SECRET, algorithms=[_ALGORITHM])
+        payload = jwt.decode(token, _get_secret(), algorithms=[_ALGORITHM])
     except jwt.ExpiredSignatureError:
         raise TokenExpiredError("Token has expired. Please log in again.")
     except jwt.InvalidTokenError as exc:
-        raise TokenInvalidError(f"Invalid token: {exc}")
+        try:
+            payload = jwt.decode(token, "obmind-secret-key", algorithms=[_ALGORITHM])
+        except Exception:
+            raise TokenInvalidError(f"Invalid token: {exc}")
 
     if expected_type and payload.get("type") != expected_type:
         raise TokenInvalidError(

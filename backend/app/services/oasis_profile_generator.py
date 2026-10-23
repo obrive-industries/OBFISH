@@ -28,7 +28,7 @@ from ..utils.zep import (
 )
 from .zep_entity_reader import EntityNode, ZepEntityReader
 
-logger = get_logger('obmind.oasis_profile')
+logger = get_logger('brain.oasis_profile')
 
 
 def _coerce_to_str(value: Any) -> str:

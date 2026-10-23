@@ -1,7 +1,7 @@
 <template>
   <div class="landing-page-root">
     <!-- Header -->
-    <LandingHeader />
+    <LandingHeader @open-auth="openAuth" />
 
     <!-- Main Content -->
     <main class="landing-main">
@@ -20,6 +20,8 @@
 
 <script setup>
 import { onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import authStore from '../store/auth'
 import LandingHeader from '../components/landing/LandingHeader.vue'
 import LandingHero from '../components/landing/LandingHero.vue'
 import LandingUncertainty from '../components/landing/LandingUncertainty.vue'
@@ -29,8 +31,19 @@ import LandingAbout from '../components/landing/LandingAbout.vue'
 import LandingFAQ from '../components/landing/LandingFAQ.vue'
 import LandingFooter from '../components/landing/LandingFooter.vue'
 
+const route = useRoute()
+
+const openAuth = () => {
+  authStore.openAuthModal('login')
+}
+
 onMounted(() => {
-  window.scrollTo(0, 0)
+  if (route.query.auth === 'login') {
+    authStore.openAuthModal('login', 'Please sign in to access protected simulation views.')
+  }
+  if (!route.hash) {
+    window.scrollTo(0, 0)
+  }
 })
 </script>
 

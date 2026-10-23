@@ -1,5 +1,5 @@
 """
-ObMind Backend - Flask Application Factory
+Brain Backend - Flask Application Factory
 """
 
 import os
@@ -31,9 +31,20 @@ def create_app(config_class=Config):
     db.init_app(app)
     with app.app_context():
         db.create_all()  # Create tables if they don't exist yet
+        try:
+            from sqlalchemy import inspect, text
+            inspector = inspect(db.engine)
+            if "users" in inspector.get_table_names():
+                cols = [c["name"] for c in inspector.get_columns("users")]
+                if "token_version" not in cols:
+                    db.session.execute(text("ALTER TABLE users ADD COLUMN token_version INTEGER DEFAULT 1"))
+                    db.session.commit()
+        except Exception:
+            pass
+
 
     # 设置日志
-    logger = setup_logger('obmind')
+    logger = setup_logger('brain')
     
     # 只在 reloader 子进程中打印启动信息（避免 debug 模式下打印两次）
     is_reloader_process = os.environ.get('WERKZEUG_RUN_MAIN') == 'true'
@@ -42,7 +53,7 @@ def create_app(config_class=Config):
     
     if should_log_startup:
         logger.info("=" * 50)
-        logger.info('ObMind Backend starting...')
+        logger.info('Brain Backend starting...')
         logger.info("=" * 50)
     
     # 启用CORS
@@ -57,14 +68,14 @@ def create_app(config_class=Config):
     # 请求日志中间件
     @app.before_request
     def log_request():
-        logger = get_logger('obmind.request')
+        logger = get_logger('brain.request')
         logger.debug(f"请求: {request.method} {request.path}")
         if request.content_type and 'json' in request.content_type:
             logger.debug(f"请求体: {request.get_json(silent=True)}")
     
     @app.after_request
     def log_response(response):
-        logger = get_logger('obmind.request')
+        logger = get_logger('brain.request')
         logger.debug(f"响应: {response.status_code}")
         return response
     
@@ -79,10 +90,10 @@ def create_app(config_class=Config):
     # 健康检查
     @app.route('/health')
     def health():
-        return {'status': 'ok', 'service': 'ObMind Backend'}
+        return {'status': 'ok', 'service': 'Brain Backend'}
     
     if should_log_startup:
-        logger.info('ObMind Backend started')
+        logger.info('Brain Backend started')
     
     return app
 

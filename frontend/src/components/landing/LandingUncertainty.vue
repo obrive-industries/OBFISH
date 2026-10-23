@@ -18,11 +18,11 @@
         </p>
 
         <p class="section-highlight">
-          <strong>Obmind</strong> is designed to help you explore these complexities in a controlled virtual environment.
+          <strong>Brain</strong> is designed to help you explore these complexities in a controlled virtual environment.
         </p>
       </div>
 
-      <!-- Comparison Showcase: Traditional vs OBMIND Multi-Agent Swarm -->
+      <!-- Comparison Showcase: Traditional vs BRAIN Multi-Agent Swarm -->
       <div class="comparison-grid">
         <!-- Card 1: Traditional Planning -->
         <div class="comparison-card traditional">
@@ -50,9 +50,9 @@
           </ul>
         </div>
 
-        <!-- Card 2: OBMIND Multi-Agent Simulation -->
-        <div class="comparison-card obmind">
-          <div class="card-badge success font-microgramma">OBMIND SIMULATION</div>
+        <!-- Card 2: BRAIN Multi-Agent Simulation -->
+        <div class="comparison-card brain obmind">
+          <div class="card-badge success font-microgramma">BRAIN SIMULATION</div>
           <h3 class="card-title font-microgramma">Virtual Emergent Complexity</h3>
           <p class="card-desc">
             Autonomous AI digital twin agents simulate hundreds of interactions, surfacing hidden risks, consensus tipping points, and resilient decision paths.
@@ -213,6 +213,7 @@ const activeScenario = ref('base')
   box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
 }
 
+.comparison-card.brain,
 .comparison-card.obmind {
   background: linear-gradient(145deg, #ffffff 0%, #caede5 100%);
   border: 2px solid rgba(7, 65, 57, 0.28);

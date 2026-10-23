@@ -26,7 +26,7 @@ from ..utils.zep import (
     normalize_zep_search_query,
 )
 
-logger = get_logger('obmind.zep_tools')
+logger = get_logger('brain.zep_tools')
 
 
 @dataclass

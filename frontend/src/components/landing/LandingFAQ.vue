@@ -13,7 +13,7 @@
         </h2>
 
         <p class="section-sub">
-          Everything you need to know about predictive scenario modeling and OBMIND intelligence.
+          Everything you need to know about predictive scenario modeling and BRAIN intelligence.
         </p>
       </div>
 
@@ -54,28 +54,28 @@ const toggle = (idx) => {
 
 const faqs = [
   {
-    question: 'What is OBMIND?',
-    answer: 'OBMIND is envisioned as an AI-powered simulation and predictive intelligence platform for exploring scenarios, stakeholder responses, and possible outcomes.'
+    question: 'What is BRAIN?',
+    answer: 'BRAIN is an advanced AI multi-agent simulation and predictive intelligence platform developed by Obrive Industries. It models complex multi-stakeholder dynamics, market forces, and emergent real-world behaviors to evaluate possible outcomes before critical decisions are executed.'
   },
   {
-    question: 'How does OBMIND generate predictions?',
-    answer: 'The proposed workflow uses source information, scenario modelling, simulated AI agents, and structured analysis to explore possible outcomes. Actual methodology and supported features will depend on the implemented product.'
+    question: 'How does BRAIN generate predictions?',
+    answer: 'BRAIN uses a 5-stage predictive workflow: knowledge graph ingestion, ontological graph synthesis, autonomous multi-agent simulation swarms, dialectical debate rounds, and structured intelligence reporting. Dynamic digital twin agents interact in a virtual sandbox to surface blind spots, consensus shifts, and second-order effects.'
   },
   {
-    question: 'Can OBMIND predict the future accurately?',
-    answer: "No AI simulation can guarantee future outcomes. OBMIND's outputs should be treated as model-generated scenarios and validated against reliable evidence."
+    question: 'Can BRAIN predict the future with complete accuracy?',
+    answer: 'No AI system can guarantee future outcomes with absolute certainty. BRAIN generates rigorous, high-fidelity probabilistic scenario forecasts and risk matrices that challenge assumptions and provide strategic foresight for sound empirical validation.'
   },
   {
-    question: 'Who can use OBMIND?',
-    answer: 'The intended audience includes businesses, founders, researchers, analysts, product teams, and professionals who need to explore complex decisions.'
+    question: 'Who is BRAIN designed for?',
+    answer: 'BRAIN empowers enterprise leadership, venture investors, strategic planners, policy makers, product innovators, and researchers who need to stress-test high-stakes decisions and simulate complex human dynamics in a zero-risk virtual environment.'
   },
   {
-    question: 'Can I upload my own documents?',
-    answer: 'Document uploads can be offered if supported by the implemented platform. Supported formats, file limits, and data-handling policies should be documented before launch.'
+    question: 'Can I upload custom documents and proprietary data?',
+    answer: 'Yes. BRAIN natively accepts dossiers, PDF whitepapers, market research, policy drafts, and internal memos. The ontology engine ingests your source material to configure simulated stakeholder agents with authentic roles, domain expertise, and realistic constraints.'
   },
   {
-    question: 'Is OBMIND a replacement for human decision-making?',
-    answer: 'No. It is intended to support analysis and scenario exploration while leaving final decisions to people.'
+    question: 'Is BRAIN a replacement for human strategic decision-making?',
+    answer: 'No. BRAIN is purpose-built to augment human judgment, not replace it. By stress-testing assumptions and visualizing hidden consequence paths, it gives leaders the clarity and confidence required to make decisive moves.'
   }
 ]
 </script>

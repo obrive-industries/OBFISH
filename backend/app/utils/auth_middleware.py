@@ -1,5 +1,5 @@
 """
-ObMind Auth Middleware
+Brain Auth Middleware
 Flask decorator to protect routes with JWT authentication.
 
 Usage:
@@ -25,7 +25,7 @@ from flask import request, jsonify, g
 
 from .jwt_utils import decode_token, TokenExpiredError, TokenInvalidError
 
-logger = logging.getLogger("obmind.auth_middleware")
+logger = logging.getLogger("brain.auth_middleware")
 
 
 def _extract_bearer_token() -> str | None:
@@ -141,23 +141,42 @@ def get_user_llm_client(user=None):
     from ..config import Config
 
     target_user = user or get_current_user()
-    if target_user and target_user.custom_llm_api_key:
-        logger.info(f"Using BYOK credentials for user: {target_user.email} (model={target_user.custom_llm_model_name or Config.LLM_MODEL_NAME})")
+    if target_user and isinstance(getattr(target_user, "custom_llm_api_key", None), str) and target_user.custom_llm_api_key:
+        raw_base = getattr(target_user, "custom_llm_base_url", None)
+        base_url = raw_base if isinstance(raw_base, str) and raw_base else Config.LLM_BASE_URL
+        raw_model = getattr(target_user, "custom_llm_model_name", None)
+        model_name = raw_model if isinstance(raw_model, str) and raw_model else None
+        from .llm_client import resolve_default_model
+        resolved_model = resolve_default_model(base_url, model_name)
+        logger.info(f"Using BYOK credentials for user: {getattr(target_user, 'email', '')} (model={resolved_model})")
         return LLMClient(
             api_key=target_user.custom_llm_api_key,
-            base_url=target_user.custom_llm_base_url or Config.LLM_BASE_URL,
-            model=target_user.custom_llm_model_name or Config.LLM_MODEL_NAME
+            base_url=base_url,
+            model=resolved_model
         )
     return LLMClient()
 
 
 def check_simulation_permission(user=None) -> tuple[bool, str | None]:
     """
-    Enforces email verification for simulation/ontology workflows.
+    Enforces email verification and BYOK (Bring Your Own Key) LLM credentials for simulation/ontology workflows.
     Returns (True, None) if permitted, or (False, error_msg) if blocked.
     """
     target_user = user or get_current_user()
-    if target_user and not target_user.is_verified:
+    if not target_user:
+        return False, "Authentication required. Please sign in to run simulations."
+    if not target_user.is_verified:
         return False, "Please verify your email address before running simulations."
+    require_byok = True
+    try:
+        from flask import current_app
+        if current_app:
+            require_byok = current_app.config.get("REQUIRE_BYOK", True)
+    except Exception:
+        from ..config import Config
+        require_byok = getattr(Config, 'REQUIRE_BYOK', True)
+
+    if require_byok and not target_user.custom_llm_api_key:
+        return False, "LLM API Key required. Please configure your custom API key (BYOK) in your profile settings before starting a simulation."
     return True, None
 

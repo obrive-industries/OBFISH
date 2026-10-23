@@ -88,6 +88,12 @@ def _contains_additional_json_container(content: str) -> bool:
     return False
 
 
+def resolve_default_model(base_url: Optional[str], model: Optional[str]) -> str:
+    """Resolve sensible default model based on provider base_url."""
+    from .byok_detector import resolve_model_for_base_url
+    return resolve_model_for_base_url(base_url, model)
+
+
 class LLMClient:
     """LLM客户端"""
     
@@ -99,7 +105,7 @@ class LLMClient:
     ):
         self.api_key = api_key or Config.LLM_API_KEY
         self.base_url = base_url or Config.LLM_BASE_URL
-        self.model = model or Config.LLM_MODEL_NAME
+        self.model = resolve_default_model(self.base_url, model)
         
         if not self.api_key:
             raise ValueError("LLM_API_KEY 未配置")
@@ -107,9 +113,16 @@ class LLMClient:
         self.api_keys = [k.strip() for k in self.api_key.split(",") if k.strip()]
         if not self.api_keys:
             raise ValueError("LLM_API_KEY 未配置有效密钥")
+
+        default_headers = {}
+        if self.base_url and "openrouter.ai" in self.base_url.lower():
+            default_headers = {
+                "HTTP-Referer": "https://brain.obrive.com",
+                "X-Title": "Brain"
+            }
             
         self.clients = [
-            OpenAI(api_key=k, base_url=self.base_url)
+            OpenAI(api_key=k, base_url=self.base_url, default_headers=default_headers or None)
             for k in self.api_keys
         ]
         self._key_index = 0
@@ -123,17 +136,34 @@ class LLMClient:
         max_tokens: Optional[int],
         response_format: Optional[Dict[str, Any]],
     ) -> Any:
+        base_url = getattr(self, "base_url", None)
+        fallback_model = resolve_default_model(base_url, None)
         clients = getattr(self, "clients", [self.client])
         num_clients = len(clients)
         if num_clients <= 1:
-            return create_chat_completion(
-                self.client,
-                model=self.model,
-                messages=messages,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                response_format=response_format,
-            )
+            try:
+                return create_chat_completion(
+                    self.client,
+                    model=self.model,
+                    messages=messages,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    response_format=response_format,
+                )
+            except Exception as e:
+                err_str = str(e).lower()
+                if ("model_not_found" in err_str or "does not exist" in err_str or "404" in err_str) and self.model != fallback_model:
+                    logger.warning(f"Model '{self.model}' not found on provider ({base_url}). Auto-falling back to baseline model '{fallback_model}'.")
+                    self.model = fallback_model
+                    return create_chat_completion(
+                        self.client,
+                        model=self.model,
+                        messages=messages,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        response_format=response_format,
+                    )
+                raise
 
         max_attempts = num_clients * 2
         last_error = None

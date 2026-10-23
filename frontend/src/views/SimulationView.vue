@@ -3,9 +3,9 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to ObMind Console">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
-          <span>OBMIND</span>
+        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to Brain Console">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-header-icon" />
+          <span>BRAIN</span>
         </div>
       </div>
       
@@ -25,7 +25,7 @@
 
       <div class="header-right">
         <div class="workflow-step">
-          <span class="step-num">Step 2/5</span>
+          <span class="step-num">Step 2/4</span>
           <span class="step-name">{{ $tm('main.stepNames')[1] }}</span>
         </div>
         <div class="step-divider"></div>
@@ -294,10 +294,7 @@ const refreshGraph = () => {
 onMounted(async () => {
   addLog(t('log.simViewInit'))
   
-  // 检查并关闭正在运行的模拟（用户从 Step 3 返回时）
-  await checkAndStopRunningSimulation()
-  
-  // 加载模拟数据
+  // 加载模拟数据并保持已有记忆与运行状态，不强制中止正在运行的模拟
   loadSimulationData()
 })
 </script>

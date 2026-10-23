@@ -210,10 +210,19 @@ const selectedOntologyItem = ref(null)
 const logContent = ref(null)
 const creatingSimulation = ref(false)
 
-// 进入环境搭建 - 创建 simulation 并跳转
+// 进入环境搭建 - 创建或复用 simulation 并跳转
 const handleEnterEnvSetup = async () => {
   if (!props.projectData?.project_id || !props.projectData?.graph_id) {
     console.error('Missing project or graph information')
+    return
+  }
+
+  // 如果项目已经关联了 simulation_id，直接跳转复用，保持记忆与状态
+  if (props.projectData?.simulation_id) {
+    router.push({
+      name: 'Simulation',
+      params: { simulationId: props.projectData.simulation_id }
+    })
     return
   }
   

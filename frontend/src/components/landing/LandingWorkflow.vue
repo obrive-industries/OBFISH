@@ -9,7 +9,7 @@
         </div>
 
         <h2 class="section-title font-microgramma">
-          How OBMIND Works
+          How BRAIN Works
         </h2>
 
         <p class="section-sub">

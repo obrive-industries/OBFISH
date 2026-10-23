@@ -19,7 +19,7 @@
           <div class="platform-stats">
             <span class="stat">
               <span class="stat-label">ROUND</span>
-              <span class="stat-value mono">{{ runStatus.twitter_current_round || 0 }}<span class="stat-total">/{{ runStatus.total_rounds || maxRounds || '-' }}</span></span>
+              <span class="stat-value mono">{{ displayTwitterRound }}<span class="stat-total">/{{ runStatus.total_rounds || maxRounds || '-' }}</span></span>
             </span>
             <span class="stat">
               <span class="stat-label">TIME</span>
@@ -60,7 +60,7 @@
           <div class="platform-stats">
             <span class="stat">
               <span class="stat-label">ROUND</span>
-              <span class="stat-value mono">{{ runStatus.reddit_current_round || 0 }}<span class="stat-total">/{{ runStatus.total_rounds || maxRounds || '-' }}</span></span>
+              <span class="stat-value mono">{{ displayRedditRound }}<span class="stat-total">/{{ runStatus.total_rounds || maxRounds || '-' }}</span></span>
             </span>
             <span class="stat">
               <span class="stat-label">TIME</span>
@@ -92,6 +92,14 @@
 
       <div class="action-controls">
         <button 
+          class="action-btn secondary back-btn"
+          @click="handleBackToSetup"
+          title="Return to Scenario / Environment Setup"
+        >
+          ← Back to Setup
+        </button>
+
+        <button 
           v-if="phase === 1"
           class="action-btn secondary stop-btn"
           :disabled="isStopping"
@@ -121,6 +129,25 @@
           {{ isGeneratingReport ? $t('step3.generatingReportBtn') : $t('step3.startGenerateReportBtn') }}
           <span v-if="!isGeneratingReport" class="arrow-icon">→</span>
         </button>
+      </div>
+    </div>
+
+    <!-- Simulation Launch / Run Error Banner (ENG-06) -->
+    <div v-if="startError" class="simulation-error-banner">
+      <div class="error-banner-content">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" class="error-icon">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <div class="error-banner-text">
+          <strong class="error-banner-title">Simulation Error</strong>
+          <span class="error-banner-msg">{{ startError }}</span>
+        </div>
+      </div>
+      <div class="error-banner-actions">
+        <button class="action-btn secondary error-retry-btn" @click="doStartSimulation(true)">Retry</button>
+        <button class="error-close-btn" @click="startError = null" title="Dismiss error">×</button>
       </div>
     </div>
 
@@ -336,6 +363,10 @@ const emit = defineEmits(['go-back', 'next-step', 'add-log', 'update-status'])
 
 const router = useRouter()
 
+const handleBackToSetup = () => {
+  emit('go-back')
+}
+
 // State
 const isGeneratingReport = ref(false)
 const phase = ref(0) // 0: 未开始, 1: 运行中, 2: 已完成
@@ -371,14 +402,31 @@ const formatElapsedTime = (currentRound) => {
   return `${hours}h ${minutes}m`
 }
 
+// Displayed platform rounds (ensures completed simulations never get stuck showing 0)
+const displayTwitterRound = computed(() => {
+  const s = runStatus.value || {}
+  if (s.twitter_completed || s.runner_status === 'completed') {
+    return s.twitter_current_round || s.total_rounds || s.current_round || maxRounds.value || 0
+  }
+  return s.twitter_current_round || s.current_round || 0
+})
+
+const displayRedditRound = computed(() => {
+  const s = runStatus.value || {}
+  if (s.reddit_completed || s.runner_status === 'completed') {
+    return s.reddit_current_round || s.total_rounds || s.current_round || maxRounds.value || 0
+  }
+  return s.reddit_current_round || s.current_round || 0
+})
+
 // Twitter平台的模拟流逝时间
 const twitterElapsedTime = computed(() => {
-  return formatElapsedTime(runStatus.value.twitter_current_round || 0)
+  return formatElapsedTime(displayTwitterRound.value || 0)
 })
 
 // Reddit平台的模拟流逝时间
 const redditElapsedTime = computed(() => {
-  return formatElapsedTime(runStatus.value.reddit_current_round || 0)
+  return formatElapsedTime(displayRedditRound.value || 0)
 })
 
 // Methods
@@ -539,6 +587,7 @@ const fetchRunStatus = async () => {
       // runner_status is authoritative because the backend only publishes a
       // terminal state after the Zep ingestion barrier has completed.
       if (isFailed) {
+        startError.value = data.error || 'Simulation runner failed'
         addLog(t('log.simFailed') + (data.error ? `: ${data.error}` : ''))
         phase.value = 2
         stopPolling()
@@ -727,8 +776,8 @@ onMounted(async () => {
     console.warn('Check existing simulation status error:', err)
   }
 
-  // 仅在未运行且未完成时，首次启动
-  doStartSimulation(true)
+  // 仅在未运行且未完成时，首次启动（不强制清空既有日志和记忆）
+  doStartSimulation(false)
 })
 
 onUnmounted(() => {
@@ -1322,5 +1371,72 @@ onUnmounted(() => {
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-right: 6px;
+}
+
+/* Simulation Error Banner (ENG-06) */
+.simulation-error-banner {
+  margin: 12px 20px 0;
+  padding: 12px 16px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #ef4444;
+}
+
+.error-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.error-icon {
+  flex-shrink: 0;
+  color: #ef4444;
+}
+
+.error-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.error-banner-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ef4444;
+}
+
+.error-banner-msg {
+  font-size: 12px;
+  color: #fca5a5;
+  word-break: break-word;
+}
+
+.error-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.error-retry-btn {
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+}
+
+.error-close-btn {
+  background: none;
+  border: none;
+  color: #ef4444;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 4px;
 }
 </style>

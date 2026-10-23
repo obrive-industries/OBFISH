@@ -3,9 +3,9 @@
     <!-- Minimal Application Header (Full-width sticky Obrive header) -->
     <header class="console-navbar">
       <div class="nav-left">
-        <router-link to="/" class="brand-link" title="Return to ObMind Home">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
-          <span class="brand-name font-microgramma">OBMIND</span>
+        <router-link to="/" class="brand-link" title="Return to Brain Home">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-logo-img" />
+          <span class="brand-name font-microgramma">BRAIN</span>
           <span class="console-tag font-microgramma">CONSOLE</span>
         </router-link>
 
@@ -56,13 +56,13 @@
       <div v-if="authStore.isAuthenticated.value && !authStore.isVerified.value" class="verify-banner">
         <span class="banner-icon">⚠️</span>
         <span class="banner-text">
-          Your email <strong>{{ authStore.user.value?.email }}</strong> is not verified yet. Please check your Brevo inbox to enable engine simulation runs.
+          Your email <strong>{{ authStore.user.value?.email }}</strong> is not verified yet. Enter the 6-digit code sent to your email to enable engine simulation runs.
         </span>
         <div class="banner-actions">
+          <button class="banner-btn" @click="openOtpModal">Enter Code</button>
           <button class="banner-btn-secondary" @click="handleResendVerification" :disabled="resending">
-            {{ resending ? 'Sending...' : 'Resend Link' }}
+            {{ resending ? 'Sending...' : 'Resend Code' }}
           </button>
-          <button class="banner-btn" @click="authStore.openProfileModal">View Profile</button>
         </div>
       </div>
 
@@ -77,7 +77,7 @@
 
           <h2 class="panel-heading font-microgramma">System Ready</h2>
           <p class="panel-sub">
-            OBMIND is primed to explore possibilities, stress-test variables, and simulate potential strategic outcomes.
+            BRAIN is primed to explore possibilities, stress-test variables, and simulate potential strategic outcomes.
           </p>
 
           <!-- System Readiness Metrics Row -->
@@ -126,7 +126,7 @@
             <div class="console-section">
               <div class="section-label-bar">
                 <span class="label-title font-microgramma">REALITY SEED</span>
-                <span class="label-hint">PDF, DOCX, MD, TXT (up to 50MB)</span>
+                <span class="label-hint">PDF, DOCX, MD, TXT (Optional, up to 50MB)</span>
               </div>
 
               <div 
@@ -149,8 +149,8 @@
 
                 <div v-if="files.length === 0" class="upload-empty">
                   <div class="upload-icon-circle">↑</div>
-                  <span class="upload-text-bold">Drag and drop documents here</span>
-                  <span class="upload-text-sub">or click to browse from device</span>
+                  <span class="upload-text-bold">Drag and drop documents here (optional)</span>
+                  <span class="upload-text-sub">or enter text hypothesis below</span>
                 </div>
 
                 <div v-else class="file-chips-grid">
@@ -164,7 +164,7 @@
             </div>
 
             <!-- Parameters Section -->
-            <div class="console-section">
+            <div class="console-section input-section">
               <div class="section-label-bar">
                 <span class="label-title font-microgramma">SIMULATION REQUIREMENT & HYPOTHESIS</span>
                 <span class="label-hint">Natural language prompt</span>
@@ -186,13 +186,38 @@
               </div>
             </div>
 
+            <!-- BYOK Key Status Bar -->
+            <div 
+              class="byok-status-card"
+              :class="{ 'has-key': authStore.user.value?.has_custom_api_key }"
+              @click="openByokSettings"
+              title="Click to configure Bring-Your-Own-Key (BYOK) settings"
+            >
+              <div class="byok-card-left">
+                <span class="byok-card-icon">{{ authStore.user.value?.has_custom_api_key ? '🔑' : '⚡' }}</span>
+                <div class="byok-card-info">
+                  <div class="byok-card-title font-microgramma">
+                    {{ authStore.user.value?.has_custom_api_key ? 'LLM KEY CONFIGURED (BYOK)' : 'LLM API KEY REQUIRED (BYOK)' }}
+                  </div>
+                  <div class="byok-card-sub">
+                    {{ authStore.user.value?.has_custom_api_key 
+                      ? (authStore.user.value?.custom_llm_model_name ? `Dedicated model: ${authStore.user.value.custom_llm_model_name}` : 'Using personal provider key')
+                      : 'Click to add your OpenAI, DeepSeek, or Groq API key' }}
+                  </div>
+                </div>
+              </div>
+              <button type="button" class="byok-card-btn font-microgramma">
+                {{ authStore.user.value?.has_custom_api_key ? 'EDIT' : 'CONNECT KEY →' }}
+              </button>
+            </div>
+
             <!-- Launch Button Section with Obrive Animated Button styling -->
             <div class="console-section launch-section">
               <button 
                 class="btn-start-engine font-microgramma"
-                :class="{ 'btn-ready': canSubmit && !loading }"
+                :class="{ 'btn-ready': !loading }"
                 @click="handleStartEngine"
-                :disabled="!canSubmit || loading"
+                :disabled="loading"
               >
                 <span v-if="!loading" class="btn-text-content">
                   <span class="btn-label">Start Engine</span>
@@ -225,7 +250,7 @@ import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
 import RoundedBallIcon from '../components/common/RoundedBallIcon.vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
-import { setPendingUpload, getPendingUpload } from '../store/pendingUpload.js'
+import { savePendingUpload, setPendingUpload, getPendingUpload } from '../utils/pendingUpload.js'
 
 const router = useRouter()
 
@@ -244,33 +269,33 @@ const consoleSteps = [
   {
     number: '01',
     title: 'Scenario & Context Building',
-    description: 'Transform source materials, business data, research, or creative ideas into a structured foundation for simulation.'
+    description: 'Ingest source materials and data as a structured foundation for simulation.'
   },
   {
     number: '02',
     title: 'Entity & Behaviour Modelling',
-    description: 'Identify key entities, relationships, stakeholder perspectives, and behavioural factors relevant to your scenario.'
+    description: 'Map key entities, relationships, and stakeholder personas.'
   },
   {
     number: '03',
     title: 'Run Simulation',
-    description: 'Explore interactions, test assumptions, introduce variables, and examine how different scenarios may evolve over time.'
+    description: 'Deploy multi-agent debates and social interactions across rounds.'
   },
   {
     number: '04',
     title: 'Insights & Report Generation',
-    description: 'Generate structured reports highlighting potential outcomes, emerging patterns, risks, opportunities, and alternative pathways.'
+    description: 'Synthesize predictive reports highlighting risks and emerging patterns.'
   },
   {
     number: '05',
     title: 'Explore & Refine',
-    description: 'Interact with simulation results, investigate individual perspectives, ask follow-up questions, and refine scenarios to uncover deeper insights.'
+    description: 'Deep interactive interviews with personas to test strategic hypotheses.'
   }
 ]
 
-onMounted(() => {
+onMounted(async () => {
   // Check if there was pending upload saved before auth
-  const pending = getPendingUpload()
+  const pending = await getPendingUpload()
   if (pending && pending.isPending) {
     if (pending.simulationRequirement) {
       formData.value.simulationRequirement = pending.simulationRequirement
@@ -282,9 +307,9 @@ onMounted(() => {
 })
 
 // Watch auth state to restore pending dossier if login happened in-place
-watch(() => authStore.isAuthenticated.value, (isAuth) => {
+watch(() => authStore.isAuthenticated.value, async (isAuth) => {
   if (isAuth) {
-    const pending = getPendingUpload()
+    const pending = await getPendingUpload()
     if (pending && pending.isPending) {
       if (pending.simulationRequirement && !formData.value.simulationRequirement) {
         formData.value.simulationRequirement = pending.simulationRequirement
@@ -296,14 +321,22 @@ watch(() => authStore.isAuthenticated.value, (isAuth) => {
   }
 })
 
+const openOtpModal = () => {
+  authStore.openAuthModal(
+    'verify-otp',
+    'Enter the 6-digit verification code sent to your email.',
+    authStore.user.value?.email
+  )
+}
+
 const handleResendVerification = async () => {
   if (!authStore.user.value?.email) return
   resending.value = true
   try {
     await authApi.resendVerification(authStore.user.value.email)
-    alert('A new verification email has been sent via Brevo. Please check your inbox.')
+    openOtpModal()
   } catch (err) {
-    alert(err.message || 'Failed to resend verification link.')
+    alert(err.message || 'Failed to resend verification code.')
   } finally {
     resending.value = false
   }
@@ -319,12 +352,12 @@ const userInitials = computed(() => {
 })
 
 const hasCustomKey = computed(() => {
-  const customKey = localStorage.getItem('obmind_custom_llm_key')
+  const customKey = localStorage.getItem('brain_custom_llm_key') || localStorage.getItem('obmind_custom_llm_key')
   return Boolean(customKey && customKey.trim().length > 5)
 })
 
 const canSubmit = computed(() => {
-  return formData.value.simulationRequirement.trim().length > 0 && files.value.length > 0
+  return formData.value.simulationRequirement.trim().length > 0
 })
 
 const openByokSettings = () => {
@@ -387,28 +420,48 @@ const scrollToHistory = () => {
 }
 
 // Start Engine with Authentication Interception Gate
-const handleStartEngine = () => {
-  if (!canSubmit.value || loading.value) return
+const handleStartEngine = async () => {
+  if (loading.value) return
 
-  // Cache user's inputs in pending store immediately so nothing is lost
-  setPendingUpload(files.value, formData.value.simulationRequirement)
-
-  // Authentication Gate Check
+  // 1. Authentication Gate Check: If not signed in, open Sign In / Register popup
   if (!authStore.isAuthenticated.value) {
+    if (formData.value.simulationRequirement?.trim() || files.value.length > 0) {
+      await savePendingUpload(files.value, formData.value.simulationRequirement)
+    }
     authStore.openAuthModal(
       'login',
-      'Please sign in to launch your simulation engine. Your scenario and documents have been saved.'
+      'Please sign in or create an account to start your simulation engine.'
     )
     return
   }
 
-  // Email Verification Check
+  // 2. Email Verification Check -> Direct OTP code prompt
   if (!authStore.isVerified.value) {
-    alert('Please verify your email address via the link sent to your inbox before launching simulations.')
+    authStore.openAuthModal(
+      'verify-otp',
+      'Please enter the 6-digit verification code sent to your email to activate and start the engine.',
+      authStore.user.value?.email
+    )
     return
   }
 
-  // Authenticated & Verified -> Navigate to Process View
+  // 3. Scenario & Hypothesis Check
+  if (!formData.value.simulationRequirement?.trim()) {
+    alert('Please describe your simulation scenario, requirement, or hypothesis to start the engine.')
+    return
+  }
+
+  // 4. Bring Your Own Key (BYOK) Gate Check
+  if (!authStore.user.value?.has_custom_api_key) {
+    await savePendingUpload(files.value, formData.value.simulationRequirement)
+    authStore.openProfileModal()
+    return
+  }
+
+  // Cache user's inputs in IndexedDB pending store immediately so nothing is lost
+  await savePendingUpload(files.value, formData.value.simulationRequirement)
+
+  // 5. Authenticated, Verified & BYOK Key Configured -> Navigate to Process View
   loading.value = true
   router.push({
     name: 'Process',
@@ -799,8 +852,9 @@ const handleStartEngine = () => {
 /* Console Grid */
 .console-grid {
   display: grid;
-  grid-template-columns: 1fr 1.28fr;
-  gap: 32px;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  align-items: stretch;
   margin-bottom: 60px;
 }
 
@@ -820,9 +874,11 @@ const handleStartEngine = () => {
 
 /* Left Panel */
 .left-panel {
-  padding: 36px 32px;
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .panel-badge {
@@ -892,14 +948,14 @@ const handleStartEngine = () => {
 .workflow-steps-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 10px;
 }
 
 .console-step-item {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   align-items: flex-start;
-  padding: 12px 14px;
+  padding: 10px 14px;
   border-radius: 12px;
   background: #F9FCFB;
   border: 1px solid rgba(7, 65, 57, 0.1);
@@ -945,13 +1001,16 @@ const handleStartEngine = () => {
 .right-panel {
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .console-box {
-  padding: 36px 32px;
+  padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 24px;
+  height: 100%;
+  box-sizing: border-box;
 }
 
 .console-section {
@@ -1078,12 +1137,23 @@ const handleStartEngine = () => {
   color: #ef4444;
 }
 
-.textarea-wrapper {
+.console-section.input-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.console-section.input-section .textarea-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
 
 .scenario-input {
   width: 100%;
+  flex: 1;
+  min-height: 200px;
   box-sizing: border-box;
   background: #F9FCFB;
   border: 1.5px solid rgba(7, 65, 57, 0.2);
@@ -1095,7 +1165,7 @@ const handleStartEngine = () => {
   font-size: 0.95rem;
   line-height: 1.6;
   outline: none;
-  resize: vertical;
+  resize: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -1129,8 +1199,94 @@ const handleStartEngine = () => {
   background: #074139;
 }
 
+/* BYOK Status Card */
+.byok-status-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 18px;
+  background: #FFFBEB;
+  border: 1.5px solid #FDE68A;
+  border-radius: 12px;
+  margin-top: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.byok-status-card:hover {
+  background: #FEF3C7;
+  border-color: #F59E0B;
+}
+
+.byok-status-card.has-key {
+  background: #ECFDF5;
+  border-color: #A7F3D0;
+}
+
+.byok-status-card.has-key:hover {
+  background: #D1FAE5;
+  border-color: #10B981;
+}
+
+.byok-card-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.byok-card-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.byok-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.byok-card-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #92400E;
+}
+
+.byok-status-card.has-key .byok-card-title {
+  color: #065F46;
+}
+
+.byok-card-sub {
+  font-size: 0.78rem;
+  color: #78350F;
+}
+
+.byok-status-card.has-key .byok-card-sub {
+  color: #047857;
+}
+
+.byok-card-btn {
+  background: #074139;
+  color: #A2F1DF;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.byok-card-btn:hover {
+  background: #052e28;
+}
+
 .launch-section {
-  padding-top: 8px;
+  margin-top: auto;
+  padding-top: 10px;
 }
 
 /* Obrive Official Animated Button Design for Start Engine */

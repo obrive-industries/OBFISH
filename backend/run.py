@@ -1,5 +1,5 @@
 """
-ObMind Backend Entry Point
+Brain Backend Entry Point
 """
 
 import os

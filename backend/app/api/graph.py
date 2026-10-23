@@ -26,9 +26,10 @@ from ..services.simulation_manager import SimulationManager
 from ..services.simulation_runner import SimulationRunner, RunnerStatus
 from ..services.zep_graph_memory_updater import ZepGraphMemoryManager
 from ..utils.llm_client import LLMResponseError
+from ..utils.auth_middleware import require_auth, get_current_user_id
 
 # 获取日志器
-logger = get_logger('obmind.api')
+logger = get_logger('brain.api')
 _build_locks: dict[str, threading.Lock] = {}
 _build_locks_guard = threading.Lock()
 
@@ -144,7 +145,7 @@ def get_project(project_id: str):
 
     from ..utils.auth_middleware import get_current_user_id
     user_id = get_current_user_id()
-    if user_id and project.user_id and project.user_id != user_id:
+    if project.user_id and project.user_id != user_id:
         return jsonify({
             "success": False,
             "error": "Access denied"
@@ -192,7 +193,7 @@ def _delete_project_impl(project_id: str):
 
     from ..utils.auth_middleware import get_current_user_id
     user_id = get_current_user_id()
-    if user_id and project.user_id and project.user_id != user_id:
+    if project.user_id and project.user_id != user_id:
         return jsonify({
             "success": False,
             "error": "Access denied"
@@ -245,6 +246,14 @@ def _reset_project_impl(project_id: str):
             "success": False,
             "error": t('api.projectNotFound', id=project_id)
         }), 404
+
+    from ..utils.auth_middleware import get_current_user_id
+    user_id = get_current_user_id()
+    if project.user_id and project.user_id != user_id:
+        return jsonify({
+            "success": False,
+            "error": "Access denied"
+        }), 403
 
     if _project_has_active_build(project):
         return jsonify({
@@ -328,24 +337,35 @@ def generate_ontology():
         
         # 获取上传的文件
         uploaded_files = request.files.getlist('files')
-        if not uploaded_files or all(not f.filename for f in uploaded_files):
+        has_uploaded_files = bool(uploaded_files and any(f.filename for f in uploaded_files))
+        
+        # 允许纯文本假设输入，无需强制上传物理文件
+        if not has_uploaded_files and not simulation_requirement.strip():
             return jsonify({
                 "success": False,
-                "error": t('api.requireFileUpload')
+                "error": t('api.requireSimulationRequirement')
             }), 400
         
-        # 创建项目
+        # 创建项目（要求用户登录且完成邮箱验证）
         from ..utils.auth_middleware import get_current_user, get_user_llm_client, check_simulation_permission
         user = get_current_user()
+        if not user:
+            return jsonify({
+                "success": False,
+                "error": "Authentication required. Please log in to create projects.",
+                "code": "MISSING_TOKEN"
+            }), 401
+
         allowed, reason = check_simulation_permission(user)
         if not allowed:
+            code = "BYOK_KEY_REQUIRED" if "LLM API Key" in (reason or "") else "EMAIL_NOT_VERIFIED"
             return jsonify({
                 "success": False,
                 "error": reason,
-                "code": "EMAIL_NOT_VERIFIED"
+                "code": code
             }), 403
 
-        user_id = user.id if user else None
+        user_id = user.id
         project = ProjectManager.create_project(name=project_name, user_id=user_id)
         project.simulation_requirement = simulation_requirement
         logger.info(f"创建项目: {project.project_id} (user_id={user_id})")
@@ -354,24 +374,42 @@ def generate_ontology():
         document_texts = []
         all_text = ""
         
-        for file in uploaded_files:
-            if file and file.filename and allowed_file(file.filename):
-                # 保存文件到项目目录
-                file_info = ProjectManager.save_file_to_project(
-                    project.project_id, 
-                    file, 
-                    file.filename
-                )
-                project.files.append({
-                    "filename": file_info["original_filename"],
-                    "size": file_info["size"]
-                })
-                
-                # 提取文本
-                text = FileParser.extract_text(file_info["path"])
-                text = TextProcessor.preprocess_text(text)
-                document_texts.append(text)
-                all_text += f"\n\n=== {file_info['original_filename']} ===\n{text}"
+        if has_uploaded_files:
+            for file in uploaded_files:
+                if file and file.filename and allowed_file(file.filename):
+                    # 保存文件到项目目录
+                    file_info = ProjectManager.save_file_to_project(
+                        project.project_id, 
+                        file, 
+                        file.filename
+                    )
+                    project.files.append({
+                        "filename": file_info["original_filename"],
+                        "size": file_info["size"]
+                    })
+                    
+                    # 提取文本
+                    text = FileParser.extract_text(file_info["path"])
+                    text = TextProcessor.preprocess_text(text)
+                    document_texts.append(text)
+                    all_text += f"\n\n=== {file_info['original_filename']} ===\n{text}"
+        else:
+            # 纯文本假设输入：直接使用需求文本作为文档内容
+            clean_text = TextProcessor.preprocess_text(simulation_requirement)
+            document_texts.append(clean_text)
+            all_text = f"=== Hypothesis / Scenario Input ===\n{clean_text}"
+            
+            # 保存为文本文件以维持项目文件结构一致性
+            hypo_filename = "hypothesis.txt"
+            files_dir = ProjectManager._get_project_files_dir(project.project_id)
+            os.makedirs(files_dir, exist_ok=True)
+            hypo_path = os.path.join(files_dir, hypo_filename)
+            with open(hypo_path, 'w', encoding='utf-8') as f:
+                f.write(clean_text)
+            project.files.append({
+                "filename": hypo_filename,
+                "size": len(clean_text.encode('utf-8'))
+            })
         
         if not document_texts:
             ProjectManager.delete_project(project.project_id)
@@ -555,13 +593,14 @@ def _build_graph_impl():
         user = get_current_user()
         allowed, reason = check_simulation_permission(user)
         if not allowed:
+            code = "BYOK_KEY_REQUIRED" if "LLM API Key" in (reason or "") else "EMAIL_NOT_VERIFIED"
             return jsonify({
                 "success": False,
                 "error": reason,
-                "code": "EMAIL_NOT_VERIFIED"
+                "code": code
             }), 403
 
-        if project.user_id and user and project.user_id != user.id:
+        if project.user_id and (not user or project.user_id != user.id):
             return jsonify({
                 "success": False,
                 "error": "Access denied to this project"
@@ -638,7 +677,7 @@ def _build_graph_impl():
             })
         
         # 获取配置
-        graph_name = data.get('graph_name', project.name or 'ObMind Graph')
+        graph_name = data.get('graph_name', project.name or 'Brain Graph')
         chunk_size = data.get('chunk_size', project.chunk_size or Config.DEFAULT_CHUNK_SIZE)
         chunk_overlap = data.get('chunk_overlap', project.chunk_overlap or Config.DEFAULT_CHUNK_OVERLAP)
         if not isinstance(chunk_size, int) or chunk_size <= 0:
@@ -691,7 +730,10 @@ def _build_graph_impl():
         
         # 创建异步任务
         task_manager = TaskManager()
-        task_id = task_manager.create_task(f"Build Graph: {graph_name}")
+        task_id = task_manager.create_task(
+            f"Build Graph: {graph_name}",
+            metadata={"project_id": project_id, "user_id": project.user_id}
+        )
         logger.info(f"创建图谱构建任务: task_id={task_id}, project_id={project_id}")
         
         # 更新项目状态
@@ -705,7 +747,7 @@ def _build_graph_impl():
         # 启动后台任务
         def build_task():
             set_locale(current_locale)
-            build_logger = get_logger('obmind.build')
+            build_logger = get_logger('brain.build')
             try:
                 build_logger.info(f"[{task_id}] 开始构建图谱...")
                 task_manager.update_task(
@@ -887,16 +929,17 @@ def _build_graph_impl():
     except GraphInUseError as e:
         return jsonify({"success": False, "error": str(e)}), 409
     except Exception as e:
+        logger.error(f"Error building graph: {e}\n{traceback.format_exc()}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
 # ============== 任务查询接口 ==============
 
 @graph_bp.route('/task/<task_id>', methods=['GET'])
+@require_auth
 def get_task(task_id: str):
     """
     查询任务状态
@@ -909,6 +952,14 @@ def get_task(task_id: str):
             "error": t('api.taskNotFound', id=task_id)
         }), 404
     
+    user_id = get_current_user_id()
+    task_user_id = task.metadata.get("user_id") if task.metadata else None
+    if task_user_id is not None and str(task_user_id) != str(user_id):
+        return jsonify({
+            "success": False,
+            "error": "Forbidden: Access denied to task"
+        }), 403
+
     return jsonify({
         "success": True,
         "data": task.to_dict()
@@ -916,11 +967,13 @@ def get_task(task_id: str):
 
 
 @graph_bp.route('/tasks', methods=['GET'])
+@require_auth
 def list_tasks():
     """
-    列出所有任务
+    列出当前用户的任务
     """
-    tasks = TaskManager().list_tasks()
+    user_id = get_current_user_id()
+    tasks = TaskManager().list_tasks(user_id=user_id)
     
     return jsonify({
         "success": True,
@@ -932,6 +985,7 @@ def list_tasks():
 # ============== 图谱数据接口 ==============
 
 @graph_bp.route('/data/<graph_id>', methods=['GET'])
+@require_auth
 def get_graph_data(graph_id: str):
     """
     获取图谱数据（节点和边）
@@ -943,6 +997,16 @@ def get_graph_data(graph_id: str):
                 "error": t('api.zepApiKeyMissing')
             }), 500
         
+        projects = ProjectManager.find_projects_by_graph_id(graph_id)
+        if projects:
+            user_id = get_current_user_id()
+            for project in projects:
+                if project.user_id and str(project.user_id) != str(user_id):
+                    return jsonify({
+                        "success": False,
+                        "error": "Access denied"
+                    }), 403
+
         builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
         graph_data = builder.get_graph_data(graph_id)
         
@@ -952,14 +1016,15 @@ def get_graph_data(graph_id: str):
         })
         
     except Exception as e:
+        logger.error(f"Error fetching graph data: {e}\n{traceback.format_exc()}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
 @graph_bp.route('/delete/<graph_id>', methods=['DELETE'])
+@require_auth
 def delete_graph(graph_id: str):
     """
     删除Zep图谱
@@ -977,6 +1042,15 @@ def delete_graph(graph_id: str):
                 "success": False,
                 "error": "No local project references this graph"
             }), 404
+
+        user_id = get_current_user_id()
+        for project in projects:
+            if project.user_id and str(project.user_id) != str(user_id):
+                return jsonify({
+                    "success": False,
+                    "error": "Access denied"
+                }), 403
+
         project_ids = sorted({project.project_id for project in projects})
         with ExitStack() as stack:
             for project_id in project_ids:
@@ -1011,8 +1085,8 @@ def delete_graph(graph_id: str):
     except GraphInUseError as e:
         return jsonify({"success": False, "error": str(e)}), 409
     except Exception as e:
+        logger.error(f"Error deleting graph: {e}\n{traceback.format_exc()}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500

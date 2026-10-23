@@ -76,7 +76,7 @@ class GraphBuilderService:
         self,
         text: str,
         ontology: Dict[str, Any],
-        graph_name: str = "ObMind Graph",
+        graph_name: str = "Brain Graph",
         chunk_size: int = 500,
         chunk_overlap: int = 50,
         batch_size: int = 350
@@ -224,7 +224,7 @@ class GraphBuilderService:
     ) -> str:
         """Create a graph with a caller-durable ID and reconcile lost replies."""
 
-        graph_id = graph_id or f"obmind_{uuid.uuid4().hex[:16]}"
+        graph_id = graph_id or f"brain_{uuid.uuid4().hex[:16]}"
         # Persist the client-generated ID before the non-idempotent POST so a
         # later reset can clean up a graph whose successful response was lost.
         if graph_id_callback:
@@ -234,7 +234,7 @@ class GraphBuilderService:
             self.client.graph.create(
                 graph_id=graph_id,
                 name=name,
-                description="ObMind Social Simulation Graph"
+                description="Brain Social Simulation Graph"
             )
         except Exception as error:
             if not is_retryable_zep_error(error):
@@ -287,7 +287,7 @@ class GraphBuilderService:
                 )
                 for batch in getattr(page, "batches", None) or []:
                     metadata = getattr(batch, "metadata", None) or {}
-                    op_id = metadata.get("obmind_operation_id") or metadata.get("mirofish_operation_id")
+                    op_id = metadata.get("brain_operation_id") or metadata.get("obmind_operation_id") or metadata.get("mirofish_operation_id")
                     if (
                         op_id == operation_id
                         and metadata.get("graph_id") == graph_id
@@ -436,6 +436,7 @@ class GraphBuilderService:
         try:
             batch = self.client.batch.create(
                 metadata={
+                    "brain_operation_id": operation_id,
                     "obmind_operation_id": operation_id,
                     "graph_id": graph_id,
                     "chunk_count": total_chunks,
@@ -474,8 +475,9 @@ class GraphBuilderService:
                     graph_id=graph_id,
                     data=chunk,
                     data_type="text",
-                    source_description="ObMind source document chunk",
+                    source_description="Brain source document chunk",
                     metadata={
+                        "brain_operation_id": operation_id,
                         "obmind_operation_id": operation_id,
                         "chunk_index": i + offset,
                         "chunk_sha256": hashlib.sha256(

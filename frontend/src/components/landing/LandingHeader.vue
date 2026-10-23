@@ -2,7 +2,7 @@
   <header class="header-outer" :class="{ 'is-scrolled': isScrolled }">
     <div class="header-pill">
       <!-- Brand Logo -->
-      <router-link to="/" class="brand-link" aria-label="ObMind Home">
+      <router-link to="/" class="brand-link" aria-label="Brain Home">
         <img
           src="../../assets/icons/obrive-logo.svg"
           alt="Obrive"
@@ -10,7 +10,7 @@
         />
         <span class="brand-divider"></span>
         <div class="brand-text-lockup font-microgramma">
-          <span class="brand-name">OBMIND</span>
+          <span class="brand-name">BRAIN</span>
           <span class="brand-badge">AI</span>
         </div>
       </router-link>
@@ -39,10 +39,20 @@
           <span class="arrow-ext">↗</span>
         </a>
 
+        <!-- Console Link (when logged in) -->
+        <router-link
+          v-if="authStore.isAuthenticated.value"
+          to="/console"
+          class="header-console-btn font-microgramma"
+          title="Open Console"
+        >
+          Console
+        </router-link>
+
         <!-- Auth Profile Pill (when logged in) -->
         <div
           v-if="authStore.isAuthenticated.value"
-          class="user-pill"
+          class="user-pill font-microgramma"
           @click="authStore.openProfileModal"
           title="Account Profile"
         >
@@ -91,7 +101,7 @@
       <div v-if="mobileMenuOpen" class="mobile-drawer">
         <div class="mobile-drawer-header">
           <div class="drawer-brand font-microgramma">
-            <span>OBMIND</span>
+            <span>BRAIN</span>
             <span class="brand-badge">AI</span>
           </div>
           <button
@@ -141,6 +151,16 @@
             Predict Now
           </AnimatedButton>
 
+          <!-- Mobile Console Link (when logged in) -->
+          <router-link
+            v-if="authStore.isAuthenticated.value"
+            to="/console"
+            class="mobile-console-btn font-microgramma"
+            @click="mobileMenuOpen = false"
+          >
+            Console
+          </router-link>
+
           <div class="mobile-secondary-row">
             <div
               v-if="authStore.isAuthenticated.value"
@@ -168,11 +188,24 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import authStore from '../../store/auth'
 import AnimatedButton from '../common/AnimatedButton.vue'
 
+const router = useRouter()
+const emit = defineEmits(['open-auth'])
+
 const isScrolled = ref(false)
 const mobileMenuOpen = ref(false)
+
+const handleSignIn = () => {
+  if (authStore.isAuthenticated.value) {
+    router.push('/console')
+  } else {
+    emit('open-auth')
+    authStore.openAuthModal('login')
+  }
+}
 
 const handleScroll = () => {
   isScrolled.value = window.scrollY > 20
@@ -343,6 +376,61 @@ const handleMobileNav = (hash) => {
   align-items: center;
   gap: 12px;
   flex-shrink: 0;
+}
+
+.header-sign-in-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 16px;
+  font-family: 'Microgramma', 'Michroma', sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #074139;
+  background: rgba(7, 65, 57, 0.05);
+  border: 1px solid rgba(7, 65, 57, 0.28);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+}
+
+.header-sign-in-btn:hover {
+  background: #074139;
+  color: #caede5;
+  border-color: #074139;
+  box-shadow: 0 4px 14px -2px rgba(7, 65, 57, 0.25);
+  transform: translateY(-1px);
+}
+
+.header-sign-in-btn:active {
+  transform: translateY(0);
+}
+
+.header-console-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  font-family: 'Microgramma', 'Michroma', sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #074139;
+  text-decoration: none;
+  background: rgba(7, 65, 57, 0.04);
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 9999px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.header-console-btn:hover {
+  background: rgba(7, 65, 57, 0.1);
+  border-color: #074139;
 }
 
 
@@ -625,6 +713,34 @@ const handleMobileNav = (hash) => {
   color: #074139;
 }
 
+.mobile-sign-in-btn,
+.mobile-console-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 11px 16px;
+  font-family: 'Microgramma', 'Michroma', sans-serif !important;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #074139;
+  text-decoration: none;
+  background: rgba(7, 65, 57, 0.05);
+  border: 1px solid rgba(7, 65, 57, 0.24);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mobile-sign-in-btn:hover,
+.mobile-console-btn:hover {
+  background: #074139;
+  color: #caede5;
+  border-color: #074139;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.25s ease;
@@ -672,6 +788,13 @@ const handleMobileNav = (hash) => {
     height: 54px;
     padding: 0 14px;
     border-radius: 12px;
+  }
+}
+
+@media (max-width: 560px) {
+  .header-actions .header-sign-in-btn,
+  .header-actions .header-console-btn {
+    display: none;
   }
 }
 </style>

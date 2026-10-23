@@ -9,7 +9,7 @@
         </div>
 
         <h2 class="section-title font-microgramma">
-          OBMIND is Built to Explore
+          BRAIN is Built to Explore
         </h2>
 
         <p class="section-sub">

@@ -2,10 +2,10 @@
   <div class="reset-page">
     <div class="reset-card">
       <div class="reset-header">
-        <router-link to="/" class="brand-link" title="Return to ObMind Home">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-logo" />
+        <router-link to="/" class="brand-link" title="Return to Brain Home">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-logo" />
         </router-link>
-        <h1 class="brand-title font-microgramma">OBMIND</h1>
+        <h1 class="brand-title font-microgramma">BRAIN</h1>
         <p class="brand-sub font-microgramma">Reset Your Password</p>
       </div>
 
@@ -15,7 +15,7 @@
         <h2 class="state-title font-microgramma">Password Reset Complete!</h2>
         <p class="state-desc">Your password has been securely updated. You can now log in.</p>
         <button class="primary-btn font-microgramma" @click="openLogin">
-          <span>Log In to ObMind</span>
+          <span>Log In to Brain</span>
           <span class="btn-arrow">→</span>
         </button>
       </div>

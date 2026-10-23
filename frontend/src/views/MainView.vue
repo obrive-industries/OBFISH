@@ -3,9 +3,9 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to ObMind Console">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
-          <span>OBMIND</span>
+        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to Brain Console">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-header-icon" />
+          <span>BRAIN</span>
         </div>
       </div>
       
@@ -25,8 +25,8 @@
 
       <div class="header-right">
         <div class="workflow-step">
-          <span class="step-num">Step {{ currentStep }}/5</span>
-          <span class="step-name">{{ $tm('main.stepNames')[currentStep - 1] }}</span>
+          <span class="step-num">Step 1/4</span>
+          <span class="step-name">{{ pipelineSteps[0] }}</span>
         </div>
         <div class="step-divider"></div>
         <span class="status-indicator" :class="statusClass">
@@ -38,9 +38,6 @@
           <div class="user-avatar-tiny">{{ userInitials }}</div>
           <span class="user-pill-name">{{ authStore.user.value?.full_name || 'Account' }}</span>
         </div>
-        <button v-else class="sign-in-btn-header" @click="authStore.openAuthModal('login')">
-          Sign In
-        </button>
       </div>
     </header>
 
@@ -57,11 +54,9 @@
         />
       </div>
 
-      <!-- Right Panel: Step Components -->
+      <!-- Right Panel: Step 1 Scenario / Upload & Graph Build -->
       <div class="panel-wrapper right" :style="rightPanelStyle">
-        <!-- Step 1: 图谱构建 -->
         <Step1GraphBuild 
-          v-if="currentStep === 1"
           :currentPhase="currentPhase"
           :projectData="projectData"
           :ontologyProgress="ontologyProgress"
@@ -69,16 +64,6 @@
           :graphData="graphData"
           :systemLogs="systemLogs"
           @next-step="handleNextStep"
-        />
-        <!-- Step 2: 环境搭建 -->
-        <Step2EnvSetup
-          v-else-if="currentStep === 2"
-          :projectData="projectData"
-          :graphData="graphData"
-          :systemLogs="systemLogs"
-          @go-back="handleGoBack"
-          @next-step="handleNextStep"
-          @add-log="addLog"
         />
       </div>
     </main>
@@ -91,7 +76,6 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import GraphPanel from '../components/GraphPanel.vue'
 import Step1GraphBuild from '../components/Step1GraphBuild.vue'
-import Step2EnvSetup from '../components/Step2EnvSetup.vue'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import authStore from '../store/auth'
@@ -112,9 +96,15 @@ const userInitials = computed(() => {
 // Layout State
 const viewMode = ref('split') // graph | split | workbench
 
-// Step State
-const currentStep = ref(1) // 1: 图谱构建, 2: 环境搭建, 3: 开始模拟, 4: 报告生成, 5: 深度互动
-const stepNames = computed(() => tm('main.stepNames'))
+// Step State: 4-Step Simulation Pipeline
+const pipelineSteps = [
+  'Scenario / Upload',
+  'Simulation & Agents',
+  'Insights & Report',
+  'Exploration / Dialogue'
+]
+const currentStep = ref(1)
+const stepNames = computed(() => tm('main.stepNames') || pipelineSteps)
 
 // Data State
 const currentProjectId = ref(route.params.projectId)
@@ -210,26 +200,42 @@ const initProject = async () => {
 }
 
 const handleNewProject = async () => {
-  const pending = getPendingUpload()
-  if (!pending.isPending || pending.files.length === 0) {
-    error.value = 'No pending files found.'
-    addLog('Error: No pending files found for new project.')
+  const pending = await getPendingUpload()
+  const hasFiles = Boolean(pending && pending.files && pending.files.length > 0)
+  const hasHypothesis = Boolean(pending && pending.simulationRequirement && pending.simulationRequirement.trim().length > 0)
+
+  if (!hasFiles && !hasHypothesis) {
+    error.value = 'No pending files or scenario hypothesis found.'
+    addLog('Error: No pending files or hypothesis found for new project.')
+    return
+  }
+
+  // BYOK LLM Key Gate Check
+  if (!authStore.user.value?.has_custom_api_key) {
+    loading.value = false
+    error.value = 'LLM API Key required (BYOK). Please configure your API key in profile settings.'
+    addLog('Warning: Brain is a Bring-Your-Own-Key platform. Please configure your LLM API Key to start.')
+    authStore.openProfileModal()
     return
   }
   
   try {
     loading.value = true
     currentPhase.value = 0
-    ontologyProgress.value = { message: 'Uploading and analyzing docs...' }
-    addLog('Starting ontology generation: Uploading files...')
+    ontologyProgress.value = { 
+      message: hasFiles ? 'Uploading and analyzing docs...' : 'Ingesting scenario hypothesis...' 
+    }
+    addLog(hasFiles ? 'Starting ontology generation: Uploading files...' : 'Starting ontology generation from hypothesis text...')
     
     const formData = new FormData()
-    pending.files.forEach(f => formData.append('files', f))
-    formData.append('simulation_requirement', pending.simulationRequirement)
+    if (hasFiles) {
+      pending.files.forEach(f => formData.append('files', f))
+    }
+    formData.append('simulation_requirement', pending.simulationRequirement || '')
     
     const res = await generateOntology(formData)
     if (res.success) {
-      clearPendingUpload()
+      await clearPendingUpload()
       currentProjectId.value = res.data.project_id
       projectData.value = res.data
       
@@ -244,6 +250,9 @@ const handleNewProject = async () => {
   } catch (err) {
     error.value = err.message
     addLog(`Exception in handleNewProject: ${err.message}`)
+    if (err.message?.includes('LLM API Key') || err.message?.includes('BYOK') || err.code === 'BYOK_KEY_REQUIRED') {
+      authStore.openProfileModal()
+    }
   } finally {
     loading.value = false
   }

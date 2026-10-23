@@ -3,8 +3,8 @@
     <!-- 顶部导航栏 -->
     <nav class="navbar">
       <div class="nav-brand-container">
-        <img src="../assets/logo/obrive-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
-        <span class="nav-brand">OBMIND<span class="brand-tm">TM</span></span>
+        <img src="../assets/logo/obrive-logo.svg" alt="Brain Logo" class="brand-logo-img" />
+        <span class="nav-brand">BRAIN<span class="brand-tm">TM</span></span>
       </div>
       <div class="nav-links">
         <!-- Auth Button / User Pill -->
@@ -14,9 +14,6 @@
           <span v-if="authStore.isVerified.value" class="user-status-dot verified" title="Email Verified">●</span>
           <span v-else class="user-status-dot unverified" title="Email Not Verified">●</span>
         </div>
-        <button v-else class="sign-in-btn" @click="authStore.openAuthModal('login')">
-          Sign In
-        </button>
 
         <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="website-link">
           {{ $t('nav.visitWebsite') }} <span class="arrow">↗</span>
@@ -58,9 +55,9 @@
           <!-- Mascot & Brand Showcase directly embedded into Hero -->
           <div class="hero-brand-embedded">
             <div class="mascot-frame">
-              <img src="../assets/logo/obfish-mascot.png" alt="ObMind Swarm Mascot" class="hero-mascot-img" />
+              <img src="../assets/logo/obfish-mascot.png" alt="Brain Swarm Mascot" class="hero-mascot-img" />
             </div>
-            <div class="hero-brand-name">OBMIND</div>
+            <div class="hero-brand-name">BRAIN</div>
             <div class="hero-brand-desc">Swarm Intelligence Simulation Platform</div>
             <div class="hero-brand-pill">
               <span class="pill-dot"></span> Powered by Obrive AI
@@ -165,7 +162,7 @@
                   ref="fileInput"
                   type="file"
                   multiple
-                  accept=".pdf,.md,.txt"
+                  accept=".pdf,.docx,.md,.txt"
                   @change="handleFileSelect"
                   style="display: none"
                   :disabled="loading"
@@ -266,7 +263,7 @@ const fileInput = ref(null)
 
 // 计算属性:是否可以提交
 const canSubmit = computed(() => {
-  return formData.value.simulationRequirement.trim() !== '' && files.value.length > 0
+  return formData.value.simulationRequirement.trim() !== ''
 })
 
 // 触发文件选择
@@ -305,7 +302,7 @@ const handleDrop = (e) => {
 const addFiles = (newFiles) => {
   const validFiles = newFiles.filter(file => {
     const ext = file.name.split('.').pop().toLowerCase()
-    return ['pdf', 'md', 'txt'].includes(ext)
+    return ['pdf', 'docx', 'md', 'txt'].includes(ext)
   })
   files.value.push(...validFiles)
 }
@@ -324,23 +321,22 @@ const scrollToBottom = () => {
 }
 
 // 开始模拟 - 立即跳转，API调用在Process页面进行
-const startSimulation = () => {
+const startSimulation = async () => {
   if (!canSubmit.value || loading.value) return
   
+  // 存储待上传的数据到 IndexedDB
+  const { savePendingUpload } = await import('../utils/pendingUpload.js')
+  await savePendingUpload(files.value, formData.value.simulationRequirement)
+
   if (!authStore.isAuthenticated.value) {
     authStore.openAuthModal('login')
     return
   }
 
-  // 存储待上传的数据
-  import('../store/pendingUpload.js').then(({ setPendingUpload }) => {
-    setPendingUpload(files.value, formData.value.simulationRequirement)
-    
-    // 立即跳转到Process页面（使用特殊标识表示新建项目）
-    router.push({
-      name: 'Process',
-      params: { projectId: 'new' }
-    })
+  // 立即跳转到Process页面（使用特殊标识表示新建项目）
+  router.push({
+    name: 'Process',
+    params: { projectId: 'new' }
   })
 }
 </script>

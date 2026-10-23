@@ -93,14 +93,33 @@ def create_chat_completion(
                 "type": "function",
                 "function": {
                     "name": "interview_agents",
-                    "description": "Interview simulated agents for firsthand opinions",
+                    "description": "Interview simulated agents for firsthand opinions and authentic reactions",
                     "parameters": {
                         "type": "object",
                         "properties": {
-                            "question": {"type": "string"},
-                            "agent_names": {"type": "array", "items": {"type": "string"}},
+                            "question": {
+                                "type": "string",
+                                "description": "The interview question or topic"
+                            },
+                            "interview_topic": {
+                                "type": "string",
+                                "description": "Alternative parameter for interview topic"
+                            },
+                            "agent_names": {
+                                "anyOf": [
+                                    {"type": "array", "items": {"type": "string"}},
+                                    {"type": "null"}
+                                ],
+                                "description": "Optional list of agent names to interview. Can be null or omitted."
+                            },
+                            "max_agents": {
+                                "anyOf": [
+                                    {"type": "integer"},
+                                    {"type": "null"}
+                                ],
+                                "description": "Maximum number of agents to interview (default 5, max 10)"
+                            }
                         },
-                        "required": ["question"],
                     },
                 },
             },

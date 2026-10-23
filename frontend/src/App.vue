@@ -17,6 +17,7 @@ const handleLogoutEvent = () => {
 }
 
 onMounted(async () => {
+  window.addEventListener('brain-auth-logout', handleLogoutEvent)
   window.addEventListener('obmind-auth-logout', handleLogoutEvent)
 
   // Sync profile if token exists
@@ -34,6 +35,7 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  window.removeEventListener('brain-auth-logout', handleLogoutEvent)
   window.removeEventListener('obmind-auth-logout', handleLogoutEvent)
 })
 </script>

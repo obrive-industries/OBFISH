@@ -9,7 +9,7 @@
 
         <!-- Subheading in Michroma font matching Obrive hero body -->
         <p class="hero-subtitle font-michroma">
-          Obmind helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
+          Brain helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
         </p>
 
         <!-- Primary Dual Pill Buttons (Matched to Obrive.com screenshot) -->
@@ -99,7 +99,7 @@ import AnimatedButton from '../common/AnimatedButton.vue'
   font-family: 'Michroma', sans-serif !important;
   font-size: clamp(0.875rem, 1.1vw, 1rem);
   line-height: 1.75;
-  color: #000000;
+  color: #074139;
   max-width: 896px;
   padding: 0 16px;
   margin: 0 auto 36px auto;

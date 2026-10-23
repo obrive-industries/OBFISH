@@ -15,7 +15,7 @@ def test_extract_text_from_docx():
     with tempfile.TemporaryDirectory() as tmpdir:
         docx_path = os.path.join(tmpdir, 'test_scenario.docx')
         doc = docx.Document()
-        doc.add_paragraph('OBMIND Predictive Intelligence scenario definition.')
+        doc.add_paragraph('BRAIN Predictive Intelligence scenario definition.')
         doc.add_paragraph('Key stakeholder: Enterprise CEO and Marketing Director.')
         
         # Add table
@@ -28,7 +28,7 @@ def test_extract_text_from_docx():
         doc.save(docx_path)
 
         extracted = FileParser.extract_text(docx_path)
-        assert 'OBMIND Predictive Intelligence scenario definition.' in extracted
+        assert 'BRAIN Predictive Intelligence scenario definition.' in extracted
         assert 'Key stakeholder: Enterprise CEO and Marketing Director.' in extracted
         assert 'Metric | Target' in extracted
         assert 'Conversion | 18.5%' in extracted

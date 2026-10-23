@@ -24,7 +24,7 @@ from ..utils.locale import t, get_locale, set_locale
 from ..utils.zep_lifecycle import get_graph_readers, graph_lifecycle_lock
 from ..models.project import ProjectManager
 
-logger = get_logger('obmind.api.simulation')
+logger = get_logger('brain.api.simulation')
 
 
 def _get_default_platform(simulation_id: str) -> str:
@@ -115,8 +115,7 @@ def get_graph_entities(graph_id: str):
         logger.error(f"获取图谱实体失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -148,8 +147,7 @@ def get_entity_detail(graph_id: str, entity_uuid: str):
         logger.error(f"获取实体详情失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -185,8 +183,7 @@ def get_entities_by_type(graph_id: str, entity_type: str):
         logger.error(f"获取实体失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -202,7 +199,7 @@ def create_simulation():
     请求（JSON）：
         {
             "project_id": "proj_xxxx",      // 必填
-            "graph_id": "obmind_xxxx",    // 可选，如不提供则从project获取
+            "graph_id": "brain_xxxx",    // 可选，如不提供则从project获取
             "enable_twitter": true,          // 可选，默认true
             "enable_reddit": true            // 可选，默认true
         }
@@ -213,7 +210,7 @@ def create_simulation():
             "data": {
                 "simulation_id": "sim_xxxx",
                 "project_id": "proj_xxxx",
-                "graph_id": "obmind_xxxx",
+                "graph_id": "brain_xxxx",
                 "status": "created",
                 "enable_twitter": true,
                 "enable_reddit": true,
@@ -237,6 +234,14 @@ def create_simulation():
                 "success": False,
                 "error": t('api.projectNotFound', id=project_id)
             }), 404
+
+        from ..utils.auth_middleware import get_current_user_id
+        user_id = get_current_user_id()
+        if project.user_id and project.user_id != user_id:
+            return jsonify({
+                "success": False,
+                "error": "Access denied"
+            }), 403
         
         graph_id = data.get('graph_id') or project.graph_id
         if not graph_id:
@@ -246,12 +251,41 @@ def create_simulation():
             }), 400
         
         manager = SimulationManager()
+        
+        # 检查是否复用已有模拟实例，避免重复创建和重复消耗Token
+        if not data.get('force_new', False):
+            if getattr(project, 'simulation_id', None):
+                existing_state = manager.get_simulation(project.simulation_id)
+                if existing_state and existing_state.status != SimulationStatus.FAILED:
+                    logger.info(f"复用项目已有的模拟实例: {existing_state.simulation_id}")
+                    return jsonify({
+                        "success": True,
+                        "data": existing_state.to_dict(),
+                        "reused": True
+                    })
+            
+            existing_sims = manager.list_simulations(project_id=project_id, user_id=user_id if user_id else None)
+            valid_sims = [s for s in existing_sims if s.status != SimulationStatus.FAILED]
+            if valid_sims:
+                valid_sims.sort(key=lambda s: getattr(s, 'created_at', '') or '', reverse=True)
+                latest_sim = valid_sims[0]
+                project.simulation_id = latest_sim.simulation_id
+                ProjectManager.save_project(project)
+                logger.info(f"复用项目匹配的模拟实例: {latest_sim.simulation_id}")
+                return jsonify({
+                    "success": True,
+                    "data": latest_sim.to_dict(),
+                    "reused": True
+                })
+
         state = manager.create_simulation(
             project_id=project_id,
             graph_id=graph_id,
             enable_twitter=data.get('enable_twitter', True),
             enable_reddit=data.get('enable_reddit', True),
         )
+        project.simulation_id = state.simulation_id
+        ProjectManager.save_project(project)
         
         return jsonify({
             "success": True,
@@ -262,8 +296,7 @@ def create_simulation():
         logger.error(f"创建模拟失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -497,6 +530,12 @@ def prepare_simulation():
                 "success": False,
                 "error": t('api.projectNotFound', id=state.project_id)
             }), 404
+
+        if project.user_id and (not user or project.user_id != user.id):
+            return jsonify({
+                "success": False,
+                "error": "Access denied"
+            }), 403
         
         # 获取模拟需求
         simulation_requirement = project.simulation_requirement or ""
@@ -687,8 +726,7 @@ def prepare_simulation():
         logger.error(f"启动准备任务失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -805,30 +843,41 @@ def get_prepare_status():
         }), 500
 
 
+def _check_simulation_access(simulation_id: str):
+    """
+    验证当前请求对模拟的访问权限（支持多租户隔离）
+    返回: (allowed: bool, error_msg: str | None, status_code: int, state: SimulationState | None)
+    """
+    manager = SimulationManager()
+    state = manager.get_simulation(simulation_id)
+    if not state:
+        return False, t('api.simulationNotFound', id=simulation_id), 404, None
+
+    from ..utils.auth_middleware import get_current_user_id
+    from ..models.project import ProjectManager
+    user_id = get_current_user_id()
+    proj_id = getattr(state, "project_id", None)
+    if proj_id:
+        project = ProjectManager.get_project(proj_id)
+        p_user_id = getattr(project, "user_id", None) if project else None
+        if p_user_id and p_user_id != user_id:
+            return False, "Access denied", 403, None
+
+    return True, None, 200, state
+
+
 @simulation_bp.route('/<simulation_id>', methods=['GET'])
 def get_simulation(simulation_id: str):
     """获取模拟状态"""
     try:
-        manager = SimulationManager()
-        state = manager.get_simulation(simulation_id)
-        
-        if not state:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
             return jsonify({
                 "success": False,
-                "error": t('api.simulationNotFound', id=simulation_id)
-            }), 404
-
-        from ..utils.auth_middleware import get_current_user_id
-        from ..models.project import ProjectManager
-        user_id = get_current_user_id()
-        if user_id:
-            project = ProjectManager.get_project(state.project_id)
-            if project and project.user_id and project.user_id != user_id:
-                return jsonify({
-                    "success": False,
-                    "error": "Access denied"
-                }), 403
+                "error": err
+            }), status
         
+        manager = SimulationManager()
         result = state.to_dict()
         
         # 如果模拟已准备好，附加运行说明
@@ -844,24 +893,31 @@ def get_simulation(simulation_id: str):
         logger.error(f"获取模拟状态失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
 @simulation_bp.route('/list', methods=['GET'])
 def list_simulations():
     """
-    列出所有模拟
+    列出所有模拟（支持多租户用户数据隔离）
     
     Query参数：
         project_id: 按项目ID过滤（可选）
     """
     try:
         project_id = request.args.get('project_id')
+        from ..utils.auth_middleware import get_current_user_id
+        user_id = get_current_user_id()
+        if not user_id:
+            return jsonify({
+                "success": True,
+                "data": [],
+                "count": 0
+            })
         
         manager = SimulationManager()
-        simulations = manager.list_simulations(project_id=project_id)
+        simulations = manager.list_simulations(project_id=project_id, user_id=user_id)
         
         return jsonify({
             "success": True,
@@ -873,8 +929,7 @@ def list_simulations():
         logger.error(f"列出模拟失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -976,6 +1031,12 @@ def get_simulation_history():
         limit = request.args.get('limit', 20, type=int)
         from ..utils.auth_middleware import get_current_user_id
         user_id = get_current_user_id()
+        if not user_id:
+            return jsonify({
+                "success": True,
+                "data": [],
+                "count": 0
+            })
         
         manager = SimulationManager()
         simulations = manager.list_simulations(user_id=user_id)[:limit]
@@ -1048,8 +1109,7 @@ def get_simulation_history():
         logger.error(f"获取历史模拟失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1062,6 +1122,10 @@ def get_simulation_profiles(simulation_id: str):
         platform: 平台类型（reddit/twitter，默认reddit）
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         platform = request.args.get('platform') or _get_default_platform(simulation_id)
 
         manager = SimulationManager()
@@ -1086,8 +1150,7 @@ def get_simulation_profiles(simulation_id: str):
         logger.error(f"获取Profile失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1095,35 +1158,16 @@ def get_simulation_profiles(simulation_id: str):
 def get_simulation_profiles_realtime(simulation_id: str):
     """
     实时获取模拟的Agent Profile（用于在生成过程中实时查看进度）
-    
-    与 /profiles 接口的区别：
-    - 直接读取文件，不经过 SimulationManager
-    - 适用于生成过程中的实时查看
-    - 返回额外的元数据（如文件修改时间、是否正在生成等）
-    
-    Query参数：
-        platform: 平台类型（reddit/twitter，默认reddit）
-    
-    返回：
-        {
-            "success": true,
-            "data": {
-                "simulation_id": "sim_xxxx",
-                "platform": "reddit",
-                "count": 15,
-                "total_expected": 93,  // 预期总数（如果有）
-                "is_generating": true,  // 是否正在生成
-                "file_exists": true,
-                "file_modified_at": "2025-12-04T18:20:00",
-                "profiles": [...]
-            }
-        }
     """
     import json
     import csv
     from datetime import datetime
     
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         platform = request.args.get('platform') or _get_default_platform(simulation_id)
 
         # 获取模拟目录
@@ -1201,8 +1245,7 @@ def get_simulation_profiles_realtime(simulation_id: str):
         logger.error(f"实时获取Profile失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1234,6 +1277,10 @@ def get_simulation_config_realtime(simulation_id: str):
     from datetime import datetime
     
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         # 获取模拟目录
         sim_dir = os.path.join(Config.OASIS_SIMULATION_DATA_DIR, simulation_id)
         
@@ -1331,8 +1378,7 @@ def get_simulation_config_realtime(simulation_id: str):
         logger.error(f"实时获取Config失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1349,6 +1395,10 @@ def get_simulation_config(simulation_id: str):
         - generation_reasoning: LLM的配置推理说明
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         manager = SimulationManager()
         config = manager.get_simulation_config(simulation_id)
         
@@ -1367,8 +1417,7 @@ def get_simulation_config(simulation_id: str):
         logger.error(f"获取配置失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1376,6 +1425,10 @@ def get_simulation_config(simulation_id: str):
 def download_simulation_config(simulation_id: str):
     """下载模拟配置文件"""
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         manager = SimulationManager()
         sim_dir = manager._get_simulation_dir(simulation_id)
         config_path = os.path.join(sim_dir, "simulation_config.json")
@@ -1396,8 +1449,7 @@ def download_simulation_config(simulation_id: str):
         logger.error(f"下载配置失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1448,8 +1500,7 @@ def download_simulation_script(script_name: str):
         logger.error(f"下载脚本失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1462,7 +1513,7 @@ def generate_profiles():
     
     请求（JSON）：
         {
-            "graph_id": "obmind_xxxx",     // 必填
+            "graph_id": "brain_xxxx",     // 必填
             "entity_types": ["Student"],      // 可选
             "use_llm": true,                  // 可选
             "platform": "reddit"              // 可选
@@ -1536,8 +1587,7 @@ def generate_profiles():
         logger.error(f"生成Profile失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1650,6 +1700,17 @@ def start_simulation():
                 "success": False,
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
+
+        # 归属检查
+        proj_id = getattr(state, "project_id", None)
+        if proj_id:
+            project = ProjectManager.get_project(proj_id)
+            p_user_id = getattr(project, "user_id", None) if project else None
+            if p_user_id and (not user or p_user_id != user.id):
+                return jsonify({
+                    "success": False,
+                    "error": "Access denied"
+                }), 403
 
         force_restarted = False
         
@@ -1839,8 +1900,7 @@ def start_simulation():
         logger.error(f"启动模拟失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1873,6 +1933,27 @@ def stop_simulation():
                 "success": False,
                 "error": t('api.requireSimulationId')
             }), 400
+
+        manager = SimulationManager()
+        state = manager.get_simulation(simulation_id)
+        if not state:
+            return jsonify({
+                "success": False,
+                "error": t('api.simulationNotFound', id=simulation_id)
+            }), 404
+
+        from ..utils.auth_middleware import get_current_user_id
+        from ..models.project import ProjectManager
+        user_id = get_current_user_id()
+        proj_id = getattr(state, "project_id", None)
+        if proj_id:
+            project = ProjectManager.get_project(proj_id)
+            p_user_id = getattr(project, "user_id", None) if project else None
+            if p_user_id and p_user_id != user_id:
+                return jsonify({
+                    "success": False,
+                    "error": "Access denied"
+                }), 403
         
         run_state = SimulationRunner.stop_simulation(simulation_id)
         
@@ -1914,8 +1995,7 @@ def stop_simulation():
                 manager._save_simulation_state(state)
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -1925,29 +2005,12 @@ def stop_simulation():
 def get_run_status(simulation_id: str):
     """
     获取模拟运行实时状态（用于前端轮询）
-    
-    返回：
-        {
-            "success": true,
-            "data": {
-                "simulation_id": "sim_xxxx",
-                "runner_status": "running",
-                "current_round": 5,
-                "total_rounds": 144,
-                "progress_percent": 3.5,
-                "simulated_hours": 2,
-                "total_simulation_hours": 72,
-                "twitter_running": true,
-                "reddit_running": true,
-                "twitter_actions_count": 150,
-                "reddit_actions_count": 200,
-                "total_actions_count": 350,
-                "started_at": "2025-12-01T10:00:00",
-                "updated_at": "2025-12-01T10:30:00"
-            }
-        }
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         run_state = SimulationRunner.get_run_state(simulation_id)
         
         if not run_state:
@@ -1974,8 +2037,7 @@ def get_run_status(simulation_id: str):
         logger.error(f"获取运行状态失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2017,6 +2079,10 @@ def get_run_status_detail(simulation_id: str):
         }
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         run_state = SimulationRunner.get_run_state(simulation_id)
         platform_filter = request.args.get('platform')
         
@@ -2075,8 +2141,7 @@ def get_run_status_detail(simulation_id: str):
         logger.error(f"获取详细状态失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2084,24 +2149,12 @@ def get_run_status_detail(simulation_id: str):
 def get_simulation_actions(simulation_id: str):
     """
     获取模拟中的Agent动作历史
-    
-    Query参数：
-        limit: 返回数量（默认100）
-        offset: 偏移量（默认0）
-        platform: 过滤平台（twitter/reddit）
-        agent_id: 过滤Agent ID
-        round_num: 过滤轮次
-    
-    返回：
-        {
-            "success": true,
-            "data": {
-                "count": 100,
-                "actions": [...]
-            }
-        }
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         limit = request.args.get('limit', 100, type=int)
         offset = request.args.get('offset', 0, type=int)
         platform = request.args.get('platform')
@@ -2129,8 +2182,7 @@ def get_simulation_actions(simulation_id: str):
         logger.error(f"获取动作历史失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2138,16 +2190,12 @@ def get_simulation_actions(simulation_id: str):
 def get_simulation_timeline(simulation_id: str):
     """
     获取模拟时间线（按轮次汇总）
-    
-    用于前端展示进度条和时间线视图
-    
-    Query参数：
-        start_round: 起始轮次（默认0）
-        end_round: 结束轮次（默认全部）
-    
-    返回每轮的汇总信息
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         start_round = request.args.get('start_round', 0, type=int)
         end_round = request.args.get('end_round', type=int)
         
@@ -2169,8 +2217,7 @@ def get_simulation_timeline(simulation_id: str):
         logger.error(f"获取时间线失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2178,10 +2225,12 @@ def get_simulation_timeline(simulation_id: str):
 def get_agent_stats(simulation_id: str):
     """
     获取每个Agent的统计信息
-    
-    用于前端展示Agent活跃度排行、动作分布等
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         stats = SimulationRunner.get_agent_stats(simulation_id)
         
         return jsonify({
@@ -2196,8 +2245,7 @@ def get_agent_stats(simulation_id: str):
         logger.error(f"获取Agent统计失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2216,7 +2264,14 @@ def get_simulation_posts(simulation_id: str):
     返回帖子列表（从SQLite数据库读取）
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         platform = request.args.get('platform') or _get_default_platform(simulation_id)
+        if platform not in ("twitter", "reddit"):
+            return jsonify({"success": False, "error": "Invalid platform. Must be 'twitter' or 'reddit'"}), 400
+
         limit = request.args.get('limit', 50, type=int)
         offset = request.args.get('offset', 0, type=int)
 
@@ -2276,8 +2331,7 @@ def get_simulation_posts(simulation_id: str):
         logger.error(f"获取帖子失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2293,7 +2347,14 @@ def get_simulation_comments(simulation_id: str):
         offset: 偏移量
     """
     try:
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         platform = request.args.get('platform') or _get_default_platform(simulation_id)
+        if platform not in ("twitter", "reddit"):
+            return jsonify({"success": False, "error": "Invalid platform. Must be 'twitter' or 'reddit'"}), 400
+
         post_id = request.args.get('post_id')
         limit = request.args.get('limit', 50, type=int)
         offset = request.args.get('offset', 0, type=int)
@@ -2353,8 +2414,7 @@ def get_simulation_comments(simulation_id: str):
         logger.error(f"获取评论失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2425,6 +2485,10 @@ def interview_agent():
                 "success": False,
                 "error": t('api.requireSimulationId')
             }), 400
+
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
         
         if agent_id is None:
             return jsonify({
@@ -2484,8 +2548,7 @@ def interview_agent():
         logger.error(f"Interview失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2546,6 +2609,10 @@ def interview_agents_batch():
                 "success": False,
                 "error": t('api.requireSimulationId')
             }), 400
+
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
 
         if not interviews or not isinstance(interviews, list):
             return jsonify({
@@ -2622,8 +2689,7 @@ def interview_agents_batch():
         logger.error(f"批量Interview失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2673,6 +2739,10 @@ def interview_all_agents():
                 "success": False,
                 "error": t('api.requireSimulationId')
             }), 400
+
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
 
         if not prompt:
             return jsonify({
@@ -2725,8 +2795,7 @@ def interview_all_agents():
         logger.error(f"全局Interview失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2778,6 +2847,10 @@ def get_interview_history():
                 "error": t('api.requireSimulationId')
             }), 400
 
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
+
         history = SimulationRunner.get_interview_history(
             simulation_id=simulation_id,
             platform=platform,
@@ -2797,8 +2870,7 @@ def get_interview_history():
         logger.error(f"获取Interview历史失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2862,8 +2934,7 @@ def get_env_status():
         logger.error(f"获取环境状态失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500
 
 
@@ -2904,6 +2975,10 @@ def close_simulation_env():
                 "success": False,
                 "error": t('api.requireSimulationId')
             }), 400
+
+        allowed, err, status, state = _check_simulation_access(simulation_id)
+        if not allowed:
+            return jsonify({"success": False, "error": err}), status
         
         result = SimulationRunner.close_simulation_env(
             simulation_id=simulation_id,
@@ -2932,6 +3007,5 @@ def close_simulation_env():
         logger.error(f"关闭环境失败: {str(e)}")
         return jsonify({
             "success": False,
-            "error": str(e),
-            "traceback": traceback.format_exc()
+            "error": str(e)
         }), 500

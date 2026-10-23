@@ -55,6 +55,9 @@ class Project:
     # 错误信息
     error: Optional[str] = None
     
+    # 模拟信息（创建或复用模拟后填充）
+    simulation_id: Optional[str] = None
+    
     def to_dict(self) -> Dict[str, Any]:
         """转换为字典"""
         return {
@@ -75,7 +78,8 @@ class Project:
             "simulation_requirement": self.simulation_requirement,
             "chunk_size": self.chunk_size,
             "chunk_overlap": self.chunk_overlap,
-            "error": self.error
+            "error": self.error,
+            "simulation_id": self.simulation_id
         }
     
     @classmethod
@@ -103,7 +107,8 @@ class Project:
             simulation_requirement=data.get('simulation_requirement'),
             chunk_size=data.get('chunk_size', 500),
             chunk_overlap=data.get('chunk_overlap', 50),
-            error=data.get('error')
+            error=data.get('error'),
+            simulation_id=data.get('simulation_id')
         )
 
 
@@ -203,16 +208,36 @@ class ProjectManager:
         with open(meta_path, 'r', encoding='utf-8') as f:
             data = json.load(f)
         
-        return Project.from_dict(data)
+        project = Project.from_dict(data)
+        if not project.simulation_id:
+            try:
+                from ..services.simulation_manager import SimulationManager
+                mgr = SimulationManager()
+                sims = mgr.list_simulations(project_id=project_id, include_all=True)
+                if sims:
+                    valid_sims = [s for s in sims if getattr(s, 'status', None) != 'failed']
+                    target_sims = valid_sims if valid_sims else sims
+                    target_sims.sort(key=lambda s: getattr(s, 'created_at', '') or '', reverse=True)
+                    project.simulation_id = target_sims[0].simulation_id
+                    cls.save_project(project)
+            except Exception:
+                pass
+        return project
     
     @classmethod
-    def list_projects(cls, limit: Optional[int] = 50, user_id: Optional[str] = None) -> List[Project]:
+    def list_projects(
+        cls,
+        limit: Optional[int] = 50,
+        user_id: Optional[str] = None,
+        include_all: bool = False
+    ) -> List[Project]:
         """
         列出项目（支持按用户ID过滤隔离）
         
         Args:
             limit: 返回数量限制
-            user_id: 可选的用户ID过滤
+            user_id: 可选的用户ID过滤。如果不指定且 include_all 为 False，仅返回未关联用户的公开/演示项目。
+            include_all: 是否忽略用户隔离返回所有项目（仅供内部系统/图谱生命周期维护使用）
             
         Returns:
             项目列表，按创建时间倒序
@@ -223,8 +248,13 @@ class ProjectManager:
         for project_id in os.listdir(cls.PROJECTS_DIR):
             project = cls.get_project(project_id)
             if project:
-                if user_id is not None and project.user_id != user_id:
-                    continue
+                if not include_all:
+                    if user_id is not None:
+                        if project.user_id != user_id:
+                            continue
+                    else:
+                        # 匿名未登录请求不返回任何项目，防止泄漏历史数据
+                        continue
                 projects.append(project)
         
         # 按创建时间倒序排序
@@ -238,7 +268,7 @@ class ProjectManager:
 
         return [
             project
-            for project in cls.list_projects(limit=None)
+            for project in cls.list_projects(limit=None, include_all=True)
             if project.graph_id == graph_id
         ]
     

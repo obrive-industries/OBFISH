@@ -7,7 +7,7 @@ import uuid
 import threading
 from datetime import datetime
 from enum import Enum
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, Union
 from dataclasses import dataclass, field
 
 from ..utils.locale import t
@@ -163,12 +163,18 @@ class TaskManager:
             error=error
         )
     
-    def list_tasks(self, task_type: Optional[str] = None) -> list:
+    def list_tasks(self, task_type: Optional[str] = None, user_id: Optional[Union[int, str]] = None) -> list:
         """列出任务"""
         with self._task_lock:
             tasks = list(self._tasks.values())
             if task_type:
                 tasks = [t for t in tasks if t.task_type == task_type]
+            if user_id is not None:
+                tasks = [
+                    t for t in tasks
+                    if t.metadata.get("user_id") == user_id
+                    or (t.metadata.get("user_id") is not None and str(t.metadata.get("user_id")) == str(user_id))
+                ]
             return [t.to_dict() for t in sorted(tasks, key=lambda x: x.created_at, reverse=True)]
     
     def cleanup_old_tasks(self, max_age_hours: int = 24):

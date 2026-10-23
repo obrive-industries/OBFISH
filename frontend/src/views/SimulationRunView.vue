@@ -3,9 +3,9 @@
     <!-- Header -->
     <header class="app-header">
       <div class="header-left">
-        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to ObMind Console">
-          <img src="../assets/icons/obrive-logo.svg" alt="ObMind Logo" class="brand-header-icon" />
-          <span>OBMIND</span>
+        <div class="brand font-microgramma" @click="router.push('/console')" title="Return to Brain Console">
+          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-header-icon" />
+          <span>BRAIN</span>
         </div>
       </div>
       
@@ -25,8 +25,8 @@
 
       <div class="header-right">
         <div class="workflow-step">
-          <span class="step-num">Step 3/5</span>
-          <span class="step-name">{{ $tm('main.stepNames')[2] }}</span>
+          <span class="step-num">Step 2/4</span>
+          <span class="step-name">{{ $tm('main.stepNames')[1] }}</span>
         </div>
         <div class="step-divider"></div>
         <span class="status-indicator" :class="statusClass">
@@ -149,51 +149,13 @@ const toggleMaximize = (target) => {
   }
 }
 
-const handleGoBack = async () => {
-  // 在返回 Step 2 之前，先关闭正在运行的模拟
+const handleGoBack = () => {
   addLog(t('log.preparingGoBack'))
   
-  // 停止轮询
+  // 停止本地图谱轮询
   stopGraphRefresh()
   
-  try {
-    // 先尝试优雅关闭模拟环境
-    const envStatusRes = await getEnvStatus({ simulation_id: currentSimulationId.value })
-    
-    if (envStatusRes.success && envStatusRes.data?.env_alive) {
-      addLog(t('log.closingSimEnv'))
-      try {
-        await closeSimulationEnv({ 
-          simulation_id: currentSimulationId.value,
-          timeout: 10
-        })
-        addLog(t('log.simEnvClosed'))
-      } catch (closeErr) {
-        addLog(t('log.closeSimEnvFailed'))
-        try {
-          await stopSimulation({ simulation_id: currentSimulationId.value })
-          addLog(t('log.simForceStopSuccess'))
-        } catch (stopErr) {
-          addLog(t('log.forceStopFailed', { error: stopErr.message }))
-        }
-      }
-    } else {
-      // 环境未运行，检查是否需要停止进程
-      if (isSimulating.value) {
-        addLog(t('log.stoppingSimProcess'))
-        try {
-          await stopSimulation({ simulation_id: currentSimulationId.value })
-          addLog(t('log.simStopped'))
-        } catch (err) {
-          addLog(t('log.stopSimFailed', { error: err.message }))
-        }
-      }
-    }
-  } catch (err) {
-    addLog(t('log.checkStatusFailed', { error: err.message }))
-  }
-  
-  // 返回到 Step 2 (环境搭建)
+  // 返回到 Step 2 (保持模拟在后台继续运行，不杀掉进程与环境)
   router.push({ name: 'Simulation', params: { simulationId: currentSimulationId.value } })
 }
 

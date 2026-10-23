@@ -1,5 +1,5 @@
 """
-ObMind Auth API — /api/auth/*
+Brain Auth API — /api/auth/*
 All authentication endpoints:
 
   POST /api/auth/register         Sign up with email + password
@@ -23,7 +23,11 @@ Security posture:
 
 import re
 import logging
+import threading
+import traceback
 from datetime import datetime, timezone
+
+import bcrypt
 
 from flask import Blueprint, request, jsonify, g
 
@@ -39,7 +43,7 @@ from ..services.email_service import (
     send_welcome_email,
 )
 
-logger = logging.getLogger("obmind.api.auth")
+logger = logging.getLogger("brain.api.auth")
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -116,7 +120,7 @@ def register():
 
     email = (data.get("email") or "").strip().lower()
     password = data.get("password") or ""
-    full_name = (data.get("full_name") or "").strip()
+    full_name = (data.get("full_name") or data.get("name") or "").strip()
 
     # Validate
     if err := _validate_email(email):
@@ -133,35 +137,42 @@ def register():
             code="EMAIL_TAKEN"
         )
 
-    # Create user
-    user = User(email=email, full_name=full_name)
-    user.set_password(password)
-    token = user.generate_verification_token(ttl_hours=24)
+    try:
+        # Create user
+        user = User(email=email, full_name=full_name)
+        user.set_password(password)
+        token = user.generate_verification_token(ttl_hours=24)
 
-    db.session.add(user)
-    db.session.commit()
+        db.session.add(user)
+        db.session.commit()
 
-    logger.info(f"New user registered: {email} (id={user.id})")
+        logger.info(f"New user registered: {email} (id={user.id})")
 
-    # Send verification email (non-blocking — failure doesn't fail registration)
-    email_sent = send_verification_email(user.email, user.full_name, token)
-    if not email_sent:
-        logger.warning(f"Verification email failed to send for {email}")
+        # Send verification email asynchronously in background so register returns immediately
+        def _send_email_async():
+            try:
+                send_verification_email(email, full_name, token)
+            except Exception as e:
+                logger.error(f"Async email send failed for {email}: {e}")
 
-    # Issue tokens immediately — user can explore, but sim features need verification
-    access = create_access_token(user.id, is_verified=False)
-    refresh = create_refresh_token(user.id)
+        threading.Thread(target=_send_email_async, daemon=True).start()
 
-    return _ok({
-        "message": (
-            "Account created! Please check your email to verify your account. "
-            "You can start exploring ObMind, but simulation runs require verification."
-        ),
-        "access_token": access,
-        "refresh_token": refresh,
-        "user": user.to_public_dict(),
-        "email_sent": email_sent,
-    }, status=201)
+        # Issue tokens immediately — user can explore, but sim features need verification
+        t_ver = getattr(user, "token_version", 1)
+        access = create_access_token(user.id, is_verified=False, token_version=t_ver)
+        refresh = create_refresh_token(user.id, token_version=t_ver)
+
+        return _ok({
+            "message": "Account created! A 6-digit verification code has been sent to your email.",
+            "access_token": access,
+            "refresh_token": refresh,
+            "user": user.to_public_dict(),
+            "email_sent": True,
+        }, status=201)
+    except Exception as e:
+        db.session.rollback()
+        logger.error(f"Registration failed for {email}: {e}\n{traceback.format_exc()}")
+        return _err(f"Registration failed: {str(e)}", status=500)
 
 
 # ------------------------------------------------------------------ #
@@ -188,8 +199,10 @@ def login():
 
     user = User.query.filter_by(email=email).first()
 
-    # Use constant-time comparison — always call check_password to prevent timing attacks
-    if not user or not user.check_password(password):
+    # Constant-time comparison to prevent user enumeration via timing attack
+    _DUMMY_BCRYPT = "$2b$12$e8rGg6eH.D3l5wM.0tT6tOOi7XkS0Qn6fS8YkH3QxTz3r1nZ9O9re"
+    is_valid = user.check_password(password) if user else bcrypt.checkpw(password.encode(), _DUMMY_BCRYPT.encode())
+    if not user or not is_valid:
         return _err(
             "Invalid email or password.",
             code="INVALID_CREDENTIALS",
@@ -209,8 +222,9 @@ def login():
 
     logger.info(f"User logged in: {email} (verified={user.is_verified})")
 
-    access = create_access_token(user.id, is_verified=user.is_verified)
-    refresh = create_refresh_token(user.id)
+    t_ver = getattr(user, "token_version", 1)
+    access = create_access_token(user.id, is_verified=user.is_verified, token_version=t_ver)
+    refresh = create_refresh_token(user.id, token_version=t_ver)
 
     return _ok({
         "access_token": access,
@@ -250,64 +264,89 @@ def refresh():
     if not user or not user.is_active:
         return _err("User not found or deactivated.", code="USER_NOT_FOUND", status=401)
 
-    new_access = create_access_token(user.id, is_verified=user.is_verified)
+    # Verify token version to support server-side logout and session invalidation
+    token_v = payload.get("v")
+    user_v = getattr(user, "token_version", 1)
+    if token_v is not None and token_v != user_v:
+        return _err("Session has been revoked. Please log in again.", code="TOKEN_REVOKED", status=401)
+
+    new_access = create_access_token(user.id, is_verified=user.is_verified, token_version=user_v)
+    new_refresh = create_refresh_token(user.id, token_version=user_v)
     return _ok({
         "access_token": new_access,
+        "refresh_token": new_refresh,
         "user": user.to_public_dict(),
     })
 
 
 # ------------------------------------------------------------------ #
-# GET /api/auth/verify-email?token=<token>
+# POST /api/auth/verify-email or POST /api/auth/verify-otp
 # ------------------------------------------------------------------ #
 
 @auth_bp.route("/verify-email", methods=["GET", "POST"])
+@auth_bp.route("/verify-otp", methods=["POST"])
 def verify_email():
     """
-    Verify a user's email address using the token from the verification link.
+    Verify a user's email address using a 6-digit OTP code (or token).
 
-    Query param or JSON body: token
+    JSON body or Query params: { email?: string, otp?: string, token?: string }
 
     On success: marks user as verified, sends welcome email, returns
     fresh access token with is_verified=True so the frontend can update state.
     """
-    token = (request.args.get("token") or (request.get_json(silent=True) or {}).get("token") or "").strip()
-    if not token:
-        return _err("Verification token is missing.", code="MISSING_TOKEN")
+    data = request.get_json(silent=True) or {}
+    code = (data.get("otp") or data.get("token") or request.args.get("otp") or request.args.get("token") or "").strip()
+    email = (data.get("email") or request.args.get("email") or "").strip().lower()
 
-    # Find user by token
-    user = User.query.filter_by(verification_token=token).first()
+    if not code:
+        return _err("Verification code is required.", code="MISSING_CODE")
+
+    # If email provided, find by email; otherwise find by token
+    if email:
+        user = User.query.filter_by(email=email).first()
+    else:
+        user = User.query.filter_by(verification_token=code).first()
 
     if not user:
         return _err(
-            "This verification link is invalid or has already been used.",
-            code="TOKEN_INVALID"
+            "This verification code is invalid or has already been used.",
+            code="CODE_INVALID"
         )
 
     if user.is_verified:
-        return _ok({"message": "Your email is already verified. You're all set!"})
+        t_ver = getattr(user, "token_version", 1)
+        new_access = create_access_token(user.id, is_verified=True, token_version=t_ver)
+        return _ok({
+            "message": "Your email is already verified. You're all set!",
+            "access_token": new_access,
+            "user": user.to_public_dict(),
+        })
 
     if user.is_verification_token_expired():
         return _err(
-            "This verification link has expired. Please request a new one.",
-            code="TOKEN_EXPIRED"
+            "This verification code has expired. Please request a new one.",
+            code="CODE_EXPIRED"
         )
 
-    # Verify
-    if not user.verify_email(token):
-        return _err("Email verification failed. Please try again.", code="VERIFICATION_FAILED")
+    # Verify matching OTP code
+    if not user.verify_email(code):
+        return _err("Invalid verification code. Please check your email and try again.", code="VERIFICATION_FAILED")
 
     db.session.commit()
-    logger.info(f"Email verified: {user.email}")
+    logger.info(f"Email verified via OTP: {user.email}")
 
-    # Send welcome email
-    send_welcome_email(user.email, user.full_name)
+    # Send welcome email asynchronously
+    try:
+        send_welcome_email(user.email, user.full_name)
+    except Exception as e:
+        logger.warning(f"Welcome email error for {user.email}: {e}")
 
     # Return updated access token so frontend can reflect verified state immediately
-    new_access = create_access_token(user.id, is_verified=True)
+    t_ver = getattr(user, "token_version", 1)
+    new_access = create_access_token(user.id, is_verified=True, token_version=t_ver)
 
     return _ok({
-        "message": "Email verified successfully! Welcome to ObMind.",
+        "message": "Email verified successfully! Welcome to Brain.",
         "access_token": new_access,
         "user": user.to_public_dict(),
     })
@@ -320,7 +359,7 @@ def verify_email():
 @auth_bp.route("/resend-verification", methods=["POST"])
 def resend_verification():
     """
-    Re-send the verification email (e.g. if the first one expired or was lost).
+    Re-send the 6-digit OTP verification email.
 
     Body: { email }
     """
@@ -334,15 +373,22 @@ def resend_verification():
 
     # Always return the same response to prevent user enumeration
     generic_ok = _ok({
-        "message": "If an unverified account exists with that email, a new verification link has been sent."
+        "message": "If an unverified account exists with that email, a new 6-digit verification code has been sent."
     })
 
     if not user or user.is_verified:
         return generic_ok
 
-    token = user.generate_verification_token(ttl_hours=24)
+    otp = user.generate_verification_otp(ttl_minutes=15)
     db.session.commit()
-    send_verification_email(user.email, user.full_name, token)
+
+    def _send_otp_async():
+        try:
+            send_verification_email(user.email, user.full_name, otp)
+        except Exception as e:
+            logger.error(f"Failed to resend verification OTP to {user.email}: {e}")
+
+    threading.Thread(target=_send_otp_async, daemon=True).start()
 
     return generic_ok
 
@@ -418,6 +464,7 @@ def reset_password():
             code="TOKEN_EXPIRED"
         )
 
+    user.token_version = (getattr(user, "token_version", 1) or 1) + 1
     db.session.commit()
     logger.info(f"Password reset successful for: {user.email}")
 
@@ -467,16 +514,24 @@ def update_profile():
 
     # BYOK settings
     if "custom_llm_api_key" in data:
-        key = data["custom_llm_api_key"]
-        user.custom_llm_api_key = key.strip() if key else None
+        key = (data["custom_llm_api_key"] or "").strip()
+        user.custom_llm_api_key = key if key else None
+        
+        # Zero-Config: If user sets API key without explicitly providing Base URL or Model, auto-detect!
+        if key and ("custom_llm_base_url" not in data or not data["custom_llm_base_url"]):
+            from ..utils.byok_detector import detect_provider_from_key
+            detected = detect_provider_from_key(key, hint_provider=data.get("provider_hint"))
+            user.custom_llm_base_url = detected["base_url"]
+            if "custom_llm_model_name" not in data or not data["custom_llm_model_name"]:
+                user.custom_llm_model_name = detected["default_model"]
 
-    if "custom_llm_base_url" in data:
-        base_url = data["custom_llm_base_url"]
-        user.custom_llm_base_url = base_url.strip() if base_url else None
+    if "custom_llm_base_url" in data and data["custom_llm_base_url"]:
+        base_url = data["custom_llm_base_url"].strip()
+        user.custom_llm_base_url = base_url if base_url else None
 
-    if "custom_llm_model_name" in data:
-        model = data["custom_llm_model_name"]
-        user.custom_llm_model_name = model.strip() if model else None
+    if "custom_llm_model_name" in data and data["custom_llm_model_name"]:
+        model = data["custom_llm_model_name"].strip()
+        user.custom_llm_model_name = model if model else None
 
     db.session.commit()
     logger.info(f"User profile updated: {user.email}")
@@ -485,6 +540,33 @@ def update_profile():
         "message": "Profile updated successfully.",
         "user": user.to_public_dict()
     })
+
+
+# ------------------------------------------------------------------ #
+# POST /api/auth/probe-llm-key
+# ------------------------------------------------------------------ #
+
+@auth_bp.route("/probe-llm-key", methods=["POST"])
+@require_auth
+def probe_key():
+    """Probe an API key live to detect provider, check credentials, and discover active models."""
+    data = request.get_json(silent=True) or {}
+    api_key = (data.get("api_key") or "").strip()
+    if not api_key:
+        return _err("API key is required.", code="MISSING_KEY", status=400)
+    
+    base_url = data.get("base_url")
+    model = data.get("model")
+    hint_provider = data.get("hint_provider")
+    
+    from ..utils.byok_detector import probe_llm_key
+    result = probe_llm_key(
+        api_key=api_key,
+        base_url=base_url,
+        model=model,
+        hint_provider=hint_provider
+    )
+    return _ok(result)
 
 
 # ------------------------------------------------------------------ #
@@ -516,7 +598,30 @@ def change_password():
         return _err(err)
 
     user.set_password(new_password)
+    user.token_version = (getattr(user, "token_version", 1) or 1) + 1
     db.session.commit()
     logger.info(f"Password changed for user: {user.email}")
 
     return _ok({"message": "Password changed successfully."})
+
+
+# ------------------------------------------------------------------ #
+# POST /api/auth/logout
+# ------------------------------------------------------------------ #
+
+@auth_bp.route("/logout", methods=["POST"])
+@require_auth
+def logout():
+    """
+    Server-side logout: Invalidates all refresh tokens for current user
+    by incrementing token_version.
+    Requires: valid access token.
+    """
+    user = db.session.get(User, g.user_id)
+    if user:
+        user.token_version = (getattr(user, "token_version", 1) or 1) + 1
+        db.session.commit()
+        logger.info(f"User logged out, session invalidated: {user.email}")
+
+    return _ok({"message": "Successfully logged out."})
+
