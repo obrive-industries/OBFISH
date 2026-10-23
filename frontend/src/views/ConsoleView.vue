@@ -29,48 +29,24 @@
       </div>
     </header>
 
-    <!-- Obrive Signature Mint Accent Gradient Hero Section -->
+    <!-- Obrive Signature Mint Accent Gradient Hero Section (Clean & uncluttered, matching Landing Page Hero) -->
     <section class="console-hero">
       <div class="hero-container">
         <!-- Category Badge Pill with Official RoundedBallIcon -->
         <div class="brand-pill">
           <RoundedBallIcon :width="14" :height="20" />
-          <span class="pill-text font-microgramma">PREDICTIVE CONSOLE // SYSTEM READY</span>
+          <span class="pill-text font-michroma">Predictive Console</span>
         </div>
 
-        <!-- Microgramma Bold Main Title -->
+        <!-- Main Title matching Landing Page Hero -->
         <h1 class="hero-title font-microgramma">
-          OBMIND PREDICTIVE CONSOLE
+          Predictive Console
         </h1>
 
-        <!-- Subtitle -->
-        <p class="hero-subtitle">
+        <!-- Subtitle matching Landing Page Hero typography -->
+        <p class="hero-subtitle font-michroma">
           Deploy multi-agent simulation swarms, upload reality seed documents, and stress-test strategic hypotheses before real-world execution.
         </p>
-
-        <!-- System Readiness Metrics -->
-        <div class="hero-metrics">
-          <div class="metric-chip">
-            <span class="chip-val font-microgramma">LOW COST</span>
-            <span class="chip-label">High token efficiency & edge caching</span>
-          </div>
-          <div class="metric-chip">
-            <span class="chip-val font-microgramma">HIGH AVAIL</span>
-            <span class="chip-label">Autonomous swarm cluster</span>
-          </div>
-          <div class="metric-chip">
-            <span class="chip-val font-microgramma">DETERMINISTIC</span>
-            <span class="chip-label">Multi-agent consensus verification</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Obrive Brand Divider Line -->
-      <div class="hero-divider">
-        <div class="divider-inner">
-          <div class="divider-badge font-microgramma">SYSTEM READY</div>
-          <p class="divider-text font-microgramma">TURNING COMPLEX UNCERTAINTIES INTO PREDICTIVE DECISIONS.</p>
-        </div>
       </div>
     </section>
 
@@ -103,6 +79,22 @@
           <p class="panel-sub">
             OBMIND is primed to explore possibilities, stress-test variables, and simulate potential strategic outcomes.
           </p>
+
+          <!-- System Readiness Metrics Row -->
+          <div class="metrics-row">
+            <div class="metric-card">
+              <span class="metric-value font-microgramma">LOW COST</span>
+              <span class="metric-label">High token efficiency & edge caching</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-value font-microgramma">HIGH AVAIL</span>
+              <span class="metric-label">Autonomous swarm cluster</span>
+            </div>
+            <div class="metric-card">
+              <span class="metric-value font-microgramma">DETERMINISTIC</span>
+              <span class="metric-label">Consensus verification</span>
+            </div>
+          </div>
 
           <!-- Workflow Steps (01 to 05) from docx -->
           <div class="workflow-box">
@@ -632,7 +624,7 @@ const handleStartEngine = () => {
   color: #CAEDE5;
 }
 
-/* Obrive Mint Accent Gradient Hero Section */
+/* Obrive Mint Accent Gradient Hero Section (Clean & spacious, matching Landing Page Hero) */
 .console-hero {
   position: relative;
   background: linear-gradient(
@@ -643,13 +635,13 @@ const handleStartEngine = () => {
     #a5f1df 75%,
     #98f2dd 100%
   );
-  padding: 56px 24px 0;
-  border-bottom: 1px solid rgba(7, 65, 57, 0.15);
+  padding: 76px 24px 68px;
+  border-bottom: 1px solid rgba(7, 65, 57, 0.12);
   overflow: hidden;
 }
 
 .hero-container {
-  max-width: 1200px;
+  max-width: 920px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
@@ -662,107 +654,84 @@ const handleStartEngine = () => {
   align-items: center;
   gap: 8px;
   padding: 6px 16px;
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255, 255, 255, 0.88);
   border: 1px solid rgba(7, 65, 57, 0.2);
   border-radius: 9999px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
   backdrop-filter: blur(8px);
+  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.05);
 }
 
 .pill-text {
+  font-family: 'Michroma', sans-serif !important;
   font-size: 0.72rem;
-  font-weight: 800;
+  font-weight: 700;
   color: #074139;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
 .hero-title {
-  font-size: 2.3rem;
+  font-family: 'Microgramma', 'Microgramma Bold', 'Michroma', sans-serif !important;
+  font-size: clamp(2.25rem, 4.2vw, 3.5rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.16;
   color: #074139;
-  margin-bottom: 16px;
-  letter-spacing: 0.02em;
+  margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
+  text-transform: none;
 }
 
 .hero-subtitle {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  max-width: 780px;
+  font-family: 'Michroma', sans-serif !important;
+  font-size: clamp(0.875rem, 1.1vw, 1rem);
+  line-height: 1.75;
   color: #074139;
   opacity: 0.88;
-  margin-bottom: 32px;
-  font-weight: 500;
+  max-width: 820px;
+  margin: 0 auto;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-align: center;
+  text-wrap: balance;
 }
 
-.hero-metrics {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 36px;
+/* System Readiness Metrics inside Left Panel */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 28px;
 }
 
-.metric-chip {
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(7, 65, 57, 0.2);
-  border-radius: 14px;
-  padding: 12px 20px;
+.metric-card {
+  background: rgba(7, 65, 57, 0.035);
+  border: 1px solid rgba(7, 65, 57, 0.12);
+  border-radius: 12px;
+  padding: 12px 14px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 4px;
-  min-width: 200px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 4px 15px rgba(7, 65, 57, 0.05);
+  transition: all 0.2s ease;
 }
 
-.chip-val {
-  font-size: 0.82rem;
+.metric-card:hover {
+  background: rgba(7, 65, 57, 0.06);
+  border-color: rgba(7, 65, 57, 0.24);
+}
+
+.metric-value {
+  font-size: 0.75rem;
   font-weight: 800;
   color: #074139;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
 }
 
-.chip-label {
-  font-size: 0.72rem;
-  color: #3f5451;
+.metric-label {
+  font-size: 0.7rem;
+  color: #526361;
+  line-height: 1.4;
   font-weight: 500;
-}
-
-/* Obrive Brand Divider Line */
-.hero-divider {
-  width: 100%;
-  border-top: 1.5px solid rgba(7, 65, 57, 0.22);
-  padding: 16px 24px;
-  background: rgba(255, 255, 255, 0.35);
-}
-
-.divider-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-}
-
-.divider-badge {
-  background: #074139;
-  color: #CAEDE5;
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 4px 10px;
-  border-radius: 6px;
-  letter-spacing: 0.08em;
-}
-
-.divider-text {
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #074139;
-  letter-spacing: 0.06em;
-  text-align: right;
 }
 
 /* Main Workspace */
@@ -1214,7 +1183,8 @@ const handleStartEngine = () => {
 
 /* History */
 .history-wrapper {
-  margin-top: 20px;
+  margin-top: 36px;
+  scroll-margin-top: 80px;
 }
 
 @media (max-width: 960px) {
@@ -1222,21 +1192,18 @@ const handleStartEngine = () => {
     grid-template-columns: 1fr;
   }
 
-  .divider-inner {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .divider-text {
-    text-align: left;
-  }
-
   .console-hero {
-    padding: 36px 16px 0;
+    padding: 56px 16px 48px;
   }
 
   .hero-title {
-    font-size: 1.75rem;
+    font-size: 1.85rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .metrics-row {
+    grid-template-columns: 1fr;
   }
 }
 </style>
