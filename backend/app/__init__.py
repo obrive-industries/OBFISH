@@ -14,6 +14,7 @@ from flask_cors import CORS
 
 from .config import Config
 from .utils.logger import setup_logger, get_logger
+from .models.user import db  # SQLAlchemy instance
 
 
 def create_app(config_class=Config):
@@ -25,7 +26,12 @@ def create_app(config_class=Config):
     # Flask >= 2.3 使用 app.json.ensure_ascii，旧版本使用 JSON_AS_ASCII 配置
     if hasattr(app, 'json') and hasattr(app.json, 'ensure_ascii'):
         app.json.ensure_ascii = False
-    
+
+    # Initialise SQLAlchemy (uses SQLALCHEMY_DATABASE_URI from Config)
+    db.init_app(app)
+    with app.app_context():
+        db.create_all()  # Create tables if they don't exist yet
+
     # 设置日志
     logger = setup_logger('obmind')
     
@@ -64,9 +70,11 @@ def create_app(config_class=Config):
     
     # 注册蓝图
     from .api import graph_bp, simulation_bp, report_bp
+    from .api.auth import auth_bp
     app.register_blueprint(graph_bp, url_prefix='/api/graph')
     app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
     app.register_blueprint(report_bp, url_prefix='/api/report')
+    app.register_blueprint(auth_bp, url_prefix='/api/auth')
     
     # 健康检查
     @app.route('/health')

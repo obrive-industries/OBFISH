@@ -8,6 +8,12 @@
 # ============= 核心框架 =============
 flask>=3.0.0
 flask-cors>=6.0.0
+flask-sqlalchemy>=3.1.0
+
+# ============= Auth =============
+PyJWT>=2.8.0
+bcrypt>=4.0.0
+psycopg2-binary>=2.9.0   # Postgres driver (also works with SQLite for local dev)
 
 # ============= LLM 相关 =============
 # OpenAI SDK（统一使用 OpenAI 格式调用 LLM）

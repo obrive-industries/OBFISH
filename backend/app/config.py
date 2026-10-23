@@ -21,9 +21,18 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY', 'obmind-secret-key')
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
-    # JSON配置 - 禁用ASCII转义，让中文直接显示
-    JSON_AS_ASCII = False
-    
+    # Database (SQLAlchemy)
+    # Default: SQLite for local dev. Set DATABASE_URL to postgres:// for production.
+    SQLALCHEMY_DATABASE_URI = os.environ.get(
+        'DATABASE_URL',
+        'sqlite:///obmind_users.db'  # stored in backend/instance/
+    )
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+    # JWT
+    JWT_ACCESS_TTL_MINUTES = int(os.environ.get('JWT_ACCESS_TTL_MINUTES', '15'))
+    JWT_REFRESH_TTL_DAYS = int(os.environ.get('JWT_REFRESH_TTL_DAYS', '30'))
+
     # LLM配置（统一使用OpenAI格式）
     LLM_API_KEY = os.environ.get('LLM_API_KEY')
     LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
