@@ -1,13 +1,14 @@
 <template>
   <section class="section-faq" id="faq">
     <div class="container">
+      <!-- Section Header with Obrive 3-Ball Badge -->
       <div class="section-header">
         <div class="category-pill">
-          <span class="pill-dot"></span>
-          KNOWLEDGE BASE
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">KNOWLEDGE BASE</span>
         </div>
 
-        <h2 class="section-title">
+        <h2 class="section-title font-microgramma">
           Frequently Asked Questions
         </h2>
 
@@ -22,12 +23,14 @@
           v-for="(faq, index) in faqs" 
           :key="faq.question"
           class="faq-item"
-          :class="{ 'open': openIndex === index }"
+          :class="{ 'is-open': openIndex === index }"
         >
-          <button class="faq-trigger" @click="toggle(index)">
-            <span class="faq-q-num">0{{ index + 1 }}</span>
+          <button class="faq-trigger" @click="toggle(index)" :aria-expanded="openIndex === index">
+            <span class="faq-q-num font-microgramma">0{{ index + 1 }}</span>
             <span class="faq-question">{{ faq.question }}</span>
-            <span class="faq-icon">{{ openIndex === index ? '−' : '+' }}</span>
+            <span class="faq-icon-wrapper">
+              <span class="faq-icon">{{ openIndex === index ? '−' : '+' }}</span>
+            </span>
           </button>
 
           <div v-show="openIndex === index" class="faq-content">
@@ -41,6 +44,7 @@
 
 <script setup>
 import { ref } from 'vue'
+import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 
 const openIndex = ref(0) // First open by default
 
@@ -78,10 +82,10 @@ const faqs = [
 
 <style scoped>
 .section-faq {
-  padding: 120px 24px;
-  background: #070b0e;
+  padding: 110px 24px;
+  background: #ffffff;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .container {
@@ -91,133 +95,142 @@ const faqs = [
 
 .section-header {
   text-align: center;
-  margin-bottom: 60px;
+  margin-bottom: 56px;
 }
 
 .category-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  background: rgba(7, 65, 57, 0.3);
-  border: 1px solid rgba(0, 229, 163, 0.2);
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
   margin-bottom: 20px;
 }
 
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00E5A3;
+.pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #074139;
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  color: #ffffff;
+  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+  font-weight: 700;
+  color: #074139;
   margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
 }
 
 .section-sub {
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0;
+  font-weight: 450;
 }
 
+/* FAQ List */
 .faq-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .faq-item {
-  background: rgba(12, 18, 22, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 14px;
   overflow: hidden;
-  backdrop-filter: blur(12px);
-  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  transition: all 0.25s ease;
 }
 
-.faq-item.open {
-  border-color: rgba(0, 229, 163, 0.35);
-  background: rgba(12, 18, 22, 0.95);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+.faq-item:hover {
+  border-color: rgba(7, 65, 57, 0.35);
+}
+
+.faq-item.is-open {
+  border-color: #074139;
+  background: #fafcfb;
+  box-shadow: 0 6px 20px -2px rgba(7, 65, 57, 0.08);
 }
 
 .faq-trigger {
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 22px 28px;
+  padding: 22px 24px;
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
-  gap: 16px;
+  gap: 18px;
 }
 
 .faq-q-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
+  font-size: 13px;
   font-weight: 700;
-  color: #00E5A3;
+  color: #074139;
+  opacity: 0.6;
 }
 
 .faq-question {
   flex: 1;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.15rem;
+  font-size: 1.08rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #074139;
+  line-height: 1.4;
+}
+
+.faq-icon-wrapper {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(7, 65, 57, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.2s ease;
+}
+
+.faq-item.is-open .faq-icon-wrapper {
+  background: #074139;
 }
 
 .faq-icon {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.5rem;
-  color: #00E5A3;
-  width: 24px;
-  text-align: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #074139;
   line-height: 1;
 }
 
+.faq-item.is-open .faq-icon {
+  color: #caede5;
+}
+
 .faq-content {
-  padding: 0 28px 24px 68px;
-  animation: fadeIn 0.3s ease;
+  padding: 0 24px 24px 54px;
 }
 
 .faq-answer {
-  font-size: 1rem;
-  line-height: 1.65;
-  color: #94a3b8;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 640px) {
   .faq-trigger {
-    padding: 18px 20px;
+    padding: 18px 16px;
     gap: 12px;
   }
 
   .faq-content {
-    padding: 0 20px 20px 20px;
-  }
-
-  .faq-question {
-    font-size: 1rem;
+    padding: 0 16px 20px 42px;
   }
 }
 </style>

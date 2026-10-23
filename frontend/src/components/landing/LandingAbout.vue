@@ -1,22 +1,22 @@
 <template>
   <section class="section-about" id="about">
     <div class="container">
-      <!-- Section Header -->
+      <!-- Section Header with Obrive 3-Ball Badge -->
       <div class="section-header">
         <div class="category-pill">
-          <span class="pill-dot"></span>
-          About Us: Simulate Possibilities. Make Smarter Decisions.
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">ABOUT US: SIMULATE POSSIBILITIES. MAKE SMARTER DECISIONS.</span>
         </div>
 
-        <h2 class="section-title">
+        <h2 class="section-title font-microgramma">
           Simulate Possibilities.<br />
-          <span class="gradient-text">Make Smarter Decisions.</span>
+          <span class="title-sub">Make Smarter Decisions.</span>
         </h2>
       </div>
 
       <!-- Narrative Story Grid -->
       <div class="narrative-grid">
-        <div class="narrative-col">
+        <div class="narrative-card">
           <p class="narrative-lead">
             OBMIND is an AI-powered simulation and predictive intelligence platform designed to explore possibilities, understand complex behaviours, and evaluate potential outcomes.
           </p>
@@ -25,7 +25,7 @@
           </p>
         </div>
 
-        <div class="narrative-col">
+        <div class="narrative-card">
           <p class="narrative-text">
             Through AI-driven simulations, users can explore multiple perspectives, test assumptions, analyse stakeholder behaviour, and discover alternative pathways.
           </p>
@@ -38,44 +38,44 @@
       <!-- Vision & 3 Pillars -->
       <div class="vision-wrapper">
         <div class="vision-header">
-          <span class="vision-eyebrow">OUR VISION</span>
-          <h3 class="vision-title">
+          <span class="vision-eyebrow font-microgramma">OUR VISION</span>
+          <h3 class="vision-title font-microgramma">
             Making advanced simulation accessible to everyone — from founders and enterprise leaders to researchers and creative storytellers.
           </h3>
         </div>
 
         <div class="pillars-grid">
           <!-- Pillar 1 -->
-          <div class="pillar-card">
+          <div class="pillar-card obrive-cell">
             <div class="pillar-top">
-              <span class="pillar-level">01 // STRATEGIC LEVEL</span>
+              <span class="pillar-level font-microgramma">01 // STRATEGIC LEVEL</span>
               <span class="pillar-dot"></span>
             </div>
-            <h4 class="pillar-name">Executive Strategy & Risk</h4>
+            <h4 class="pillar-name font-microgramma">Executive Strategy & Risk</h4>
             <p class="pillar-desc">
               Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.
             </p>
           </div>
 
           <!-- Pillar 2 -->
-          <div class="pillar-card">
+          <div class="pillar-card obrive-cell">
             <div class="pillar-top">
-              <span class="pillar-level">02 // CREATIVE LEVEL</span>
+              <span class="pillar-level font-microgramma">02 // CREATIVE LEVEL</span>
               <span class="pillar-dot"></span>
             </div>
-            <h4 class="pillar-name">Idea Sandbox & Worldbuilding</h4>
+            <h4 class="pillar-name font-microgramma">Idea Sandbox & Worldbuilding</h4>
             <p class="pillar-desc">
               A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.
             </p>
           </div>
 
           <!-- Pillar 3 -->
-          <div class="pillar-card">
+          <div class="pillar-card obrive-cell">
             <div class="pillar-top">
-              <span class="pillar-level">03 // RESEARCH LEVEL</span>
+              <span class="pillar-level font-microgramma">03 // RESEARCH LEVEL</span>
               <span class="pillar-dot"></span>
             </div>
-            <h4 class="pillar-name">Hypothesis & Complexity</h4>
+            <h4 class="pillar-name font-microgramma">Hypothesis & Complexity</h4>
             <p class="pillar-desc">
               Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.
             </p>
@@ -83,27 +83,40 @@
         </div>
       </div>
 
-      <!-- Featured Quote Callout from docx -->
+      <!-- High Impact Quote Card in Obrive Dark Teal Primary Style -->
       <div class="quote-card">
-        <div class="quote-symbol">“</div>
-        <p class="quote-body">
-          Every possibility begins with a question. OBMIND helps you explore what comes next.
-        </p>
-        <div class="quote-author">
-          <span class="author-name">OBMIND by Obrive Industries</span>
-          <span class="author-tag">Predictive Intelligence Architecture</span>
+        <div class="quote-content">
+          <p class="quote-body font-microgramma">
+            “Every possibility begins with a question. OBMIND helps you explore what comes next.”
+          </p>
+          <div class="quote-author">
+            <img src="../../assets/icons/obrive-white-logo.svg" alt="Obrive" class="quote-logo" />
+            <div class="quote-author-meta">
+              <span class="author-name font-microgramma">OBMIND by Obrive Industries</span>
+              <span class="author-tag">Predictive Intelligence Architecture</span>
+            </div>
+          </div>
         </div>
       </div>
+
+      <!-- Explanatory Disclaimer from docx -->
+      <p class="about-disclaimer">
+        Simulated results are exploratory, not guaranteed forecasts or substitutes for real-world evidence, professional judgement, or validated research.
+      </p>
     </div>
   </section>
 </template>
 
+<script setup>
+import RoundedBallIcon from '../common/RoundedBallIcon.vue'
+</script>
+
 <style scoped>
 .section-about {
-  padding: 120px 24px;
-  background: #070b0e;
+  padding: 110px 24px 80px;
+  background: #f8fbfa;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .container {
@@ -113,112 +126,116 @@
 
 .section-header {
   text-align: center;
-  max-width: 800px;
-  margin: 0 auto 60px;
+  max-width: 860px;
+  margin: 0 auto 56px;
 }
 
 .category-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  background: rgba(7, 65, 57, 0.3);
-  border: 1px solid rgba(0, 229, 163, 0.2);
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
   margin-bottom: 20px;
 }
 
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00E5A3;
+.pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #074139;
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  color: #ffffff;
-  line-height: 1.15;
+  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+  font-weight: 700;
+  color: #074139;
   margin: 0;
+  letter-spacing: -0.01em;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #00E5A3 0%, #a2f1df 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.title-sub {
+  color: #0d5c52;
 }
 
+/* Narrative Grid */
 .narrative-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 40px;
-  margin-bottom: 70px;
+  gap: 28px;
+  margin-bottom: 60px;
+}
+
+.narrative-card {
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.16);
+  border-radius: 18px;
+  padding: 36px 32px;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .narrative-lead {
-  font-size: 1.25rem;
-  line-height: 1.6;
-  color: #ffffff;
+  font-size: 1.15rem;
   font-weight: 600;
-  margin: 0 0 18px 0;
+  line-height: 1.6;
+  color: #074139;
+  margin: 0 0 16px 0;
 }
 
 .narrative-text {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
   line-height: 1.65;
-  color: #94a3b8;
-  margin: 0 0 18px 0;
+  color: rgba(7, 65, 57, 0.85);
+  margin: 0 0 16px 0;
 }
 
 .narrative-highlight {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
   line-height: 1.6;
-  color: #00E5A3;
+  color: #074139;
+  background: rgba(162, 241, 223, 0.35);
   padding: 16px 20px;
-  background: rgba(7, 65, 57, 0.2);
-  border-left: 3px solid #00E5A3;
-  border-radius: 0 10px 10px 0;
+  border-radius: 12px;
+  border-left: 3px solid #074139;
   margin: 0;
 }
 
+/* Vision */
 .vision-wrapper {
-  background: rgba(12, 18, 22, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 20px;
-  padding: 48px;
   margin-bottom: 60px;
-  backdrop-filter: blur(14px);
 }
 
 .vision-header {
-  max-width: 860px;
-  margin-bottom: 40px;
+  text-align: center;
+  max-width: 820px;
+  margin: 0 auto 40px;
 }
 
 .vision-eyebrow {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.75rem;
+  display: inline-block;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 2px;
-  color: #00E5A3;
+  letter-spacing: 0.12em;
+  color: #074139;
+  opacity: 0.75;
+  margin-bottom: 12px;
 }
 
 .vision-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+  font-size: clamp(1.2rem, 2vw, 1.55rem);
   font-weight: 700;
-  color: #ffffff;
-  line-height: 1.35;
-  margin: 12px 0 0 0;
+  color: #074139;
+  line-height: 1.4;
+  margin: 0;
 }
 
+/* Pillars */
 .pillars-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -226,114 +243,151 @@
 }
 
 .pillar-card {
-  background: rgba(7, 11, 14, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  padding: 24px;
+  background: #ffffff;
+  padding: 32px 28px;
+  min-height: 260px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s ease;
-}
-
-.pillar-card:hover {
-  border-color: rgba(0, 229, 163, 0.3);
-  transform: translateY(-3px);
+  cursor: pointer;
 }
 
 .pillar-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
 .pillar-level {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.7rem;
-  color: #00E5A3;
-  letter-spacing: 1px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #074139;
+  transition: color 0.4s ease;
 }
 
 .pillar-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: #00E5A3;
 }
 
+.pillar-card:hover .pillar-level {
+  color: #a2f1df !important;
+}
+
 .pillar-name {
-  font-family: 'Space Grotesk', sans-serif;
   font-size: 1.15rem;
   font-weight: 700;
-  color: #ffffff;
-  margin: 0 0 12px 0;
+  color: #074139;
+  margin: 0 0 14px 0;
+  line-height: 1.3;
+  transition: color 0.4s ease;
+}
+
+.pillar-card:hover .pillar-name {
+  color: #ffffff !important;
 }
 
 .pillar-desc {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: #94a3b8;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0;
+  flex: 1;
+  transition: color 0.4s ease;
 }
 
+.pillar-card:hover .pillar-desc {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Quote Card in Primary Dark Teal */
 .quote-card {
+  background: #074139;
+  border-radius: 20px;
+  padding: 44px 40px;
+  margin-bottom: 30px;
+  box-shadow: 0 16px 40px -8px rgba(7, 65, 57, 0.25);
   position: relative;
-  background: linear-gradient(135deg, rgba(7, 65, 57, 0.4) 0%, rgba(12, 18, 22, 0.9) 100%);
-  border: 1px solid rgba(0, 229, 163, 0.3);
-  border-radius: 18px;
-  padding: 40px 48px;
-  text-align: center;
   overflow: hidden;
 }
 
-.quote-symbol {
-  font-size: 4rem;
-  color: rgba(0, 229, 163, 0.2);
-  line-height: 1;
-  margin-bottom: -20px;
+.quote-card::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(162, 241, 223, 0.15), transparent 70%);
+  pointer-events: none;
+}
+
+.quote-content {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
 .quote-body {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(1.3rem, 2.4vw, 1.8rem);
-  font-weight: 600;
-  color: #ffffff;
-  max-width: 820px;
-  margin: 0 auto 20px;
-  line-height: 1.4;
+  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: #caede5;
+  margin: 0;
+  max-width: 900px;
 }
 
 .quote-author {
   display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(202, 237, 229, 0.2);
+}
+
+.quote-logo {
+  height: 28px;
+  width: auto;
+}
+
+.quote-author-meta {
+  display: flex;
   flex-direction: column;
-  gap: 4px;
 }
 
 .author-name {
-  font-size: 0.95rem;
+  font-size: 12px;
   font-weight: 700;
-  color: #00E5A3;
-  letter-spacing: 1px;
+  letter-spacing: 0.06em;
+  color: #ffffff;
 }
 
 .author-tag {
-  font-size: 0.8rem;
-  color: #64748b;
-  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(202, 237, 229, 0.7);
 }
 
-@media (max-width: 900px) {
-  .narrative-grid,
-  .pillars-grid {
+.about-disclaimer {
+  text-align: center;
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(7, 65, 57, 0.65);
+  max-width: 780px;
+  margin: 0 auto;
+  font-style: italic;
+}
+
+@media (max-width: 960px) {
+  .narrative-grid {
     grid-template-columns: 1fr;
   }
 
-  .vision-wrapper {
-    padding: 28px 20px;
-  }
-
-  .quote-card {
-    padding: 30px 20px;
+  .pillars-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

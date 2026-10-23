@@ -1,13 +1,14 @@
 <template>
   <section class="section-workflow" id="workflow">
     <div class="container">
+      <!-- Section Header with Obrive 3-Ball Badge -->
       <div class="section-header">
         <div class="category-pill">
-          <span class="pill-dot"></span>
-          WORKFLOW ENGINE
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">WORKFLOW ENGINE</span>
         </div>
 
-        <h2 class="section-title">
+        <h2 class="section-title font-microgramma">
           How OBMIND Works
         </h2>
 
@@ -16,41 +17,46 @@
         </p>
       </div>
 
-      <!-- 5 Step Cards with Connector Flow -->
+      <!-- 5 Step Cards with Obrive Cell Interaction -->
       <div class="steps-flow">
         <div 
           v-for="(step, index) in steps" 
           :key="step.number"
-          class="step-card"
-          :class="{ 'active': activeStep === index }"
+          class="step-card obrive-cell"
+          :class="{ 'is-active': activeStep === index }"
           @mouseenter="activeStep = index"
         >
           <div class="step-card-header">
-            <span class="step-num">{{ step.number }}</span>
-            <span class="step-tag">{{ step.tag }}</span>
+            <span class="step-num font-microgramma">{{ step.number }}</span>
+            <span class="step-tag font-microgramma">{{ step.tag }}</span>
           </div>
 
-          <h3 class="step-title">{{ step.title }}</h3>
+          <h3 class="step-title font-microgramma">{{ step.title }}</h3>
 
           <p class="step-body">
             {{ step.description }}
           </p>
 
           <div class="step-indicator">
-            <span class="indicator-bar"></span>
+            <span class="indicator-bar" :class="{ 'bar-active': activeStep === index }"></span>
           </div>
         </div>
       </div>
 
-      <!-- Interactive Step Summary Bar -->
+      <!-- Obrive Pre-Action CTA Banner -->
       <div class="workflow-cta-banner">
         <div class="cta-left">
-          <span class="cta-badge">EXPLORATION READY</span>
-          <p class="cta-text">Turn your dossier or hypothesis into a 5-step simulation in seconds.</p>
+          <span class="cta-badge font-microgramma">EXPLORATION READY</span>
+          <p class="cta-text">Turn your question, dossier, or hypothesis into a 5-step predictive simulation in seconds.</p>
         </div>
-        <router-link to="/console" class="btn-launch-step">
-          Launch Engine Now →
-        </router-link>
+        <AnimatedButton
+          to="/console"
+          variant="primary"
+          size="default"
+          :iconSize="14"
+        >
+          Launch Engine Now
+        </AnimatedButton>
       </div>
     </div>
   </section>
@@ -58,6 +64,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import AnimatedButton from '../common/AnimatedButton.vue'
+import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 
 const activeStep = ref(0)
 
@@ -97,10 +105,10 @@ const steps = [
 
 <style scoped>
 .section-workflow {
-  padding: 120px 24px;
-  background: #070b0e;
+  padding: 110px 24px;
+  background: #f8fbfa;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .container {
@@ -110,183 +118,183 @@ const steps = [
 
 .section-header {
   text-align: center;
-  max-width: 760px;
-  margin: 0 auto 64px;
+  max-width: 820px;
+  margin: 0 auto 60px;
 }
 
 .category-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  background: rgba(7, 65, 57, 0.3);
-  border: 1px solid rgba(0, 229, 163, 0.2);
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
   margin-bottom: 20px;
 }
 
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00E5A3;
+.pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #074139;
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  color: #ffffff;
+  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+  font-weight: 700;
+  color: #074139;
   margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
 }
 
 .section-sub {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0;
+  font-weight: 450;
 }
 
+/* Steps Flow */
 .steps-flow {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 20px;
-  margin-bottom: 60px;
+  gap: 18px;
+  margin-bottom: 48px;
 }
 
 .step-card {
-  background: rgba(12, 18, 22, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 16px;
-  padding: 24px 20px;
+  background: #ffffff;
+  padding: 28px 22px;
   display: flex;
   flex-direction: column;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  position: relative;
-  backdrop-filter: blur(12px);
+  justify-content: space-between;
+  min-height: 320px;
+  cursor: pointer;
 }
 
-.step-card:hover,
-.step-card.active {
-  border-color: rgba(0, 229, 163, 0.4);
-  background: rgba(12, 18, 22, 0.9);
-  transform: translateY(-4px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(0, 229, 163, 0.1);
+.step-card.is-active {
+  border-color: #074139;
+  box-shadow: 0 10px 30px -4px rgba(7, 65, 57, 0.15);
 }
 
 .step-card-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .step-num {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 1.8rem;
-  font-weight: 800;
-  color: #00E5A3;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #074139;
+  line-height: 1;
+  transition: color 0.4s ease;
 }
 
 .step-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.65rem;
-  color: #64748b;
-  letter-spacing: 0.5px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+  background: rgba(7, 65, 57, 0.08);
+  color: #074139;
+  border-radius: 6px;
+  transition: all 0.4s ease;
+}
+
+.step-card:hover .step-num {
+  color: #a2f1df !important;
+}
+
+.step-card:hover .step-tag {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff !important;
 }
 
 .step-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.12rem;
+  font-size: 1.08rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #074139;
   margin: 0 0 12px 0;
   line-height: 1.3;
+  transition: color 0.4s ease;
+}
+
+.step-card:hover .step-title {
+  color: #ffffff !important;
 }
 
 .step-body {
-  font-size: 0.88rem;
-  line-height: 1.55;
-  color: #94a3b8;
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0 0 20px 0;
   flex: 1;
+  transition: color 0.4s ease;
+}
+
+.step-card:hover .step-body {
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 .step-indicator {
-  width: 100%;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 2px;
+  height: 3px;
+  background: rgba(7, 65, 57, 0.1);
+  border-radius: 9999px;
   overflow: hidden;
 }
 
 .indicator-bar {
   display: block;
   height: 100%;
-  width: 0%;
+  width: 0;
   background: #00E5A3;
   transition: width 0.3s ease;
 }
 
-.step-card:hover .indicator-bar,
-.step-card.active .indicator-bar {
+.indicator-bar.bar-active {
   width: 100%;
 }
 
+/* Workflow Bottom Banner */
 .workflow-cta-banner {
-  background: linear-gradient(135deg, rgba(7, 65, 57, 0.4) 0%, rgba(12, 18, 22, 0.8) 100%);
-  border: 1px solid rgba(0, 229, 163, 0.25);
-  border-radius: 14px;
-  padding: 24px 32px;
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 16px;
+  padding: 22px 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  backdrop-filter: blur(16px);
+  box-shadow: 0 6px 24px -2px rgba(7, 65, 57, 0.06);
 }
 
 .cta-left {
   display: flex;
-  flex-direction: column;
-  gap: 6px;
+  align-items: center;
+  gap: 16px;
 }
 
 .cta-badge {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
+  background: #a2f1df;
+  color: #074139;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1px;
-  color: #00E5A3;
+  letter-spacing: 0.08em;
+  padding: 6px 12px;
+  border-radius: 6px;
 }
 
 .cta-text {
-  font-size: 1.05rem;
-  color: #e2e8f0;
+  font-size: 0.95rem;
   font-weight: 500;
+  color: #074139;
   margin: 0;
 }
 
-.btn-launch-step {
-  background: #00E5A3;
-  color: #070b0e;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 700;
-  text-decoration: none;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.btn-launch-step:hover {
-  background: #a2f1df;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 229, 163, 0.35);
-}
-
+/* Responsive */
 @media (max-width: 1100px) {
   .steps-flow {
     grid-template-columns: repeat(3, 1fr);
@@ -301,7 +309,7 @@ const steps = [
   .workflow-cta-banner {
     flex-direction: column;
     gap: 16px;
-    text-align: center;
+    align-items: flex-start;
   }
 }
 </style>

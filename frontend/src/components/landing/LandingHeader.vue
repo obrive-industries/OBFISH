@@ -1,74 +1,132 @@
 <template>
-  <header class="landing-header" :class="{ 'scrolled': isScrolled }">
-    <div class="header-container">
+  <header class="header-outer" :class="{ 'is-scrolled': isScrolled }">
+    <div class="header-pill">
       <!-- Brand Logo -->
-      <router-link to="/" class="brand-link">
-        <img src="../../assets/logo/obrive-white-logo.svg" alt="Obrive" class="brand-logo" />
-        <span class="brand-divider">/</span>
-        <span class="brand-name">OBMIND<span class="brand-tm">TM</span></span>
+      <router-link to="/" class="brand-link" aria-label="ObMind Home">
+        <img
+          src="../../assets/icons/obrive-logo.svg"
+          alt="Obrive"
+          class="brand-logo"
+        />
+        <span class="brand-sep">/</span>
+        <span class="brand-name font-microgramma">OBMIND</span>
       </router-link>
 
       <!-- Center Navigation Links -->
-      <nav class="nav-menu">
-        <a href="#overview" class="nav-link" @click.prevent="scrollTo('#overview')">Overview</a>
-        <a href="#workflow" class="nav-link" @click.prevent="scrollTo('#workflow')">How It Works</a>
-        <a href="#use-cases" class="nav-link" @click.prevent="scrollTo('#use-cases')">Explore</a>
-        <a href="#about" class="nav-link" @click.prevent="scrollTo('#about')">Vision</a>
-        <a href="#faq" class="nav-link" @click.prevent="scrollTo('#faq')">FAQ</a>
+      <nav class="nav-links">
+        <a href="#overview" class="nav-item" @click.prevent="scrollTo('#overview')">Overview</a>
+        <a href="#uncertainty" class="nav-item" @click.prevent="scrollTo('#uncertainty')">Decision Dynamics</a>
+        <a href="#workflow" class="nav-item" @click.prevent="scrollTo('#workflow')">How It Works</a>
+        <a href="#use-cases" class="nav-item" @click.prevent="scrollTo('#use-cases')">Explore</a>
+        <a href="#about" class="nav-item" @click.prevent="scrollTo('#about')">Vision</a>
+        <a href="#faq" class="nav-item" @click.prevent="scrollTo('#faq')">FAQ</a>
       </nav>
 
       <!-- Right Action Area -->
       <div class="header-actions">
         <!-- Auth Profile Pill / Sign In -->
-        <div v-if="authStore.isAuthenticated.value" class="user-pill" @click="authStore.openProfileModal">
+        <div
+          v-if="authStore.isAuthenticated.value"
+          class="user-pill"
+          @click="authStore.openProfileModal"
+          title="Account Profile"
+        >
           <div class="avatar">{{ userInitials }}</div>
           <span class="user-name">{{ authStore.user.value?.full_name || 'Account' }}</span>
-          <span v-if="authStore.isVerified.value" class="status-dot verified" title="Verified"></span>
-          <span v-else class="status-dot unverified" title="Verification Pending"></span>
+          <span
+            class="status-dot"
+            :class="authStore.isVerified.value ? 'verified' : 'unverified'"
+            :title="authStore.isVerified.value ? 'Verified' : 'Verification Pending'"
+          ></span>
         </div>
-        <button v-else class="btn-signin" @click="authStore.openAuthModal('login')">
+        <button
+          v-else
+          class="btn-signin"
+          @click="authStore.openAuthModal('login')"
+        >
           Sign In
         </button>
 
         <!-- External Obrive link -->
-        <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="link-obrive">
-          Explore Obrive <span class="arrow">↗</span>
+        <a
+          href="https://obrive.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-obrive"
+        >
+          Explore Obrive <span class="arrow-ext">↗</span>
         </a>
 
-        <!-- Predict Now CTA to /console -->
-        <router-link to="/console" class="btn-predict-header">
-          Predict Now <span class="btn-arrow">→</span>
-        </router-link>
+        <!-- Predict Now CTA using Obrive AnimatedButton -->
+        <AnimatedButton
+          to="/console"
+          variant="primary"
+          size="sm"
+          :iconSize="14"
+        >
+          Predict Now
+        </AnimatedButton>
       </div>
 
       <!-- Mobile Hamburger Button -->
-      <button class="mobile-toggle" @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle menu">
-        <span :class="['hamburger-line', { open: mobileMenuOpen }]"></span>
+      <button
+        class="mobile-toggle"
+        @click="mobileMenuOpen = !mobileMenuOpen"
+        aria-label="Toggle menu"
+      >
+        <span class="hamburger-bar" :class="{ open: mobileMenuOpen }"></span>
       </button>
     </div>
 
-    <!-- Mobile Dropdown -->
-    <div v-if="mobileMenuOpen" class="mobile-drawer">
-      <a href="#overview" class="mobile-nav-link" @click="handleMobileNav('#overview')">Overview</a>
-      <a href="#workflow" class="mobile-nav-link" @click="handleMobileNav('#workflow')">How It Works</a>
-      <a href="#use-cases" class="mobile-nav-link" @click="handleMobileNav('#use-cases')">Explore</a>
-      <a href="#about" class="mobile-nav-link" @click="handleMobileNav('#about')">Vision</a>
-      <a href="#faq" class="mobile-nav-link" @click="handleMobileNav('#faq')">FAQ</a>
-      <div class="mobile-actions">
-        <router-link to="/console" class="btn-predict-mobile" @click="mobileMenuOpen = false">
-          Predict Now →
-        </router-link>
-        <a href="https://obrive.com" target="_blank" class="mobile-obrive-link">
-          Explore Obrive ↗
-        </a>
+    <!-- Mobile Drawer -->
+    <transition name="drawer-slide">
+      <div v-if="mobileMenuOpen" class="mobile-drawer">
+        <nav class="mobile-nav">
+          <a href="#overview" class="mobile-item" @click="handleMobileNav('#overview')">Overview</a>
+          <a href="#uncertainty" class="mobile-item" @click="handleMobileNav('#uncertainty')">Decision Dynamics</a>
+          <a href="#workflow" class="mobile-item" @click="handleMobileNav('#workflow')">How It Works</a>
+          <a href="#use-cases" class="mobile-item" @click="handleMobileNav('#use-cases')">Explore</a>
+          <a href="#about" class="mobile-item" @click="handleMobileNav('#about')">Vision</a>
+          <a href="#faq" class="mobile-item" @click="handleMobileNav('#faq')">FAQ</a>
+        </nav>
+
+        <div class="mobile-footer">
+          <AnimatedButton
+            to="/console"
+            variant="primary"
+            size="default"
+            class="w-full justify-center"
+            @click="mobileMenuOpen = false"
+          >
+            Predict Now
+          </AnimatedButton>
+          <div class="mobile-secondary-row">
+            <button
+              v-if="!authStore.isAuthenticated.value"
+              class="mobile-signin"
+              @click="authStore.openAuthModal('login'); mobileMenuOpen = false"
+            >
+              Sign In
+            </button>
+            <a
+              href="https://obrive.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="mobile-ext-link"
+            >
+              Explore Obrive ↗
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
+    </transition>
   </header>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import authStore from '../../store/auth'
+import AnimatedButton from '../common/AnimatedButton.vue'
 
 const isScrolled = ref(false)
 const mobileMenuOpen = ref(false)
@@ -78,7 +136,7 @@ const handleScroll = () => {
 }
 
 onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
+  window.addEventListener('scroll', handleScroll, { passive: true })
 })
 
 onUnmounted(() => {
@@ -97,119 +155,167 @@ const userInitials = computed(() => {
 const scrollTo = (hash) => {
   const target = document.querySelector(hash)
   if (target) {
-    target.scrollIntoView({ behavior: 'smooth' })
+    const headerOffset = 90
+    const elementPosition = target.getBoundingClientRect().top
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    })
   }
 }
 
 const handleMobileNav = (hash) => {
   mobileMenuOpen.value = false
-  scrollTo(hash)
+  setTimeout(() => scrollTo(hash), 150)
 }
 </script>
 
 <style scoped>
-.landing-header {
+.header-outer {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  transition: all 0.3s ease;
-  background: rgba(7, 11, 14, 0.4);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 16px 20px 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.landing-header.scrolled {
-  background: rgba(7, 11, 14, 0.92);
-  border-bottom-color: rgba(0, 229, 163, 0.15);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.header-container {
-  max-width: 1320px;
+.header-pill {
+  pointer-events: auto;
+  max-width: 1152px; /* max-w-6xl */
   margin: 0 auto;
-  padding: 16px 24px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 0 20px 0 24px;
+  background-color: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(7, 65, 57, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px -2px rgba(7, 65, 57, 0.06);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.header-outer.is-scrolled .header-pill {
+  background-color: rgba(255, 255, 255, 0.96);
+  border-color: rgba(7, 65, 57, 0.24);
+  box-shadow: 0 10px 30px -4px rgba(7, 65, 57, 0.12);
+  height: 60px;
+}
+
+/* Brand Logo */
 .brand-link {
   display: flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: #fff;
+  color: #074139;
+  flex-shrink: 0;
 }
 
 .brand-logo {
-  height: 26px;
+  height: 28px;
   width: auto;
-  filter: drop-shadow(0 0 8px rgba(0, 229, 163, 0.3));
+  display: block;
 }
 
-.brand-divider {
-  color: rgba(255, 255, 255, 0.2);
+.brand-sep {
+  color: rgba(7, 65, 57, 0.3);
   font-weight: 300;
+  font-size: 1.1rem;
 }
 
 .brand-name {
-  font-family: 'Space Grotesk', -apple-system, sans-serif;
+  font-size: 0.95rem;
   font-weight: 700;
-  font-size: 1.15rem;
-  letter-spacing: 2px;
-  color: #ffffff;
+  letter-spacing: 0.08em;
+  color: #074139;
 }
 
-.brand-tm {
-  font-size: 0.6rem;
-  color: #00E5A3;
-  margin-left: 2px;
-  vertical-align: super;
-}
-
-.nav-menu {
+/* Nav Menu */
+.nav-links {
   display: flex;
   align-items: center;
-  gap: 28px;
+  gap: 22px;
 }
 
-.nav-link {
-  color: #94a3b8;
+.nav-item {
+  color: #074139;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   text-decoration: none;
-  font-size: 0.9rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
+  padding: 6px 4px;
   position: relative;
+  transition: color 0.2s ease, font-weight 0.2s ease;
 }
 
-.nav-link:hover {
-  color: #00E5A3;
+.nav-item:hover {
+  color: #0d5c52;
 }
 
+.nav-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #074139;
+  transition: all 0.25s ease;
+  transform: translateX(-50%);
+}
+
+.nav-item:hover::after {
+  width: 100%;
+}
+
+/* Actions */
 .header-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 14px;
+}
+
+.btn-signin {
+  background: transparent;
+  border: 1px solid rgba(7, 65, 57, 0.25);
+  color: #074139;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-signin:hover {
+  background-color: rgba(7, 65, 57, 0.08);
+  border-color: #074139;
 }
 
 .user-pill {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 4px 10px 4px 4px;
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.2);
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .user-pill:hover {
-  border-color: #00E5A3;
-  background: rgba(0, 229, 163, 0.08);
+  background: rgba(7, 65, 57, 0.12);
 }
 
 .avatar {
@@ -217,8 +323,8 @@ const handleMobileNav = (hash) => {
   height: 24px;
   border-radius: 50%;
   background: #074139;
-  color: #00E5A3;
-  font-size: 0.75rem;
+  color: #caede5;
+  font-size: 10px;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -226,18 +332,18 @@ const handleMobileNav = (hash) => {
 }
 
 .user-name {
-  font-size: 0.85rem;
-  color: #e2e8f0;
-  font-weight: 500;
-  max-width: 120px;
-  white-space: nowrap;
+  font-size: 11px;
+  font-weight: 600;
+  color: #074139;
+  max-width: 90px;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .status-dot {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
 }
 
@@ -247,116 +353,169 @@ const handleMobileNav = (hash) => {
 }
 
 .status-dot.unverified {
-  background: #f59e0b;
-}
-
-.btn-signin {
-  background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #e2e8f0;
-  padding: 7px 16px;
-  border-radius: 8px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-signin:hover {
-  border-color: #00E5A3;
-  color: #00E5A3;
-  background: rgba(0, 229, 163, 0.06);
+  background: #ffab00;
 }
 
 .link-obrive {
-  color: #94a3b8;
-  font-size: 0.85rem;
+  color: rgba(7, 65, 57, 0.75);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   text-decoration: none;
-  transition: color 0.2s ease;
   display: flex;
   align-items: center;
   gap: 4px;
+  padding: 6px 8px;
+  transition: color 0.2s ease;
 }
 
 .link-obrive:hover {
-  color: #ffffff;
+  color: #074139;
 }
 
-.arrow {
-  font-size: 0.8rem;
-  opacity: 0.7;
-}
-
-.btn-predict-header {
-  background: linear-gradient(135deg, #00E5A3 0%, #074139 100%);
-  color: #05080a;
-  padding: 8px 18px;
-  border-radius: 8px;
-  font-size: 0.88rem;
-  font-weight: 700;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  box-shadow: 0 4px 15px rgba(0, 229, 163, 0.25);
-  transition: all 0.25s ease;
-}
-
-.btn-predict-header:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(0, 229, 163, 0.4);
-  color: #000;
-}
-
-.btn-arrow {
+.arrow-ext {
+  font-size: 12px;
   transition: transform 0.2s ease;
 }
 
-.btn-predict-header:hover .btn-arrow {
-  transform: translateX(3px);
+.link-obrive:hover .arrow-ext {
+  transform: translate(2px, -2px);
 }
 
+/* Mobile Toggle */
 .mobile-toggle {
   display: none;
-  background: none;
+  background: transparent;
   border: none;
   cursor: pointer;
-  padding: 6px;
+  padding: 8px;
+  color: #074139;
 }
 
-.hamburger-line {
+.hamburger-bar {
   display: block;
-  width: 22px;
+  width: 20px;
   height: 2px;
-  background: #fff;
+  background-color: #074139;
   position: relative;
   transition: all 0.3s ease;
 }
 
-.hamburger-line::before,
-.hamburger-line::after {
+.hamburger-bar::before,
+.hamburger-bar::after {
   content: '';
   position: absolute;
-  width: 22px;
+  width: 20px;
   height: 2px;
-  background: #fff;
+  background-color: #074139;
   transition: all 0.3s ease;
 }
 
-.hamburger-line::before {
+.hamburger-bar::before {
   top: -6px;
 }
 
-.hamburger-line::after {
+.hamburger-bar::after {
   top: 6px;
 }
 
-.mobile-drawer {
-  display: none;
+.hamburger-bar.open {
+  background-color: transparent;
 }
 
-@media (max-width: 900px) {
-  .nav-menu,
+.hamburger-bar.open::before {
+  transform: translateY(6px) rotate(45deg);
+}
+
+.hamburger-bar.open::after {
+  transform: translateY(-6px) rotate(-45deg);
+}
+
+/* Mobile Drawer */
+.mobile-drawer {
+  pointer-events: auto;
+  max-width: 1152px;
+  margin: 10px auto 0;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 16px 36px -4px rgba(7, 65, 57, 0.16);
+}
+
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.mobile-item {
+  color: #074139;
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.mobile-item:hover {
+  background: rgba(7, 65, 57, 0.06);
+}
+
+.mobile-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
+}
+
+.mobile-secondary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mobile-signin {
+  background: none;
+  border: none;
+  color: #074139;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+.mobile-ext-link {
+  color: rgba(7, 65, 57, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.drawer-slide-enter-active,
+.drawer-slide-leave-active {
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.drawer-slide-enter-from,
+.drawer-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* Breakpoints */
+@media (max-width: 960px) {
+  .nav-links {
+    display: none;
+  }
+
   .link-obrive {
     display: none;
   }
@@ -364,47 +523,21 @@ const handleMobileNav = (hash) => {
   .mobile-toggle {
     display: block;
   }
+}
 
-  .mobile-drawer {
-    display: flex;
-    flex-direction: column;
-    padding: 20px 24px;
-    background: #070b0e;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-    gap: 16px;
+@media (max-width: 640px) {
+  .header-outer {
+    padding: 8px 12px 0;
   }
 
-  .mobile-nav-link {
-    color: #cbd5e1;
-    text-decoration: none;
-    font-size: 1rem;
-    padding: 8px 0;
+  .header-pill {
+    height: 56px;
+    padding: 0 14px;
+    border-radius: 12px;
   }
 
-  .mobile-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .btn-predict-mobile {
-    background: #00E5A3;
-    color: #070b0e;
-    padding: 10px;
-    text-align: center;
-    border-radius: 8px;
-    font-weight: 700;
-    text-decoration: none;
-  }
-
-  .mobile-obrive-link {
-    color: #94a3b8;
-    text-align: center;
-    text-decoration: none;
-    font-size: 0.9rem;
+  .btn-signin {
+    display: none;
   }
 }
 </style>

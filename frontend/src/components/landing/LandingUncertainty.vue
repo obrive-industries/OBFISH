@@ -1,16 +1,16 @@
 <template>
-  <section class="section-uncertainty">
+  <section class="section-uncertainty" id="uncertainty">
     <div class="container">
-      <!-- Section Header -->
+      <!-- Section Header with Obrive 3-Ball Badge -->
       <div class="section-header">
         <div class="category-pill">
-          <span class="pill-dot"></span>
-          DECISION DYNAMICS
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">DECISION DYNAMICS</span>
         </div>
 
-        <h2 class="section-title">
+        <h2 class="section-title font-microgramma">
           The Future Is Uncertain.<br />
-          <span class="gradient-text">Your Decisions Don’t Have to Be Blind.</span>
+          <span class="title-accent">Your Decisions Don’t Have to Be Blind.</span>
         </h2>
 
         <p class="section-lead">
@@ -26,8 +26,8 @@
       <div class="comparison-grid">
         <!-- Card 1: Traditional Planning -->
         <div class="comparison-card traditional">
-          <div class="card-badge danger">TRADITIONAL PLANNING</div>
-          <h3 class="card-title">Static Historical Models</h3>
+          <div class="card-badge danger font-microgramma">TRADITIONAL PLANNING</div>
+          <h3 class="card-title font-microgramma">Static Historical Models</h3>
           <p class="card-desc">
             Linear projections assume static conditions. When unforeseen public sentiment or market shocks arrive, decisions become reactive and vulnerable.
           </p>
@@ -39,7 +39,7 @@
               <span class="point p3 danger-point" title="Critical Blindspot">✕</span>
             </div>
             <div class="linear-legend">
-              <span class="blindspot-tag">Critical Blindspots Ignored</span>
+              <span class="blindspot-tag font-microgramma">Critical Blindspots Ignored</span>
             </div>
           </div>
 
@@ -52,8 +52,8 @@
 
         <!-- Card 2: OBMIND Multi-Agent Simulation -->
         <div class="comparison-card obmind">
-          <div class="card-badge success">OBMIND SIMULATION</div>
-          <h3 class="card-title">Virtual Emergent Complexity</h3>
+          <div class="card-badge success font-microgramma">OBMIND SIMULATION</div>
+          <h3 class="card-title font-microgramma">Virtual Emergent Complexity</h3>
           <p class="card-desc">
             Autonomous AI digital twin agents simulate hundreds of interactions, surfacing hidden risks, consensus tipping points, and resilient decision paths.
           </p>
@@ -84,27 +84,27 @@
             <div class="agent-graph-box">
               <svg viewBox="0 0 400 180" class="graph-svg">
                 <!-- Links -->
-                <line x1="60" y1="90" :x2="activeScenario === 'shock' ? '180' : '170'" :y2="activeScenario === 'shift' ? '50' : '70'" stroke="rgba(0, 229, 163, 0.4)" stroke-width="1.5" stroke-dasharray="3,3" />
-                <line x1="60" y1="90" x2="170" y2="120" stroke="rgba(0, 229, 163, 0.4)" stroke-width="1.5" />
-                <line :x1="activeScenario === 'shock' ? '180' : '170'" :y1="activeScenario === 'shift' ? '50' : '70'" x2="310" :y2="activeScenario === 'shock' ? '130' : '85'" stroke="#00E5A3" stroke-width="2" />
-                <line x1="170" y1="120" x2="310" :y2="activeScenario === 'shock' ? '130' : '85'" stroke="#00E5A3" stroke-width="2" />
-                <line x1="310" :y1="activeScenario === 'shock' ? '130' : '85'" x2="370" y2="90" stroke="#10b981" stroke-width="2.5" />
+                <line x1="60" y1="90" :x2="activeScenario === 'shock' ? '180' : '170'" :y2="activeScenario === 'shift' ? '50' : '70'" stroke="rgba(7, 65, 57, 0.35)" stroke-width="1.5" stroke-dasharray="3,3" />
+                <line x1="60" y1="90" x2="170" y2="120" stroke="rgba(7, 65, 57, 0.35)" stroke-width="1.5" />
+                <line :x1="activeScenario === 'shock' ? '180' : '170'" :y1="activeScenario === 'shift' ? '50' : '70'" x2="310" :y2="activeScenario === 'shock' ? '130' : '85'" stroke="#074139" stroke-width="2" />
+                <line x1="170" y1="120" x2="310" :y2="activeScenario === 'shock' ? '130' : '85'" stroke="#074139" stroke-width="2" />
+                <line x1="310" :y1="activeScenario === 'shock' ? '130' : '85'" x2="370" y2="90" stroke="#00E5A3" stroke-width="2.5" />
 
                 <!-- Nodes -->
                 <!-- Scenario Origin -->
-                <circle cx="60" cy="90" r="8" fill="#074139" stroke="#00E5A3" stroke-width="2" />
-                <text x="60" y="112" fill="#94a3b8" font-size="9" text-anchor="middle">Question</text>
+                <circle cx="60" cy="90" r="9" fill="#074139" />
+                <text x="60" y="112" fill="#074139" font-size="9" font-weight="600" text-anchor="middle">Question</text>
 
                 <!-- Agent Nodes -->
-                <circle :cx="activeScenario === 'shock' ? 180 : 170" :cy="activeScenario === 'shift' ? 50 : 70" r="10" fill="#0c1216" stroke="#00E5A3" stroke-width="2" />
-                <text :x="activeScenario === 'shock' ? 180 : 170" :y="activeScenario === 'shift' ? 44 : 64" fill="#00E5A3" font-size="8" text-anchor="middle">Agent A</text>
+                <circle :cx="activeScenario === 'shock' ? 180 : 170" :cy="activeScenario === 'shift' ? 50 : 70" r="10" fill="#a2f1df" stroke="#074139" stroke-width="2" />
+                <text :x="activeScenario === 'shock' ? 180 : 170" :y="activeScenario === 'shift' ? 44 : 64" fill="#074139" font-size="8" font-weight="700" text-anchor="middle">Agent A</text>
 
-                <circle cx="170" cy="120" r="10" fill="#0c1216" stroke="#00E5A3" stroke-width="2" />
-                <text x="170" y="138" fill="#00E5A3" font-size="8" text-anchor="middle">Agent B</text>
+                <circle cx="170" cy="120" r="10" fill="#a2f1df" stroke="#074139" stroke-width="2" />
+                <text x="170" y="138" fill="#074139" font-size="8" font-weight="700" text-anchor="middle">Agent B</text>
 
                 <!-- Emergent Outcome -->
-                <circle cx="310" :cy="activeScenario === 'shock' ? 130 : 85" r="12" fill="#074139" stroke="#00E5A3" stroke-width="2.5" />
-                <text x="310" :y="activeScenario === 'shock' ? 152 : 72" fill="#ffffff" font-weight="bold" font-size="9" text-anchor="middle">
+                <circle cx="310" :cy="activeScenario === 'shock' ? 130 : 85" r="13" fill="#074139" stroke="#a2f1df" stroke-width="2.5" />
+                <text x="310" :y="activeScenario === 'shock' ? 152 : 70" fill="#074139" font-weight="bold" font-size="9" text-anchor="middle">
                   {{ activeScenario === 'shock' ? 'Risk Mitigated' : (activeScenario === 'shift' ? 'Consensus' : 'Optimal Path') }}
                 </text>
               </svg>
@@ -124,274 +124,301 @@
 
 <script setup>
 import { ref } from 'vue'
+import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 
 const activeScenario = ref('base')
 </script>
 
 <style scoped>
 .section-uncertainty {
-  padding: 120px 24px;
-  background: #070b0e;
+  padding: 110px 24px;
+  background: #ffffff;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .container {
-  max-width: 1240px;
+  max-width: 1200px;
   margin: 0 auto;
 }
 
 .section-header {
   text-align: center;
-  max-width: 820px;
-  margin: 0 auto 60px;
+  max-width: 840px;
+  margin: 0 auto 56px;
 }
 
 .category-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  background: rgba(7, 65, 57, 0.3);
-  border: 1px solid rgba(0, 229, 163, 0.2);
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
   margin-bottom: 20px;
 }
 
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00E5A3;
+.pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #074139;
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2rem, 3.8vw, 3rem);
+  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
   font-weight: 700;
   line-height: 1.15;
-  color: #ffffff;
+  color: #074139;
   margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
 }
 
-.gradient-text {
-  background: linear-gradient(135deg, #00E5A3 0%, #a2f1df 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.title-accent {
+  color: #0d5c52;
 }
 
 .section-lead {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   line-height: 1.65;
-  color: #94a3b8;
-  margin: 0 0 16px 0;
+  color: rgba(7, 65, 57, 0.85);
+  margin: 0 0 14px 0;
 }
 
 .section-highlight {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   line-height: 1.6;
-  color: #e2e8f0;
+  color: #074139;
   margin: 0;
 }
 
-.section-highlight strong {
-  color: #00E5A3;
-}
-
+/* Comparison Grid */
 .comparison-grid {
   display: grid;
-  grid-template-columns: 1fr 1.25fr;
+  grid-template-columns: 1fr 1fr;
   gap: 32px;
-  align-items: stretch;
 }
 
 .comparison-card {
-  background: rgba(12, 18, 22, 0.6);
   border-radius: 18px;
-  padding: 32px;
+  padding: 36px 32px;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(12px);
   transition: all 0.3s ease;
 }
 
 .comparison-card.traditional {
-  border: 1px solid rgba(239, 68, 68, 0.2);
+  background: #fafcfb;
+  border: 1px solid rgba(7, 65, 57, 0.18);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
 }
 
 .comparison-card.obmind {
-  border: 1px solid rgba(0, 229, 163, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 229, 163, 0.08);
-  background: rgba(12, 18, 22, 0.85);
+  background: linear-gradient(145deg, #ffffff 0%, #caede5 100%);
+  border: 2px solid rgba(7, 65, 57, 0.28);
+  box-shadow: 0 12px 35px -5px rgba(7, 65, 57, 0.12);
 }
 
 .card-badge {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
+  display: inline-block;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1px;
-  padding: 4px 10px;
+  letter-spacing: 0.08em;
+  padding: 5px 12px;
   border-radius: 6px;
-  width: fit-content;
   margin-bottom: 16px;
+  width: fit-content;
 }
 
 .card-badge.danger {
-  background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
-  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.1);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.25);
 }
 
 .card-badge.success {
-  background: rgba(0, 229, 163, 0.15);
-  color: #00E5A3;
-  border: 1px solid rgba(0, 229, 163, 0.3);
+  background: #a2f1df;
+  color: #074139;
+  border: 1px solid rgba(7, 65, 57, 0.25);
 }
 
 .card-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.4rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #074139;
   margin: 0 0 12px 0;
 }
 
 .card-desc {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0 0 24px 0;
 }
 
+/* Model Visuals */
 .model-visual {
-  background: rgba(0, 0, 0, 0.3);
+  height: 200px;
   border-radius: 12px;
-  padding: 20px;
   margin-bottom: 24px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.linear-visual {
-  height: 180px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.linear-visual {
+  background: rgba(7, 65, 57, 0.03);
+  border: 1px dashed rgba(7, 65, 57, 0.2);
+  padding: 20px;
 }
 
 .linear-line {
-  position: relative;
-  width: 80%;
-  height: 3px;
-  background: linear-gradient(90deg, #94a3b8, #ef4444);
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin: 20px 20px 30px;
+}
+
+.linear-line::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 2px;
+  background: rgba(7, 65, 57, 0.25);
+  transform: translateY(-50%);
+  z-index: 1;
 }
 
 .point {
-  width: 12px;
-  height: 12px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
-  background: #94a3b8;
+  background: #074139;
+  position: relative;
+  z-index: 2;
 }
 
 .danger-point {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
   background: #ef4444;
-  color: #fff;
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.75rem;
+  font-size: 10px;
   font-weight: bold;
 }
 
 .linear-legend {
-  margin-top: 20px;
+  text-align: center;
 }
 
 .blindspot-tag {
-  font-size: 0.75rem;
-  color: #f87171;
-  font-family: 'JetBrains Mono', monospace;
+  display: inline-block;
   background: rgba(239, 68, 68, 0.1);
-  padding: 4px 8px;
-  border-radius: 4px;
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
 }
 
+/* Swarm Visual */
 .swarm-visual {
-  position: relative;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(7, 65, 57, 0.18);
+  padding: 12px;
 }
 
 .interactive-controls {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
-  flex-wrap: wrap;
+  justify-content: center;
+  margin-bottom: 8px;
 }
 
 .sim-toggle-btn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #94a3b8;
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  color: #074139;
   padding: 4px 10px;
   border-radius: 6px;
-  font-size: 0.75rem;
+  font-size: 10px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .sim-toggle-btn.active {
-  background: rgba(0, 229, 163, 0.15);
-  border-color: #00E5A3;
-  color: #00E5A3;
+  background: #074139;
+  color: #caede5;
+  border-color: #074139;
 }
 
 .agent-graph-box {
-  height: 150px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .graph-svg {
   width: 100%;
   height: 100%;
+  max-height: 150px;
 }
 
+/* Feature List */
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: auto 0 0 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
 .feature-list li {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 0.9rem;
-  color: #cbd5e1;
+  font-size: 0.88rem;
+  color: #074139;
+  font-weight: 500;
 }
 
 .icon {
-  font-size: 0.85rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
   font-weight: bold;
+  flex-shrink: 0;
 }
 
-.icon.red { color: #f87171; }
-.icon.green { color: #00E5A3; }
+.icon.red {
+  background: rgba(239, 68, 68, 0.12);
+  color: #dc2626;
+}
 
-@media (max-width: 900px) {
+.icon.green {
+  background: #a2f1df;
+  color: #074139;
+}
+
+@media (max-width: 860px) {
   .comparison-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
   }
 }
 </style>

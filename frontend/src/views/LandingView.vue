@@ -37,8 +37,8 @@ onMounted(() => {
 <style scoped>
 .landing-page-root {
   min-height: 100vh;
-  background-color: #070b0e;
-  color: #ffffff;
+  background-color: #ffffff;
+  color: #074139;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   overflow-x: hidden;
   position: relative;

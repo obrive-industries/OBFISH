@@ -4,9 +4,9 @@
     <header class="console-navbar">
       <div class="nav-left">
         <router-link to="/" class="brand-link" title="Return to ObMind Home">
-          <img src="../assets/logo/obrive-white-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
-          <span class="brand-name">OBMIND</span>
-          <span class="console-tag">CONSOLE</span>
+          <img src="../assets/icons/obrive-white-logo.svg" alt="ObMind Logo" class="brand-logo-img" />
+          <span class="brand-name font-microgramma">OBMIND</span>
+          <span class="console-tag font-microgramma">CONSOLE</span>
         </router-link>
 
         <nav class="console-nav-links">
@@ -66,7 +66,7 @@
             <span class="live-dot"></span> SYSTEM READY
           </div>
 
-          <h1 class="panel-heading">System Ready</h1>
+          <h1 class="panel-heading font-microgramma">System Ready</h1>
           <p class="panel-sub">
             OBMIND is ready to explore possibilities and simulate potential outcomes.
           </p>
@@ -176,14 +176,14 @@
             <!-- Launch Button Section with Auth Gate -->
             <div class="console-section launch-section">
               <button 
-                class="btn-start-engine"
+                class="btn-start-engine font-microgramma"
                 :class="{ 'btn-ready': canSubmit }"
                 @click="handleStartEngine"
                 :disabled="!canSubmit || loading"
               >
                 <span v-if="!loading" class="btn-text-content">
                   <span>Start Engine</span>
-                  <span class="btn-arrow">→</span>
+                  <RightAnimateIcon color="primary" :size="14" />
                 </span>
                 <span v-else class="btn-text-content">
                   <span>Initializing Swarm...</span>
@@ -207,6 +207,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import LanguageSwitcher from '../components/LanguageSwitcher.vue'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
+import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
 import { setPendingUpload, getPendingUpload } from '../store/pendingUpload.js'

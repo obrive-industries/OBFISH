@@ -1,21 +1,25 @@
 <template>
   <section class="landing-hero" id="overview">
-    <!-- Ambient background glows -->
-    <div class="ambient-glow glow-top"></div>
-    <div class="ambient-glow glow-right"></div>
-    <div class="grid-overlay"></div>
+    <!-- Curved vector background from Obrive -->
+    <div class="hero-bg-curves">
+      <img
+        src="../../assets/backgrounds/bg-animate-accent.svg"
+        alt="Obrive Curves"
+        class="bg-curve-vector"
+      />
+    </div>
 
     <div class="hero-container">
       <div class="hero-content">
-        <!-- Brand category pill -->
+        <!-- Brand category pill with Obrive 3-ball icon -->
         <div class="brand-pill">
-          <span class="pill-pulse"></span>
-          <span class="pill-text">PREDICTIVE INTELLIGENCE | POWERED BY OBRIVE</span>
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">PREDICTIVE INTELLIGENCE | POWERED BY OBRIVE</span>
         </div>
 
-        <!-- Main Heading -->
-        <h1 class="hero-title">
-          OBMIND — <span class="title-sub">Predictive Intelligence</span>
+        <!-- Main Heading from docx & MiroFish -->
+        <h1 class="hero-title font-microgramma">
+          OBMIND — <span class="title-sub">PREDICTIVE INTELLIGENCE</span>
         </h1>
 
         <!-- Subheading from docx -->
@@ -23,24 +27,34 @@
           Obmind helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
         </p>
 
-        <!-- Primary Dual CTAs -->
+        <!-- Primary Dual CTAs using Obrive AnimatedButton -->
         <div class="hero-ctas">
-          <router-link to="/console" class="btn-primary-cta">
-            <span>Predict Now</span>
-            <span class="cta-arrow">→</span>
-          </router-link>
+          <AnimatedButton
+            to="/console"
+            variant="primary"
+            size="lg"
+            :iconSize="16"
+          >
+            Predict Now
+          </AnimatedButton>
 
-          <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="btn-secondary-cta">
-            <span>Explore Obrive</span>
-            <span class="cta-external">↗</span>
-          </a>
+          <AnimatedButton
+            href="https://obrive.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            variant="outline"
+            size="lg"
+            :iconSize="16"
+          >
+            Explore Obrive
+          </AnimatedButton>
         </div>
 
         <!-- Wishlist / Waitlist Banner from docx -->
         <div class="wishlist-card">
           <div class="wishlist-header">
             <span class="wishlist-sparkle">✦</span>
-            <span class="wishlist-title">Join the Wishlist to get notified at launch !</span>
+            <span class="wishlist-title font-microgramma">Join the Wishlist to get notified at launch !</span>
           </div>
 
           <form v-if="!submitted" @submit.prevent="handleWishlist" class="wishlist-form">
@@ -51,9 +65,15 @@
               class="wishlist-input"
               required
             />
-            <button type="submit" class="wishlist-btn" :disabled="loading">
+            <AnimatedButton
+              type="submit"
+              variant="primary"
+              size="default"
+              :disabled="loading"
+              :iconSize="13"
+            >
               {{ loading ? 'Joining...' : 'Join Wishlist' }}
-            </button>
+            </AnimatedButton>
           </form>
 
           <div v-else class="wishlist-success">
@@ -66,58 +86,80 @@
         </div>
       </div>
 
-      <!-- Hero Visual Representation -->
+      <!-- Hero Visual: Multi-Agent Simulation Core -->
       <div class="hero-visual">
-        <div class="radar-card">
-          <div class="radar-header">
-            <div class="radar-dots">
-              <span class="dot red"></span>
-              <span class="dot yellow"></span>
-              <span class="dot green"></span>
+        <div class="simulation-showcase-card">
+          <div class="card-hud-bar">
+            <div class="card-dots">
+              <span class="dot d-1"></span>
+              <span class="dot d-2"></span>
+              <span class="dot d-3"></span>
             </div>
-            <span class="radar-status">SIMULATION CORE // ACTIVE</span>
+            <div class="card-status-badge">
+              <span class="status-pulse"></span>
+              <span class="hud-status font-microgramma">SIMULATION ENGINE // ACTIVE</span>
+            </div>
           </div>
 
-          <!-- Futuristic holographic simulation preview -->
+          <!-- Dynamic Agent Stage -->
           <div class="hologram-stage">
             <div class="central-node">
-              <div class="node-pulse"></div>
-              <img src="../../assets/logo/obfish-mascot.png" alt="ObMind Agent Swarm" class="mascot-img" />
+              <div class="node-ring-pulse"></div>
+              <img
+                src="../../assets/icons/obrive-logo.svg"
+                alt="ObMind Simulation Core"
+                class="core-logo"
+              />
+              <span class="core-label font-microgramma">OBMIND</span>
             </div>
 
             <!-- Orbiting Agent Nodes -->
-            <div class="orbit-ring ring-1">
-              <div class="orbit-node node-a" title="Stakeholder Agent A">
-                <span class="node-label">Enterprise</span>
+            <div class="orbit-track track-1">
+              <div class="orbit-agent agent-enterprise" title="Enterprise Stakeholders">
+                <span class="agent-avatar">🏢</span>
+                <span class="agent-tag">Enterprise</span>
               </div>
-              <div class="orbit-node node-b" title="Market Agent B">
-                <span class="node-label">Market</span>
+              <div class="orbit-agent agent-market" title="Market Forces">
+                <span class="agent-avatar">📈</span>
+                <span class="agent-tag">Market</span>
               </div>
             </div>
 
-            <div class="orbit-ring ring-2">
-              <div class="orbit-node node-c" title="Consumer Sentiment Agent">
-                <span class="node-label">Public Opinion</span>
+            <div class="orbit-track track-2">
+              <div class="orbit-agent agent-opinion" title="Public Sentiment">
+                <span class="agent-avatar">💬</span>
+                <span class="agent-tag">Public Opinion</span>
               </div>
-              <div class="orbit-node node-d" title="Policy Agent">
-                <span class="node-label">Policy</span>
+              <div class="orbit-agent agent-regulator" title="Policy & Regulatory">
+                <span class="agent-avatar">⚖️</span>
+                <span class="agent-tag">Regulatory</span>
               </div>
             </div>
+
+            <!-- Emergent Connection Rays -->
+            <svg class="connection-mesh" viewBox="0 0 400 400">
+              <circle cx="200" cy="200" r="110" stroke="rgba(7, 65, 57, 0.18)" stroke-dasharray="4 4" fill="none" />
+              <circle cx="200" cy="200" r="160" stroke="rgba(7, 65, 57, 0.12)" stroke-dasharray="6 6" fill="none" />
+              <line x1="200" y1="200" x2="110" y2="120" stroke="rgba(7, 65, 57, 0.3)" stroke-width="1.5" />
+              <line x1="200" y1="200" x2="290" y2="280" stroke="rgba(7, 65, 57, 0.3)" stroke-width="1.5" />
+              <line x1="200" y1="200" x2="100" y2="270" stroke="rgba(7, 65, 57, 0.25)" stroke-width="1.5" />
+              <line x1="200" y1="200" x2="300" y2="130" stroke="rgba(7, 65, 57, 0.25)" stroke-width="1.5" />
+            </svg>
           </div>
 
-          <!-- Bottom Metric HUD -->
-          <div class="radar-hud">
-            <div class="hud-item">
-              <span class="hud-label">ENGINE</span>
-              <span class="hud-val">OB-SWARM v2.4</span>
+          <!-- Bottom Telemetry Stats -->
+          <div class="card-telemetry">
+            <div class="telemetry-item">
+              <span class="tel-label">Active Agents</span>
+              <span class="tel-val font-microgramma">128+ Twins</span>
             </div>
-            <div class="hud-item">
-              <span class="hud-label">LATENCY</span>
-              <span class="hud-val highlight">~120ms</span>
+            <div class="telemetry-item">
+              <span class="tel-label">Emergence Depth</span>
+              <span class="tel-val font-microgramma">5 Horizons</span>
             </div>
-            <div class="hud-item">
-              <span class="hud-label">PRECISION</span>
-              <span class="hud-val highlight">99.4% Graph</span>
+            <div class="telemetry-item">
+              <span class="tel-label">Fidelity</span>
+              <span class="tel-val font-microgramma highlight">99.4% Graph</span>
             </div>
           </div>
         </div>
@@ -128,6 +170,8 @@
 
 <script setup>
 import { ref } from 'vue'
+import AnimatedButton from '../common/AnimatedButton.vue'
+import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 
 const email = ref('')
 const loading = ref(false)
@@ -139,7 +183,7 @@ const handleWishlist = () => {
   setTimeout(() => {
     loading.value = false
     submitted.value = true
-  }, 600)
+  }, 500)
 }
 </script>
 
@@ -149,52 +193,40 @@ const handleWishlist = () => {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 120px 24px 60px;
-  background: #070b0e;
+  padding: 130px 24px 80px;
+  background: linear-gradient(
+    90deg,
+    #caede5 0%,
+    #beeee3 25%,
+    #b2f0e1 50%,
+    #a5f1df 75%,
+    #98f2dd 100%
+  );
   overflow: hidden;
 }
 
-.ambient-glow {
-  position: absolute;
-  pointer-events: none;
-  filter: blur(120px);
-  z-index: 1;
-}
-
-.glow-top {
-  top: -100px;
-  left: 20%;
-  width: 500px;
-  height: 500px;
-  background: radial-gradient(circle, rgba(7, 65, 57, 0.45) 0%, rgba(0, 229, 163, 0.08) 70%, transparent 100%);
-}
-
-.glow-right {
-  bottom: 10%;
-  right: -100px;
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(0, 229, 163, 0.12) 0%, rgba(7, 65, 57, 0.25) 70%, transparent 100%);
-}
-
-.grid-overlay {
+.hero-bg-curves {
   position: absolute;
   inset: 0;
-  background-image: 
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 60px 60px;
-  z-index: 1;
   pointer-events: none;
+  opacity: 0.65;
+  z-index: 1;
+}
+
+.bg-curve-vector {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
 }
 
 .hero-container {
-  max-width: 1320px;
+  max-width: 1240px;
   margin: 0 auto;
   width: 100%;
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
-  gap: 60px;
+  gap: 56px;
   align-items: center;
   position: relative;
   z-index: 2;
@@ -205,138 +237,69 @@ const handleWishlist = () => {
   flex-direction: column;
 }
 
+/* Category Pill */
 .brand-pill {
   display: inline-flex;
   align-items: center;
   gap: 10px;
   padding: 6px 14px;
-  background: rgba(7, 65, 57, 0.35);
-  border: 1px solid rgba(0, 229, 163, 0.25);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(7, 65, 57, 0.2);
   border-radius: 9999px;
   width: fit-content;
   margin-bottom: 24px;
 }
 
-.pill-pulse {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #00E5A3;
-  box-shadow: 0 0 10px #00E5A3;
-  animation: pulse-glow 2s infinite ease-in-out;
-}
-
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
-}
-
 .pill-text {
-  font-family: 'Space Grotesk', -apple-system, sans-serif;
-  font-size: 0.75rem;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
+  letter-spacing: 0.1em;
+  color: #074139;
 }
 
+/* Titles */
 .hero-title {
-  font-family: 'Space Grotesk', -apple-system, sans-serif;
-  font-size: clamp(2.8rem, 5.5vw, 4.4rem);
-  font-weight: 800;
+  font-size: clamp(2.4rem, 4.2vw, 3.8rem);
+  font-weight: 700;
   line-height: 1.08;
-  letter-spacing: -0.02em;
-  color: #ffffff;
+  color: #074139;
   margin: 0 0 20px 0;
+  letter-spacing: -0.01em;
 }
 
 .title-sub {
-  display: block;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-  font-weight: 600;
-  background: linear-gradient(135deg, #00E5A3 0%, #a2f1df 50%, #94a3b8 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  margin-top: 6px;
+  color: #0d5c52;
+  font-weight: 700;
 }
 
 .hero-subtitle {
-  font-size: 1.15rem;
+  font-size: clamp(1rem, 1.25vw, 1.18rem);
   line-height: 1.65;
-  color: #94a3b8;
+  color: #074139;
+  opacity: 0.9;
   max-width: 620px;
-  margin: 0 0 36px 0;
+  margin: 0 0 32px 0;
+  font-weight: 450;
 }
 
+/* CTAs */
 .hero-ctas {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 40px;
+  margin-bottom: 36px;
   flex-wrap: wrap;
 }
 
-.btn-primary-cta {
-  background: linear-gradient(135deg, #00E5A3 0%, #074139 100%);
-  color: #05080a;
-  padding: 14px 32px;
-  border-radius: 10px;
-  font-size: 1.05rem;
-  font-weight: 700;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  box-shadow: 0 8px 25px rgba(0, 229, 163, 0.35);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.btn-primary-cta:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 35px rgba(0, 229, 163, 0.5);
-  color: #000;
-}
-
-.cta-arrow {
-  transition: transform 0.2s ease;
-}
-
-.btn-primary-cta:hover .cta-arrow {
-  transform: translateX(4px);
-}
-
-.btn-secondary-cta {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-  padding: 14px 28px;
-  border-radius: 10px;
-  font-size: 1.05rem;
-  font-weight: 600;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  transition: all 0.25s ease;
-  backdrop-filter: blur(8px);
-}
-
-.btn-secondary-cta:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(0, 229, 163, 0.4);
-  color: #00E5A3;
-}
-
-.cta-external {
-  font-size: 0.9rem;
-  opacity: 0.7;
-}
-
+/* Wishlist Outlined Card */
 .wishlist-card {
-  background: rgba(12, 18, 22, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 20px 24px;
-  backdrop-filter: blur(16px);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(14px);
+  border: 1px solid rgba(7, 65, 57, 0.22);
+  border-radius: 16px;
+  padding: 22px 26px;
+  box-shadow: 0 8px 30px -4px rgba(7, 65, 57, 0.08);
   max-width: 580px;
 }
 
@@ -344,19 +307,19 @@ const handleWishlist = () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .wishlist-sparkle {
-  color: #00E5A3;
-  font-size: 1rem;
+  color: #074139;
+  font-size: 14px;
 }
 
 .wishlist-title {
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: #e2e8f0;
-  letter-spacing: 0.2px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #074139;
+  letter-spacing: 0.04em;
 }
 
 .wishlist-form {
@@ -367,178 +330,203 @@ const handleWishlist = () => {
 
 .wishlist-input {
   flex: 1;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 8px;
-  padding: 10px 14px;
-  color: #ffffff;
-  font-size: 0.9rem;
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.25);
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-size: 13px;
+  color: #074139;
   outline: none;
   transition: all 0.2s ease;
 }
 
+.wishlist-input::placeholder {
+  color: rgba(7, 65, 57, 0.5);
+}
+
 .wishlist-input:focus {
-  border-color: #00E5A3;
-  box-shadow: 0 0 10px rgba(0, 229, 163, 0.2);
-}
-
-.wishlist-btn {
-  background: #074139;
-  border: 1px solid rgba(0, 229, 163, 0.4);
-  color: #00E5A3;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s ease;
-}
-
-.wishlist-btn:hover {
-  background: #00E5A3;
-  color: #070b0e;
+  border-color: #074139;
+  box-shadow: 0 0 0 3px rgba(7, 65, 57, 0.12);
 }
 
 .wishlist-success {
   padding: 10px 14px;
-  background: rgba(0, 229, 163, 0.1);
-  border: 1px solid rgba(0, 229, 163, 0.3);
+  background: rgba(7, 65, 57, 0.08);
+  border: 1px solid rgba(7, 65, 57, 0.2);
   border-radius: 8px;
-  color: #00E5A3;
-  font-size: 0.85rem;
+  font-size: 12px;
+  color: #074139;
   margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  font-weight: 500;
+}
+
+.check-icon {
+  color: #074139;
+  font-weight: 800;
+  margin-right: 4px;
 }
 
 .wishlist-disclaimer {
-  font-size: 0.75rem;
-  line-height: 1.45;
-  color: #64748b;
+  font-size: 11px;
+  line-height: 1.5;
+  color: rgba(7, 65, 57, 0.7);
   margin: 0;
+  font-style: italic;
 }
 
-/* Radar Card Visual */
+/* Simulation Showcase Card */
 .hero-visual {
   display: flex;
   justify-content: center;
 }
 
-.radar-card {
+.simulation-showcase-card {
   width: 100%;
   max-width: 480px;
-  background: rgba(12, 18, 22, 0.8);
-  border: 1px solid rgba(0, 229, 163, 0.2);
-  border-radius: 20px;
-  padding: 24px;
-  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), inset 0 0 30px rgba(7, 65, 57, 0.3);
+  background: rgba(255, 255, 255, 0.88);
   backdrop-filter: blur(20px);
+  border: 1px solid rgba(7, 65, 57, 0.22);
+  border-radius: 20px;
+  box-shadow: 0 20px 50px -10px rgba(7, 65, 57, 0.14);
+  overflow: hidden;
 }
 
-.radar-header {
+.card-hud-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
-  padding-bottom: 14px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 14px 20px;
+  background: rgba(7, 65, 57, 0.05);
+  border-bottom: 1px solid rgba(7, 65, 57, 0.12);
 }
 
-.radar-dots {
+.card-dots {
   display: flex;
   gap: 6px;
 }
 
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
 }
 
-.dot.red { background: #ef4444; }
-.dot.yellow { background: #f59e0b; }
-.dot.green { background: #10b981; }
-
-.radar-status {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.72rem;
-  color: #00E5A3;
-  letter-spacing: 1px;
+.dot.d-1 {
+  background: #ff5f56;
 }
 
+.dot.d-2 {
+  background: #ffbd2e;
+}
+
+.dot.d-3 {
+  background: #27c93f;
+}
+
+.card-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.status-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #00E5A3;
+  box-shadow: 0 0 8px #00E5A3;
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.4); opacity: 0.6; }
+}
+
+.hud-status {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #074139;
+}
+
+/* Hologram Stage */
 .hologram-stage {
   position: relative;
-  height: 300px;
+  height: 380px;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.connection-mesh {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 }
 
 .central-node {
   position: relative;
-  width: 100px;
-  height: 100px;
+  z-index: 5;
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(7, 65, 57, 0.9) 0%, rgba(7, 11, 14, 0.9) 100%);
-  border: 2px solid #00E5A3;
+  background: #074139;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 30px rgba(0, 229, 163, 0.4);
-  z-index: 5;
+  box-shadow: 0 10px 25px rgba(7, 65, 57, 0.35);
 }
 
-.mascot-img {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  filter: drop-shadow(0 0 8px #00E5A3);
+.core-logo {
+  height: 28px;
+  filter: brightness(0) invert(1);
 }
 
-.node-pulse {
+.core-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #caede5;
+  margin-top: 4px;
+}
+
+.node-ring-pulse {
   position: absolute;
-  inset: -12px;
+  inset: -8px;
   border-radius: 50%;
-  border: 1px dashed rgba(0, 229, 163, 0.5);
-  animation: spin 20s linear infinite;
+  border: 2px solid rgba(7, 65, 57, 0.3);
+  animation: pulse-ring 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
 }
 
-.orbit-ring {
+@keyframes pulse-ring {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+/* Orbit tracks */
+.orbit-track {
   position: absolute;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  border: 1px dashed rgba(7, 65, 57, 0.16);
+  pointer-events: none;
 }
 
-.ring-1 {
-  width: 200px;
-  height: 200px;
-  animation: spin 30s linear infinite;
+.track-1 {
+  width: 220px;
+  height: 220px;
+  animation: spin 32s linear infinite;
 }
 
-.ring-2 {
-  width: 280px;
-  height: 280px;
+.track-2 {
+  width: 320px;
+  height: 320px;
   animation: spin-reverse 45s linear infinite;
 }
-
-.orbit-node {
-  position: absolute;
-  padding: 4px 10px;
-  background: rgba(7, 65, 57, 0.85);
-  border: 1px solid #00E5A3;
-  border-radius: 20px;
-  font-size: 0.7rem;
-  color: #fff;
-  white-space: nowrap;
-  box-shadow: 0 0 10px rgba(0, 229, 163, 0.3);
-}
-
-.node-a { top: -14px; left: 50%; transform: translateX(-50%); }
-.node-b { bottom: -14px; left: 50%; transform: translateX(-50%); }
-.node-c { left: -20px; top: 50%; transform: translateY(-50%); }
-.node-d { right: -20px; top: 50%; transform: translateY(-50%); }
 
 @keyframes spin {
   from { transform: rotate(0deg); }
@@ -550,52 +538,136 @@ const handleWishlist = () => {
   to { transform: rotate(0deg); }
 }
 
-.radar-hud {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.hud-item {
+.orbit-agent {
+  position: absolute;
+  pointer-events: auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 6px 10px;
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.12);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.hud-label {
-  font-size: 0.68rem;
-  font-family: 'JetBrains Mono', monospace;
-  color: #64748b;
-  letter-spacing: 0.5px;
+.orbit-agent:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 20px rgba(7, 65, 57, 0.2);
 }
 
-.hud-val {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: #e2e8f0;
-  margin-top: 4px;
+.agent-avatar {
+  font-size: 16px;
 }
 
-.hud-val.highlight {
-  color: #00E5A3;
+.agent-tag {
+  font-size: 9px;
+  font-weight: 700;
+  color: #074139;
+  letter-spacing: 0.02em;
 }
 
+/* Positions on tracks */
+.agent-enterprise {
+  top: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.agent-market {
+  bottom: -16px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.agent-opinion {
+  left: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.agent-regulator {
+  right: -20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Telemetry Stats Bar */
+.card-telemetry {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 14px 20px;
+  background: rgba(7, 65, 57, 0.04);
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
+}
+
+.telemetry-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.tel-label {
+  font-size: 10px;
+  color: rgba(7, 65, 57, 0.7);
+  font-weight: 500;
+}
+
+.tel-val {
+  font-size: 12px;
+  font-weight: 700;
+  color: #074139;
+}
+
+.tel-val.highlight {
+  color: #074139;
+}
+
+/* Responsiveness */
 @media (max-width: 1024px) {
   .hero-container {
     grid-template-columns: 1fr;
-    gap: 40px;
-    padding-top: 20px;
+    gap: 48px;
   }
 
-  .hero-visual {
-    order: -1;
+  .hero-content {
+    align-items: center;
+    text-align: center;
   }
 
-  .radar-card {
-    max-width: 400px;
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-ctas {
+    justify-content: center;
+  }
+
+  .wishlist-card {
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 640px) {
+  .landing-hero {
+    padding: 100px 16px 60px;
+  }
+
+  .wishlist-form {
+    flex-direction: column;
+  }
+
+  .hologram-stage {
+    height: 320px;
+  }
+
+  .track-2 {
+    width: 280px;
+    height: 280px;
   }
 }
 </style>

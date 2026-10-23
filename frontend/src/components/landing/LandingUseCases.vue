@@ -1,14 +1,15 @@
 <template>
   <section class="section-usecases" id="use-cases">
     <div class="container">
+      <!-- Section Header with Obrive 3-Ball Badge -->
       <div class="section-header">
         <div class="category-pill">
-          <span class="pill-dot"></span>
-          INDUSTRY SIMULATION
+          <RoundedBallIcon :width="14" :height="20" />
+          <span class="pill-text font-microgramma">INDUSTRY SIMULATION</span>
         </div>
 
-        <h2 class="section-title">
-          OBMIND is built to Explore
+        <h2 class="section-title font-microgramma">
+          OBMIND is Built to Explore
         </h2>
 
         <p class="section-sub">
@@ -16,30 +17,33 @@
         </p>
       </div>
 
-      <!-- 6 Bento Cards -->
+      <!-- 6 Bento Cards styled with Obrive modern curves and borders -->
       <div class="bento-grid">
         <div 
           v-for="(card, index) in useCases" 
           :key="card.sector"
           class="bento-card"
-          :class="`bento-${index + 1}`"
+          :class="`bento-card-${index + 1}`"
         >
-          <div class="card-glow"></div>
+          <div class="card-corner-accent"></div>
           
           <div class="card-top">
-            <span class="sector-badge">{{ card.sector }}</span>
+            <span class="sector-badge font-microgramma">{{ card.sector }}</span>
             <span class="bento-icon">{{ card.icon }}</span>
           </div>
 
-          <h3 class="bento-heading">{{ card.subCategory }}</h3>
+          <h3 class="bento-heading font-microgramma">{{ card.subCategory }}</h3>
 
           <p class="bento-desc">
             {{ card.description }}
           </p>
 
           <div class="bento-footer">
-            <span class="bento-tag">AI Swarm Ready</span>
-            <span class="bento-explore-arrow">↗</span>
+            <span class="bento-tag font-microgramma">AI Swarm Ready</span>
+            <router-link to="/console" class="bento-explore-link">
+              <span>Simulate</span>
+              <span class="bento-arrow">↗</span>
+            </router-link>
           </div>
         </div>
       </div>
@@ -48,9 +52,11 @@
 </template>
 
 <script setup>
+import RoundedBallIcon from '../common/RoundedBallIcon.vue'
+
 const useCases = [
   {
-    sector: 'STARTUPS / ENTREPRENEUR',
+    sector: 'START UPS / ENTREPRENEUR',
     subCategory: 'Business Strategy & Decision Intelligence',
     description: 'Test ideas, explore markets, simulate growth, pricing, competition, and business outcomes before investing.',
     icon: '⚡'
@@ -74,7 +80,7 @@ const useCases = [
     icon: '🎭'
   },
   {
-    sector: 'RESEARCH / DEVELOPMENT',
+    sector: 'Research / development',
     subCategory: 'Product Development & Market Research',
     description: 'Simulate customer reactions to products, features, pricing, and value propositions to identify what needs real-world validation.',
     icon: '🔬'
@@ -90,10 +96,10 @@ const useCases = [
 
 <style scoped>
 .section-usecases {
-  padding: 120px 24px;
-  background: #070b0e;
+  padding: 110px 24px;
+  background: #ffffff;
   position: relative;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(7, 65, 57, 0.12);
 }
 
 .container {
@@ -103,48 +109,45 @@ const useCases = [
 
 .section-header {
   text-align: center;
-  max-width: 760px;
-  margin: 0 auto 64px;
+  max-width: 820px;
+  margin: 0 auto 60px;
 }
 
 .category-pill {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 5px 14px;
-  background: rgba(7, 65, 57, 0.3);
-  border: 1px solid rgba(0, 229, 163, 0.2);
+  gap: 10px;
+  padding: 6px 14px;
+  background: rgba(7, 65, 57, 0.06);
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 9999px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
   margin-bottom: 20px;
 }
 
-.pill-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #00E5A3;
+.pill-text {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #074139;
 }
 
 .section-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
-  font-weight: 800;
-  color: #ffffff;
+  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+  font-weight: 700;
+  color: #074139;
   margin: 0 0 16px 0;
+  letter-spacing: -0.01em;
 }
 
 .section-sub {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   line-height: 1.6;
-  color: #94a3b8;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0;
+  font-weight: 450;
 }
 
+/* Bento Grid */
 .bento-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -152,38 +155,33 @@ const useCases = [
 }
 
 .bento-card {
-  position: relative;
-  background: rgba(12, 18, 22, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #ffffff;
+  border: 1px solid rgba(7, 65, 57, 0.18);
   border-radius: 18px;
   padding: 32px 28px;
   display: flex;
   flex-direction: column;
-  backdrop-filter: blur(14px);
+  justify-content: space-between;
+  position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .bento-card:hover {
-  border-color: rgba(0, 229, 163, 0.4);
   transform: translateY(-4px);
-  box-shadow: 0 16px 35px rgba(0, 0, 0, 0.5), 0 0 25px rgba(0, 229, 163, 0.1);
+  border-color: rgba(7, 65, 57, 0.35);
+  box-shadow: 0 16px 40px -8px rgba(7, 65, 57, 0.12);
 }
 
-.card-glow {
+.card-corner-accent {
   position: absolute;
   top: 0;
   right: 0;
-  width: 140px;
-  height: 140px;
-  background: radial-gradient(circle, rgba(0, 229, 163, 0.12) 0%, transparent 70%);
+  width: 120px;
+  height: 120px;
+  background: radial-gradient(circle at top right, rgba(162, 241, 223, 0.35), transparent 70%);
   pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.bento-card:hover .card-glow {
-  opacity: 1;
 }
 
 .card-top {
@@ -194,30 +192,32 @@ const useCases = [
 }
 
 .sector-badge {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 0.72rem;
+  font-size: 10px;
   font-weight: 700;
-  letter-spacing: 1.5px;
-  color: #00E5A3;
+  letter-spacing: 0.08em;
+  padding: 5px 10px;
+  background: rgba(7, 65, 57, 0.06);
+  color: #074139;
+  border-radius: 6px;
+  border: 1px solid rgba(7, 65, 57, 0.14);
 }
 
 .bento-icon {
-  font-size: 1.4rem;
+  font-size: 22px;
 }
 
 .bento-heading {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.25rem;
+  font-size: 1.18rem;
   font-weight: 700;
-  color: #ffffff;
+  color: #074139;
   margin: 0 0 14px 0;
-  line-height: 1.35;
+  line-height: 1.3;
 }
 
 .bento-desc {
-  font-size: 0.95rem;
-  line-height: 1.6;
-  color: #94a3b8;
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: rgba(7, 65, 57, 0.85);
   margin: 0 0 28px 0;
   flex: 1;
 }
@@ -226,23 +226,41 @@ const useCases = [
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 18px;
+  border-top: 1px solid rgba(7, 65, 57, 0.1);
 }
 
 .bento-tag {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.75rem;
-  color: #64748b;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #074139;
+  opacity: 0.75;
 }
 
-.bento-explore-arrow {
-  color: #00E5A3;
-  font-size: 0.95rem;
+.bento-explore-link {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #074139;
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.2s ease;
+}
+
+.bento-explore-link:hover {
+  color: #0d5c52;
+}
+
+.bento-arrow {
+  font-size: 13px;
   transition: transform 0.2s ease;
 }
 
-.bento-card:hover .bento-explore-arrow {
+.bento-explore-link:hover .bento-arrow {
   transform: translate(2px, -2px);
 }
 
@@ -252,7 +270,7 @@ const useCases = [
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 680px) {
   .bento-grid {
     grid-template-columns: 1fr;
   }
