@@ -27,6 +27,7 @@ from ..services.simulation_runner import SimulationRunner, RunnerStatus
 from ..services.zep_graph_memory_updater import ZepGraphMemoryManager
 from ..utils.llm_client import LLMResponseError
 from ..utils.auth_middleware import require_auth, get_current_user_id
+from ..utils.zep import get_zep_key_pool
 
 # 获取日志器
 logger = get_logger('brain.api')
@@ -90,7 +91,8 @@ def _delete_cloud_graph_if_present(graph_id: str | None) -> None:
                 f"{', '.join(active_simulations)}"
             )
         try:
-            GraphBuilderService(api_key=Config.ZEP_API_KEY).delete_graph(graph_id)
+            target_key = get_zep_key_pool().get_key_for_graph(graph_id)
+            GraphBuilderService(api_key=target_key).delete_graph(graph_id)
         except NotFoundError:
             logger.info("Zep Cloud graph already absent: %s", graph_id)
 
@@ -560,7 +562,7 @@ def _build_graph_impl():
         
         # 检查配置
         errors = []
-        if not Config.ZEP_API_KEY:
+        if not Config.get_zep_api_keys():
             errors.append(t('api.zepApiKeyMissing'))
         if errors:
             logger.error(f"配置错误: {errors}")
@@ -640,7 +642,8 @@ def _build_graph_impl():
                 and project.zep_batch_id
                 and project.zep_batch_operation_id
             ):
-                builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
+                target_key = getattr(project, "zep_api_key", None) or get_zep_key_pool().get_key_for_graph(project.graph_id)
+                builder = GraphBuilderService(api_key=target_key)
                 batch_summary = builder.get_batch_summary(project.zep_batch_id)
                 if getattr(batch_summary, "status", None) in {
                     "queued",
@@ -756,8 +759,9 @@ def _build_graph_impl():
                     message=t('progress.initGraphService')
                 )
                 
-                # 创建图谱构建服务
-                builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
+                # 创建图谱构建服务（使用项目所属 Key 或 Key 池当前活跃 Key）
+                target_key = getattr(project, "zep_api_key", None) or (get_zep_key_pool().get_key_for_graph(project.graph_id) if project.graph_id else None)
+                builder = GraphBuilderService(api_key=target_key)
                 
                 # 分块
                 task_manager.update_task(
@@ -801,6 +805,8 @@ def _build_graph_impl():
 
                     def remember_graph(graph_id):
                         project.graph_id = graph_id
+                        project.zep_api_key = builder.api_key
+                        get_zep_key_pool().record_graph_key(graph_id, builder.api_key)
                         ProjectManager.save_project(project)
 
                     graph_id = builder.create_graph(
@@ -991,7 +997,7 @@ def get_graph_data(graph_id: str):
     获取图谱数据（节点和边）
     """
     try:
-        if not Config.ZEP_API_KEY:
+        if not Config.get_zep_api_keys():
             return jsonify({
                 "success": False,
                 "error": t('api.zepApiKeyMissing')
@@ -1007,7 +1013,8 @@ def get_graph_data(graph_id: str):
                         "error": "Access denied"
                     }), 403
 
-        builder = GraphBuilderService(api_key=Config.ZEP_API_KEY)
+        target_key = (projects[0].zep_api_key if projects and getattr(projects[0], 'zep_api_key', None) else None) or get_zep_key_pool().get_key_for_graph(graph_id)
+        builder = GraphBuilderService(api_key=target_key)
         graph_data = builder.get_graph_data(graph_id)
         
         return jsonify({
@@ -1030,7 +1037,7 @@ def delete_graph(graph_id: str):
     删除Zep图谱
     """
     try:
-        if not Config.ZEP_API_KEY:
+        if not Config.get_zep_api_keys():
             return jsonify({
                 "success": False,
                 "error": t('api.zepApiKeyMissing')

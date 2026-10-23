@@ -2,6 +2,7 @@
 图谱构建服务
 接口2：使用Zep API构建Standalone Graph
 """
+from __future__ import annotations
 
 import hashlib
 import uuid
@@ -11,6 +12,7 @@ from typing import Dict, Any, List, Optional, Callable
 from dataclasses import dataclass
 
 from zep_cloud import BatchAddItem, EntityEdgeSourceTarget, NotFoundError
+from zep_cloud.client import Zep
 
 from ..config import Config
 from ..models.task import TaskManager, TaskStatus
@@ -24,7 +26,9 @@ from ..utils.ontology import (
 from ..utils.zep import (
     ZEP_INGESTION_WAIT_TIMEOUT_SECONDS,
     call_zep_read_with_retry,
+    execute_with_zep_failover,
     get_zep_client,
+    get_zep_key_pool,
     is_retryable_zep_error,
 )
 from .text_processor import TextProcessor
@@ -65,7 +69,8 @@ class GraphBuilderService:
     """
     
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or Config.ZEP_API_KEY
+        self.pool = get_zep_key_pool()
+        self.api_key = api_key or self.pool.get_active_key()
         if not self.api_key:
             raise ValueError("ZEP_API_KEY 未配置")
         
@@ -222,7 +227,7 @@ class GraphBuilderService:
         graph_id: str | None = None,
         graph_id_callback: Optional[Callable[[str], None]] = None,
     ) -> str:
-        """Create a graph with a caller-durable ID and reconcile lost replies."""
+        """Create a graph with a caller-durable ID and reconcile lost replies with multi-key failover."""
 
         graph_id = graph_id or f"brain_{uuid.uuid4().hex[:16]}"
         # Persist the client-generated ID before the non-idempotent POST so a
@@ -230,35 +235,51 @@ class GraphBuilderService:
         if graph_id_callback:
             graph_id_callback(graph_id)
 
-        try:
-            self.client.graph.create(
-                graph_id=graph_id,
-                name=name,
-                description="Brain Social Simulation Graph"
-            )
-        except Exception as error:
-            if not is_retryable_zep_error(error):
-                raise
-            reconciliation_error = None
-            for attempt in range(3):
-                try:
-                    call_zep_read_with_retry(
-                        lambda: self.client.graph.get(graph_id),
-                        operation_name=f"reconcile graph create {graph_id}",
-                    )
-                    reconciliation_error = None
-                    break
-                except NotFoundError as not_found:
-                    reconciliation_error = not_found
-                    if attempt < 2:
-                        time.sleep(attempt + 1)
-                except Exception as read_error:
-                    reconciliation_error = read_error
-                    break
-            if reconciliation_error is not None:
-                raise error from reconciliation_error
+        def _do_create(client: Zep, key: str) -> str:
+            try:
+                client.graph.create(
+                    graph_id=graph_id,
+                    name=name,
+                    description="Brain Social Simulation Graph"
+                )
+            except Exception as error:
+                if not is_retryable_zep_error(error):
+                    raise
+                reconciliation_error = None
+                for attempt in range(3):
+                    try:
+                        call_zep_read_with_retry(
+                            lambda: client.graph.get(graph_id),
+                            operation_name=f"reconcile graph create {graph_id}",
+                        )
+                        reconciliation_error = None
+                        break
+                    except NotFoundError as not_found:
+                        reconciliation_error = not_found
+                        if attempt < 2:
+                            time.sleep(attempt + 1)
+                    except Exception as read_error:
+                        reconciliation_error = read_error
+                        break
+                if reconciliation_error is not None:
+                    raise error from reconciliation_error
 
-        return graph_id
+            self.api_key = key
+            self.client = client
+            pool = getattr(self, "pool", None) or get_zep_key_pool()
+            pool.record_graph_key(graph_id, key)
+            return graph_id
+
+        # If instance was created via object.__new__ with an injected mock client, invoke directly
+        if getattr(self, "pool", None) is None and getattr(self, "client", None) is not None:
+            return _do_create(self.client, getattr(self, "api_key", "mock-key"))
+
+        return execute_with_zep_failover(
+            _do_create,
+            operation_name=f"create graph {graph_id}",
+            graph_id=graph_id,
+            preferred_key=getattr(self, "api_key", None),
+        )
 
     @staticmethod
     def build_operation_id(graph_id: str, chunks: List[str]) -> str:
@@ -779,11 +800,21 @@ class GraphBuilderService:
     
     def _get_graph_info(self, graph_id: str) -> GraphInfo:
         """获取图谱信息"""
-        # 获取节点（分页）
-        nodes = fetch_all_nodes(self.client, graph_id)
+        def _fetch(client: Zep, _key: str):
+            nodes = fetch_all_nodes(client, graph_id)
+            edges = fetch_all_edges(client, graph_id)
+            return nodes, edges
 
-        # 获取边（分页）
-        edges = fetch_all_edges(self.client, graph_id)
+        if getattr(self, "pool", None) is None and getattr(self, "client", None) is not None:
+            nodes = fetch_all_nodes(self.client, graph_id)
+            edges = fetch_all_edges(self.client, graph_id)
+        else:
+            nodes, edges = execute_with_zep_failover(
+                _fetch,
+                operation_name=f"get graph info {graph_id}",
+                graph_id=graph_id,
+                preferred_key=getattr(self, "api_key", None),
+            )
 
         # 统计实体类型
         entity_types = set()
@@ -810,8 +841,20 @@ class GraphBuilderService:
         Returns:
             包含nodes和edges的字典，包括时间信息、属性等详细数据
         """
-        nodes = fetch_all_nodes(self.client, graph_id)
-        edges = fetch_all_edges(self.client, graph_id)
+        def _fetch_data(client: Zep, _key: str):
+            nodes = fetch_all_nodes(client, graph_id)
+            edges = fetch_all_edges(client, graph_id)
+            return nodes, edges
+
+        if getattr(self, "pool", None) is None and getattr(self, "client", None) is not None:
+            nodes, edges = fetch_all_nodes(self.client, graph_id), fetch_all_edges(self.client, graph_id)
+        else:
+            nodes, edges = execute_with_zep_failover(
+                _fetch_data,
+                operation_name=f"get graph data {graph_id}",
+                graph_id=graph_id,
+                preferred_key=getattr(self, "api_key", None),
+            )
 
         # 创建节点映射用于获取节点名称
         node_map = {}
@@ -878,5 +921,13 @@ class GraphBuilderService:
         }
     
     def delete_graph(self, graph_id: str):
-        """删除图谱"""
-        self.client.graph.delete(graph_id=graph_id)
+        """删除图谱（支持跨 Key 自动探测与删除）"""
+        if getattr(self, "pool", None) is None and getattr(self, "client", None) is not None:
+            self.client.graph.delete(graph_id=graph_id)
+        else:
+            execute_with_zep_failover(
+                lambda client, _key: client.graph.delete(graph_id=graph_id),
+                operation_name=f"delete graph {graph_id}",
+                graph_id=graph_id,
+                preferred_key=getattr(self, "api_key", None),
+            )

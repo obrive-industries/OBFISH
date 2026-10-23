@@ -46,6 +46,7 @@ class Project:
     graph_build_task_id: Optional[str] = None
     zep_batch_id: Optional[str] = None
     zep_batch_operation_id: Optional[str] = None
+    zep_api_key: Optional[str] = None
     
     # 配置
     simulation_requirement: Optional[str] = None
@@ -75,6 +76,7 @@ class Project:
             "graph_build_task_id": self.graph_build_task_id,
             "zep_batch_id": self.zep_batch_id,
             "zep_batch_operation_id": self.zep_batch_operation_id,
+            "zep_api_key": self.zep_api_key,
             "simulation_requirement": self.simulation_requirement,
             "chunk_size": self.chunk_size,
             "chunk_overlap": self.chunk_overlap,
@@ -104,6 +106,7 @@ class Project:
             graph_build_task_id=data.get('graph_build_task_id'),
             zep_batch_id=data.get('zep_batch_id'),
             zep_batch_operation_id=data.get('zep_batch_operation_id'),
+            zep_api_key=data.get('zep_api_key'),
             simulation_requirement=data.get('simulation_requirement'),
             chunk_size=data.get('chunk_size', 500),
             chunk_overlap=data.get('chunk_overlap', 50),

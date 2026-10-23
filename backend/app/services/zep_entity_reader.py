@@ -10,7 +10,12 @@ from zep_cloud import NotFoundError
 from ..config import Config
 from ..utils.logger import get_logger
 from ..utils.zep_paging import fetch_all_nodes, fetch_all_edges
-from ..utils.zep import call_zep_read_with_retry, get_zep_client
+from ..utils.zep import (
+    call_zep_read_with_retry,
+    execute_with_zep_failover,
+    get_zep_client,
+    get_zep_key_pool,
+)
 
 logger = get_logger('brain.zep_entity_reader')
 
@@ -78,7 +83,8 @@ class ZepEntityReader:
     """
     
     def __init__(self, api_key: Optional[str] = None):
-        self.api_key = api_key or Config.ZEP_API_KEY
+        self.pool = get_zep_key_pool()
+        self.api_key = api_key or self.pool.get_active_key()
         if not self.api_key:
             raise ValueError("ZEP_API_KEY 未配置")
         
@@ -112,7 +118,7 @@ class ZepEntityReader:
     
     def get_all_nodes(self, graph_id: str) -> List[Dict[str, Any]]:
         """
-        获取图谱的所有节点（分页获取）
+        获取图谱的所有节点（分页获取，支持跨 Key 自动故障转移）
 
         Args:
             graph_id: 图谱ID
@@ -122,7 +128,18 @@ class ZepEntityReader:
         """
         logger.info(f"获取图谱 {graph_id} 的所有节点...")
 
-        nodes = fetch_all_nodes(self.client, graph_id)
+        def _fetch(client, _key):
+            return fetch_all_nodes(client, graph_id)
+
+        if getattr(self, "pool", None) is None and getattr(self, "client", None) is not None:
+            nodes = fetch_all_nodes(self.client, graph_id)
+        else:
+            nodes = execute_with_zep_failover(
+                _fetch,
+                operation_name=f"get all nodes {graph_id}",
+                graph_id=graph_id,
+                preferred_key=getattr(self, "api_key", None),
+            )
 
         nodes_data = []
         for node in nodes:
@@ -139,7 +156,7 @@ class ZepEntityReader:
 
     def get_all_edges(self, graph_id: str) -> List[Dict[str, Any]]:
         """
-        获取图谱的所有边（分页获取）
+        获取图谱的所有边（分页获取，支持跨 Key 自动故障转移）
 
         Args:
             graph_id: 图谱ID
@@ -149,7 +166,18 @@ class ZepEntityReader:
         """
         logger.info(f"获取图谱 {graph_id} 的所有边...")
 
-        edges = fetch_all_edges(self.client, graph_id)
+        def _fetch(client, _key):
+            return fetch_all_edges(client, graph_id)
+
+        if getattr(self, "pool", None) is None and getattr(self, "client", None) is not None:
+            edges = fetch_all_edges(self.client, graph_id)
+        else:
+            edges = execute_with_zep_failover(
+                _fetch,
+                operation_name=f"get all edges {graph_id}",
+                graph_id=graph_id,
+                preferred_key=getattr(self, "api_key", None),
+            )
 
         edges_data = []
         for edge in edges:

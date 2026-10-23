@@ -22,6 +22,7 @@ from ..services.zep_graph_memory_updater import ZepGraphMemoryManager
 from ..utils.logger import get_logger
 from ..utils.locale import t, get_locale, set_locale
 from ..utils.zep_lifecycle import get_graph_readers, graph_lifecycle_lock
+from ..utils.zep import get_zep_key_pool
 from ..models.project import ProjectManager
 
 logger = get_logger('brain.api.simulation')
@@ -87,7 +88,7 @@ def get_graph_entities(graph_id: str):
         enrich: 是否获取相关边信息（默认true）
     """
     try:
-        if not Config.ZEP_API_KEY:
+        if not Config.get_zep_api_keys():
             return jsonify({
                 "success": False,
                 "error": t('api.zepApiKeyMissing')
@@ -99,7 +100,8 @@ def get_graph_entities(graph_id: str):
         
         logger.info(f"获取图谱实体: graph_id={graph_id}, entity_types={entity_types}, enrich={enrich}")
         
-        reader = ZepEntityReader()
+        target_key = get_zep_key_pool().get_key_for_graph(graph_id)
+        reader = ZepEntityReader(api_key=target_key)
         result = reader.filter_defined_entities(
             graph_id=graph_id,
             defined_entity_types=entity_types,
@@ -123,13 +125,14 @@ def get_graph_entities(graph_id: str):
 def get_entity_detail(graph_id: str, entity_uuid: str):
     """获取单个实体的详细信息"""
     try:
-        if not Config.ZEP_API_KEY:
+        if not Config.get_zep_api_keys():
             return jsonify({
                 "success": False,
                 "error": t('api.zepApiKeyMissing')
             }), 500
         
-        reader = ZepEntityReader()
+        target_key = get_zep_key_pool().get_key_for_graph(graph_id)
+        reader = ZepEntityReader(api_key=target_key)
         entity = reader.get_entity_with_context(graph_id, entity_uuid)
         
         if not entity:
@@ -155,7 +158,7 @@ def get_entity_detail(graph_id: str, entity_uuid: str):
 def get_entities_by_type(graph_id: str, entity_type: str):
     """获取指定类型的所有实体"""
     try:
-        if not Config.ZEP_API_KEY:
+        if not Config.get_zep_api_keys():
             return jsonify({
                 "success": False,
                 "error": t('api.zepApiKeyMissing')
@@ -163,7 +166,8 @@ def get_entities_by_type(graph_id: str, entity_type: str):
         
         enrich = request.args.get('enrich', 'true').lower() == 'true'
         
-        reader = ZepEntityReader()
+        target_key = get_zep_key_pool().get_key_for_graph(graph_id)
+        reader = ZepEntityReader(api_key=target_key)
         entities = reader.get_entities_by_type(
             graph_id=graph_id,
             entity_type=entity_type,

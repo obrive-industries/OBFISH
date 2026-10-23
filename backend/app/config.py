@@ -71,6 +71,29 @@ class Config:
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
+    ZEP_BACKUP_API_KEY = os.environ.get('ZEP_BACKUP_API_KEY')
+    ZEP_API_KEYS_ENV = os.environ.get('ZEP_API_KEYS')
+
+    @classmethod
+    def get_zep_api_keys(cls) -> list[str]:
+        """返回所有配置的 Zep API Key 列表（去重且保序）"""
+        import re
+        raw_candidates = []
+        if getattr(cls, 'ZEP_API_KEYS_ENV', None):
+            raw_candidates.extend(re.split(r'[,;\s]+', str(cls.ZEP_API_KEYS_ENV)))
+        if getattr(cls, 'ZEP_API_KEY', None):
+            raw_candidates.extend(re.split(r'[,;\s]+', str(cls.ZEP_API_KEY)))
+        if getattr(cls, 'ZEP_BACKUP_API_KEY', None):
+            raw_candidates.extend(re.split(r'[,;\s]+', str(cls.ZEP_BACKUP_API_KEY)))
+        
+        seen = set()
+        keys: list[str] = []
+        for k in raw_candidates:
+            clean = k.strip().strip("'\"")
+            if clean and clean not in seen:
+                seen.add(clean)
+                keys.append(clean)
+        return keys
     
     # 文件上传配置
     MAX_CONTENT_LENGTH = 50 * 1024 * 1024  # 50MB
@@ -106,7 +129,7 @@ class Config:
         errors: list[str] = []
         if not cls.LLM_API_KEY:
             errors.append("LLM_API_KEY 未配置")
-        if not cls.ZEP_API_KEY:
+        if not cls.get_zep_api_keys():
             errors.append("ZEP_API_KEY 未配置")
         if os.environ.get("ZEP_API_URL"):
             errors.append('ZEP_API_URL not supported; Brain only connects to Zep Cloud')

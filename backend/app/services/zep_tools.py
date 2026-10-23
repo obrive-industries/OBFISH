@@ -22,6 +22,7 @@ from ..utils.zep_paging import fetch_all_nodes, fetch_all_edges
 from ..utils.zep import (
     call_zep_read_with_retry,
     get_zep_client,
+    get_zep_key_pool,
     normalize_zep_search_limit,
     normalize_zep_search_query,
 )
@@ -429,7 +430,8 @@ class ZepToolsService:
     RETRY_DELAY = 2.0
     
     def __init__(self, api_key: Optional[str] = None, llm_client: Optional[LLMClient] = None):
-        self.api_key = api_key or Config.ZEP_API_KEY
+        self.pool = get_zep_key_pool()
+        self.api_key = api_key or self.pool.get_active_key()
         if not self.api_key:
             raise ValueError("ZEP_API_KEY 未配置")
         

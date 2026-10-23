@@ -23,6 +23,7 @@ from ..utils.openai_chat_compat import create_chat_completion, extract_chat_comp
 from ..utils.zep import (
     call_zep_read_with_retry,
     get_zep_client,
+    get_zep_key_pool,
     is_retryable_zep_error,
     normalize_zep_search_query,
 )
@@ -261,7 +262,7 @@ class OasisProfileGenerator:
         )
         
         # Zep客户端用于检索丰富上下文
-        self.zep_api_key = zep_api_key or Config.ZEP_API_KEY
+        self.zep_api_key = zep_api_key or get_zep_key_pool().get_key_for_graph(graph_id)
         self.zep_client = None
         self.graph_id = graph_id
         
