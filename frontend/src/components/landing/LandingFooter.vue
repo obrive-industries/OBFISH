@@ -636,31 +636,13 @@ const currentYear = new Date().getFullYear()
   height: 42px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;
   color: #074139;
   border-radius: 8px;
-  background: rgba(7, 65, 57, 0.04);
-  text-decoration: none;
-  transition: all 0.25s ease;
-}
-
-.footer-col-header:hover {
-  background: rgba(7, 65, 57, 0.1);
-  border-color: #074139;
-}
-
-.header-arrow {
-  font-size: 11px;
-  color: rgba(7, 65, 57, 0.5);
-  transition: transform 0.2s ease, color 0.2s ease;
-}
-
-.footer-col-header:hover .header-arrow {
-  color: #074139;
-  transform: translate(2px, -2px);
+  background: rgba(7, 65, 57, 0.05);
+  user-select: none;
 }
 
 .footer-cell {
