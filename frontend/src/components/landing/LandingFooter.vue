@@ -68,15 +68,9 @@
         <div class="footer-cell-grid">
           <!-- Column 1: Products -->
           <div class="footer-column">
-            <a
-              href="https://obrive.com/products"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-col-header font-microgramma"
-            >
-              <span>Products</span>
-              <span class="header-arrow">↗</span>
-            </a>
+            <div class="footer-col-header font-microgramma">
+              Products
+            </div>
             <a
               href="https://obrive.com/products/obpark"
               target="_blank"
@@ -130,15 +124,9 @@
 
           <!-- Column 2: What We Build -->
           <div class="footer-column">
-            <a
-              href="https://obrive.com/services"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-col-header font-microgramma"
-            >
-              <span>What We Build</span>
-              <span class="header-arrow">↗</span>
-            </a>
+            <div class="footer-col-header font-microgramma">
+              What We Build
+            </div>
             <a
               href="https://obrive.com/services/spatial-computing-app-development"
               target="_blank"
@@ -192,15 +180,9 @@
 
           <!-- Column 3: Industries -->
           <div class="footer-column">
-            <a
-              href="https://obrive.com/industries/real-estate"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-col-header font-microgramma"
-            >
-              <span>Industries</span>
-              <span class="header-arrow">↗</span>
-            </a>
+            <div class="footer-col-header font-microgramma">
+              Industries
+            </div>
             <a
               href="https://obrive.com/industries/real-estate"
               target="_blank"
@@ -254,15 +236,9 @@
 
           <!-- Column 4: Company -->
           <div class="footer-column">
-            <a
-              href="https://obrive.com/about"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="footer-col-header font-microgramma"
-            >
-              <span>Company</span>
-              <span class="header-arrow">↗</span>
-            </a>
+            <div class="footer-col-header font-microgramma">
+              Company
+            </div>
             <a
               href="https://obrive.com/about"
               target="_blank"
