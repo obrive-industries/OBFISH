@@ -65,8 +65,27 @@ def create_app(config_class=Config):
                 if "token_version" not in cols:
                     db.session.execute(text("ALTER TABLE users ADD COLUMN token_version INTEGER DEFAULT 1"))
                     db.session.commit()
+                if "role" not in cols:
+                    db.session.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user'"))
+                    db.session.commit()
         except Exception:
             pass
+
+        # Promote configured operator accounts to unlimited admin access.
+        try:
+            from .models.user import User
+            admin_emails = Config.admin_emails()
+            if admin_emails:
+                users = User.query.filter(User.email.in_(admin_emails)).all()
+                changed = False
+                for user in users:
+                    if user.role != "admin":
+                        user.role = "admin"
+                        changed = True
+                if changed:
+                    db.session.commit()
+        except Exception:
+            db.session.rollback()
 
 
     # 设置日志
@@ -108,10 +127,12 @@ def create_app(config_class=Config):
     # 注册蓝图
     from .api import graph_bp, simulation_bp, report_bp
     from .api.auth import auth_bp
+    from .api.billing import billing_bp
     app.register_blueprint(graph_bp, url_prefix='/api/graph')
     app.register_blueprint(simulation_bp, url_prefix='/api/simulation')
     app.register_blueprint(report_bp, url_prefix='/api/report')
     app.register_blueprint(auth_bp, url_prefix='/api/auth')
+    app.register_blueprint(billing_bp, url_prefix='/api/billing')
     
     # 健康检查
     @app.route('/health')

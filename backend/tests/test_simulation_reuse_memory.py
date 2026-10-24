@@ -1,9 +1,13 @@
 import json
+from unittest.mock import MagicMock
+
 import pytest
 from app import create_app
+from app.api import simulation as simulation_api
 from app.config import Config
 from app.models.project import Project, ProjectManager, ProjectStatus
 from app.services.simulation_manager import SimulationManager, SimulationState, SimulationStatus
+from app.utils import auth_middleware
 
 
 def test_project_model_simulation_id_persistence(tmp_path, monkeypatch):
@@ -33,6 +37,8 @@ def test_create_simulation_reuses_existing_simulation(tmp_path, monkeypatch):
     app = create_app()
     app.config.update(TESTING=True)
     client = app.test_client()
+    monkeypatch.setattr(auth_middleware, "get_current_user", lambda: MagicMock(id=None))
+    monkeypatch.setattr(simulation_api, "active_plan_denial", lambda *args, **kwargs: None)
 
     project = ProjectManager.create_project(name="Reuse Test")
     project.graph_id = "graph_test_123"

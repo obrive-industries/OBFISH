@@ -434,10 +434,7 @@ class SimulationRunner:
         platform: str = "parallel",  # twitter / reddit / parallel
         max_rounds: int = None,  # 最大模拟轮数（可选，用于截断过长的模拟）
         enable_graph_memory_update: bool = False,  # 是否将活动更新到Zep图谱
-        graph_id: str = None,  # Zep图谱ID（启用图谱更新时必需）
-        custom_llm_api_key: Optional[str] = None,  # BYOK 用户自定义 LLM API Key
-        custom_llm_base_url: Optional[str] = None,  # BYOK 自定义 Base URL
-        custom_llm_model_name: Optional[str] = None  # BYOK 自定义 Model Name
+        graph_id: str = None  # Zep图谱ID（启用图谱更新时必需）
     ) -> SimulationRunState:
         """
         启动模拟
@@ -603,16 +600,7 @@ class SimulationRunner:
             env = os.environ.copy()
             env['PYTHONUTF8'] = '1'  # Python 3.7+ 支持，让所有 open() 默认使用 UTF-8
             env['PYTHONIOENCODING'] = 'utf-8'  # 确保 stdout/stderr 使用 UTF-8
-            
-            # BYOK (Bring Your Own Key) 自定义密钥注入
-            if custom_llm_api_key:
-                env['LLM_API_KEY'] = custom_llm_api_key
-                logger.info(f"模拟 {simulation_id} 成功注入用户自定义 BYOK LLM API 密钥")
-            if custom_llm_base_url:
-                env['LLM_BASE_URL'] = custom_llm_base_url
-            if custom_llm_model_name:
-                env['LLM_MODEL_NAME'] = custom_llm_model_name
-            
+
             # 设置工作目录为模拟目录（数据库等文件会生成在此）
             # 使用 start_new_session=True 创建新的进程组，确保可以通过 os.killpg 终止所有子进程
             process = subprocess.Popen(

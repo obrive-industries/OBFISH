@@ -186,49 +186,43 @@
               </div>
             </div>
 
-            <!-- BYOK Key Status Bar -->
-            <div 
-              class="byok-status-card"
-              :class="{ 'has-key': authStore.user.value?.has_custom_api_key }"
-              @click="openByokSettings"
-              title="Click to configure Bring-Your-Own-Key (BYOK) settings"
+            <!-- Plan / usage status bar -->
+            <div
+              class="plan-status-card"
+              :class="{ 'has-plan': billingStore.isPaid.value, 'limit-reached': !billingStore.canStart.value }"
+              @click="openPlanSettings"
+              title="View plans and usage"
             >
-              <div class="byok-card-left">
-                <span class="byok-card-icon">{{ authStore.user.value?.has_custom_api_key ? '🔑' : '⚡' }}</span>
-                <div class="byok-card-info">
-                  <div class="byok-card-title font-microgramma">
-                    {{ authStore.user.value?.has_custom_api_key ? 'LLM KEY CONFIGURED (BYOK)' : 'LLM API KEY REQUIRED (BYOK)' }}
-                  </div>
-                  <div class="byok-card-sub">
-                    {{ authStore.user.value?.has_custom_api_key 
-                      ? (authStore.user.value?.custom_llm_model_name ? `Dedicated model: ${authStore.user.value.custom_llm_model_name}` : 'Using personal provider key')
-                      : 'Click to add your OpenAI, DeepSeek, or Groq API key' }}
-                  </div>
+              <div class="plan-card-left">
+                <span class="plan-card-icon">{{ planIcon }}</span>
+                <div class="plan-card-info">
+                  <div class="plan-card-title font-microgramma">{{ planTitle }}</div>
+                  <div class="plan-card-sub">{{ planSubtitle }}</div>
                 </div>
               </div>
-              <button type="button" class="byok-card-btn font-microgramma">
-                {{ authStore.user.value?.has_custom_api_key ? 'EDIT' : 'CONNECT KEY →' }}
+              <button type="button" class="plan-card-btn font-microgramma">
+                {{ billingStore.canStart.value ? 'MANAGE' : 'VIEW PLANS →' }}
               </button>
             </div>
 
-            <!-- Launch Button Section with Obrive Animated Button styling -->
+            <!-- Launch Button Section matching MiroFish start-engine-btn -->
             <div class="console-section launch-section">
               <button 
-                class="btn-start-engine font-microgramma"
-                :class="{ 'btn-ready': !loading }"
+                class="start-engine-btn font-microgramma"
                 @click="handleStartEngine"
                 :disabled="loading"
               >
                 <span v-if="!loading" class="btn-text-content">
                   <span class="btn-label">Start Engine</span>
-                  <span class="btn-arrow-wrap">
-                    <RightAnimateIcon color="primary" :size="16" />
-                  </span>
                 </span>
                 <span v-else class="btn-text-content">
                   <span>Initializing Swarm...</span>
                 </span>
+                <span class="btn-arrow">→</span>
               </button>
+              <router-link to="/demo" class="demo-link font-microgramma">
+                FIRST TIME? EXPLORE THE SAMPLE REPORT →
+              </router-link>
             </div>
           </div>
         </div>
@@ -246,11 +240,10 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
-import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
-import RoundedBallIcon from '../components/common/RoundedBallIcon.vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
-import { savePendingUpload, setPendingUpload, getPendingUpload } from '../utils/pendingUpload.js'
+import billingStore from '../store/billing'
+import { savePendingUpload, getPendingUpload } from '../utils/pendingUpload.js'
 
 const router = useRouter()
 
@@ -263,6 +256,7 @@ const loading = ref(false)
 const resending = ref(false)
 const isDragOver = ref(false)
 const fileInput = ref(null)
+const resumeAfterPurchase = ref(false)
 
 // 5 Workflow Steps directly from docx paragraphs 101-116
 const consoleSteps = [
@@ -304,7 +298,20 @@ onMounted(async () => {
       files.value = pending.files
     }
   }
+  if (authStore.isAuthenticated.value) {
+    billingStore.refresh()
+  }
 })
+
+// Resume the interrupted Start Engine flow immediately after a plan is bound.
+watch(
+  () => billingStore.state.purchaseVersion,
+  () => {
+    if (!resumeAfterPurchase.value) return
+    resumeAfterPurchase.value = false
+    if (billingStore.canStart.value) handleStartEngine()
+  }
+)
 
 // Watch auth state to restore pending dossier if login happened in-place
 watch(() => authStore.isAuthenticated.value, async (isAuth) => {
@@ -351,21 +358,39 @@ const userInitials = computed(() => {
   return name.slice(0, 2).toUpperCase()
 })
 
-const hasCustomKey = computed(() => {
-  const customKey = localStorage.getItem('brain_custom_llm_key') || localStorage.getItem('obmind_custom_llm_key')
-  return Boolean(customKey && customKey.trim().length > 5)
-})
-
 const canSubmit = computed(() => {
   return formData.value.simulationRequirement.trim().length > 0
 })
 
-const openByokSettings = () => {
-  if (authStore.isAuthenticated.value) {
-    authStore.openProfileModal()
-  } else {
-    authStore.openAuthModal('login', 'Sign in to configure your personal Bring-Your-Own-Key (BYOK) LLM provider.')
+const plan = computed(() => billingStore.entitlement.value)
+
+const planIcon = computed(() => {
+  if (plan.value.unlimited) return '∞'
+  return plan.value.plan === 'free' ? '◇' : '◆'
+})
+
+const planTitle = computed(() => {
+  if (plan.value.unlimited) return 'ADMIN ACCESS — UNLIMITED RUNS'
+  if (plan.value.plan === 'free') return 'FREE DEMO — SAMPLE REPORT ONLY'
+  const remaining = Math.max(0, (plan.value.runs_limit || 0) - (plan.value.runs_used || 0))
+  return `${plan.value.plan_name.toUpperCase()} PLAN — ${remaining} RUN${remaining === 1 ? '' : 'S'} LEFT`
+})
+
+const planSubtitle = computed(() => {
+  if (plan.value.unlimited) return 'All simulation limits bypassed'
+  if (plan.value.plan === 'free') return 'Choose a plan to run your own scenarios'
+  const rounds = plan.value.max_rounds ? `${plan.value.max_rounds} rounds per run` : 'Unlimited rounds'
+  const renews = plan.value.renews_at ? new Date(plan.value.renews_at).toLocaleDateString() : ''
+  return renews ? `${rounds} · renews ${renews}` : rounds
+})
+
+const openPlanSettings = () => {
+  if (!authStore.isAuthenticated.value) {
+    authStore.openAuthModal('login', 'Sign in to view plans and start your own simulation.')
+    return
   }
+  resumeAfterPurchase.value = true
+  billingStore.openPricing({ resume: true })
 }
 
 const triggerFileInput = () => {
@@ -445,23 +470,25 @@ const handleStartEngine = async () => {
     return
   }
 
-  // 3. Scenario & Hypothesis Check
-  if (!formData.value.simulationRequirement?.trim()) {
-    alert('Please describe your simulation scenario, requirement, or hypothesis to start the engine.')
+  // 3. Plan Gate Check: free accounts only get the sample report
+  await billingStore.refresh()
+  if (!billingStore.canStart.value) {
+    await savePendingUpload(files.value, formData.value.simulationRequirement)
+    resumeAfterPurchase.value = true
+    billingStore.openPricing({ resume: true })
     return
   }
 
-  // 4. Bring Your Own Key (BYOK) Gate Check
-  if (!authStore.user.value?.has_custom_api_key) {
-    await savePendingUpload(files.value, formData.value.simulationRequirement)
-    authStore.openProfileModal()
+  // 4. Scenario & Hypothesis Check
+  if (!formData.value.simulationRequirement?.trim()) {
+    alert('Please describe your simulation scenario, requirement, or hypothesis to start the engine.')
     return
   }
 
   // Cache user's inputs in IndexedDB pending store immediately so nothing is lost
   await savePendingUpload(files.value, formData.value.simulationRequirement)
 
-  // 5. Authenticated, Verified & BYOK Key Configured -> Navigate to Process View
+  // 5. Authenticated, Verified & Plan Active -> Navigate to Process View
   loading.value = true
   router.push({
     name: 'Process',
@@ -557,62 +584,30 @@ const handleStartEngine = async () => {
   gap: 16px;
 }
 
-.byok-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: rgba(7, 65, 57, 0.05);
-  border: 1px solid rgba(7, 65, 57, 0.16);
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.byok-badge:hover {
-  border-color: #074139;
-  background: rgba(162, 241, 223, 0.25);
-}
-
-.byok-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #074139;
-  box-shadow: 0 0 6px rgba(7, 65, 57, 0.5);
-}
-
-.byok-text {
-  font-size: 0.68rem;
-  font-weight: 700;
-  color: #074139;
-  letter-spacing: 0.06em;
-}
-
 .user-pill {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 5px 14px 5px 6px;
-  background: rgba(7, 65, 57, 0.05);
-  border: 1px solid rgba(7, 65, 57, 0.18);
+  padding: 4px 12px 4px 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .user-pill:hover {
-  border-color: #074139;
-  background: rgba(7, 65, 57, 0.08);
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .avatar {
-  width: 26px;
-  height: 26px;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: #074139;
-  color: #CAEDE5;
-  font-size: 0.72rem;
+  background: #FFFFFF;
+  color: #000000;
+  font-size: 0.7rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -1148,130 +1143,129 @@ const handleStartEngine = async () => {
   display: flex;
   flex-direction: column;
   position: relative;
+  border: 1px solid #DDDDDD;
+  background: #FAFAFA;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
 .scenario-input {
   width: 100%;
   flex: 1;
-  min-height: 200px;
+  min-height: 110px;
   box-sizing: border-box;
-  background: #F9FCFB;
-  border: 1.5px solid rgba(7, 65, 57, 0.2);
-  border-radius: 14px;
-  padding: 16px;
-  padding-bottom: 48px;
-  color: #074139;
-  font-family: inherit;
-  font-size: 0.95rem;
+  background: transparent;
+  border: none;
+  padding: 14px 18px 40px;
+  color: #000000;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
   line-height: 1.6;
   outline: none;
   resize: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .scenario-input:focus {
-  border-color: #074139;
-  box-shadow: 0 0 0 3px rgba(162, 241, 223, 0.45);
   background: #FFFFFF;
 }
 
 .engine-badge-pill {
   position: absolute;
-  bottom: 12px;
-  right: 14px;
+  bottom: 10px;
+  right: 12px;
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 4px 10px;
-  background: rgba(7, 65, 57, 0.08);
-  border: 1px solid rgba(7, 65, 57, 0.2);
-  border-radius: 20px;
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: #074139;
-  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #999999;
 }
 
 .badge-dot {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #074139;
+  background: #FF4500;
 }
 
-/* BYOK Status Card */
-.byok-status-card {
+/* Plan / usage status card */
+.plan-status-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 14px;
-  padding: 12px 18px;
-  background: #FFFBEB;
-  border: 1.5px solid #FDE68A;
-  border-radius: 12px;
-  margin-top: 14px;
+  padding: 12px 16px;
+  background: #FFFDF0;
+  border: 1px solid #F0E4B0;
+  border-radius: 8px;
+  margin: 12px 12px 0;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.byok-status-card:hover {
-  background: #FEF3C7;
-  border-color: #F59E0B;
+.plan-status-card:hover {
+  border-color: #E0CE80;
 }
 
-.byok-status-card.has-key {
-  background: #ECFDF5;
-  border-color: #A7F3D0;
+.plan-status-card.has-plan {
+  background: #F0FFF4;
+  border-color: #B8E8C4;
 }
 
-.byok-status-card.has-key:hover {
-  background: #D1FAE5;
-  border-color: #10B981;
+.plan-status-card.has-plan:hover {
+  border-color: #8FD8A0;
 }
 
-.byok-card-left {
+.plan-card-left {
   display: flex;
   align-items: center;
   gap: 12px;
 }
 
-.byok-card-icon {
-  font-size: 1.3rem;
+.plan-card-icon {
+  font-size: 1.2rem;
   line-height: 1;
 }
 
-.byok-card-info {
+.plan-card-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.byok-card-title {
+.plan-card-title {
+  font-family: var(--font-mono, monospace);
   font-size: 0.76rem;
   font-weight: 700;
   letter-spacing: 0.05em;
-  color: #92400E;
+  color: #A08940;
 }
 
-.byok-status-card.has-key .byok-card-title {
-  color: #065F46;
+.plan-status-card.has-plan .plan-card-title {
+  color: #2E7D32;
 }
 
-.byok-card-sub {
+.plan-card-sub {
   font-size: 0.78rem;
-  color: #78350F;
+  color: #A08940;
 }
 
-.byok-status-card.has-key .byok-card-sub {
-  color: #047857;
+.plan-status-card.has-plan .plan-card-sub {
+  color: #388E3C;
 }
 
-.byok-card-btn {
-  background: #074139;
-  color: #A2F1DF;
+.plan-card-btn {
+  background: #000000;
+  color: #FFFFFF;
   border: none;
   border-radius: 6px;
   padding: 6px 14px;
+  font-family: var(--font-mono, monospace);
   font-size: 0.74rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -1280,80 +1274,118 @@ const handleStartEngine = async () => {
   transition: all 0.2s ease;
 }
 
-.byok-card-btn:hover {
-  background: #052e28;
+.plan-card-btn:hover {
+  background: #FF4500;
+}
+
+.demo-link {
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+  color: #737373;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.demo-link:hover {
+  color: #000000;
 }
 
 .launch-section {
-  margin-top: auto;
-  padding-top: 10px;
+  padding: 12px;
 }
 
-/* Obrive Official Animated Button Design for Start Engine */
-.btn-start-engine {
+/* MiroFish Pulsing Start Engine Button */
+.start-engine-btn {
   width: 100%;
-  padding: 16px 28px;
-  background: rgba(7, 65, 57, 0.12);
-  border: 1.5px solid rgba(7, 65, 57, 0.18);
-  border-radius: 14px;
-  color: #7a8d8a;
-  font-size: 1rem;
-  font-weight: 800;
-  letter-spacing: 0.06em;
-  cursor: not-allowed;
+  background: #000000;
+  color: #FFFFFF;
+  border: 1px solid #000000;
+  padding: 18px 24px;
+  font-family: var(--font-mono, monospace);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  animation: pulse-border 2s infinite;
 }
 
-.btn-start-engine.btn-ready {
-  background: #074139;
-  border-color: #074139;
-  color: #CAEDE5;
-  cursor: pointer;
-  box-shadow: 0 8px 24px rgba(7, 65, 57, 0.25);
-}
-
-.btn-start-engine.btn-ready:hover {
-  background: #052e28;
-  box-shadow: 0 12px 30px rgba(7, 65, 57, 0.35);
+.start-engine-btn:hover:not(:disabled) {
+  background: #FF4500;
+  border-color: #FF4500;
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 69, 0, 0.35);
+}
+
+.start-engine-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  animation: none;
+}
+
+@keyframes pulse-border {
+  0% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.25);
+  }
+  70% {
+    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
 }
 
 .btn-text-content {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 12px;
 }
 
-.btn-arrow-wrap {
-  display: flex;
-  align-items: center;
-  transition: transform 0.3s ease;
+.btn-label {
+  letter-spacing: 0.06em;
 }
 
-.btn-start-engine.btn-ready:hover .btn-arrow-wrap {
+.btn-arrow {
+  font-size: 1.25rem;
+  font-weight: 700;
+  transition: transform 0.2s ease;
+}
+
+.start-engine-btn:hover:not(:disabled) .btn-arrow {
   transform: translateX(4px);
 }
 
 /* History */
 .history-wrapper {
-  margin-top: 36px;
+  margin-top: 40px;
   scroll-margin-top: 80px;
 }
 
-@media (max-width: 960px) {
+@media (max-width: 1024px) {
   .console-grid {
     grid-template-columns: 1fr;
   }
+}
 
+@media (max-width: 768px) {
   .console-hero {
-    padding: 56px 16px 48px;
+    padding: 44px 16px 36px;
   }
 
   .hero-title {
     font-size: 1.85rem;
+  }
+
+  .console-main {
+    padding: 32px 16px 60px;
   }
 }
 

@@ -8,21 +8,8 @@ import uuid
 import secrets
 from datetime import datetime, timedelta, timezone
 
-import logging
-import base64
-import hashlib
 import bcrypt
 from flask_sqlalchemy import SQLAlchemy
-from cryptography.fernet import Fernet
-
-logger = logging.getLogger("brain.models.user")
-
-
-def _get_fernet(secret: str | None = None) -> Fernet:
-    from ..config import Config
-    key_material = (secret or Config.SECRET_KEY or "brain-secret-key").encode("utf-8")
-    derived = base64.urlsafe_b64encode(hashlib.sha256(key_material).digest())
-    return Fernet(derived)
 
 
 db = SQLAlchemy()
@@ -65,51 +52,13 @@ class User(db.Model):
 
     # Account state
     is_active = db.Column(db.Boolean, nullable=False, default=True)
+    role = db.Column(db.String(20), nullable=False, default="user")
     created_at = db.Column(db.DateTime(timezone=True), nullable=False, default=_utcnow)
     updated_at = db.Column(db.DateTime(timezone=True), nullable=False, default=_utcnow, onupdate=_utcnow)
     last_login_at = db.Column(db.DateTime(timezone=True), nullable=True)
 
     # Session and Token invalidation version
     token_version = db.Column(db.Integer, nullable=False, default=1)
-
-    # BYOK (Bring Your Own Key) Settings - encrypted at rest
-    _custom_llm_api_key = db.Column("custom_llm_api_key", db.Text, nullable=True)
-    custom_llm_base_url = db.Column(db.String(255), nullable=True)
-    custom_llm_model_name = db.Column(db.String(255), nullable=True)
-
-    @property
-    def custom_llm_api_key(self) -> str | None:
-        """Decrypts and returns custom LLM API key, with transparent plaintext migration fallback."""
-        if not self._custom_llm_api_key:
-            return None
-        val = self._custom_llm_api_key
-        if val.startswith("gAAAAA"):
-            try:
-                f = _get_fernet()
-                return f.decrypt(val.encode("utf-8")).decode("utf-8")
-            except Exception:
-                try:
-                    f_legacy = _get_fernet("obmind-secret-key")
-                    return f_legacy.decrypt(val.encode("utf-8")).decode("utf-8")
-                except Exception as e:
-                    logger.warning(f"Failed to decrypt custom_llm_api_key: {e}")
-                    return val
-        return val
-
-    @custom_llm_api_key.setter
-    def custom_llm_api_key(self, val: str | None):
-        """Encrypts custom LLM API key before persisting."""
-        if not val or not str(val).strip():
-            self._custom_llm_api_key = None
-        else:
-            val_clean = str(val).strip()
-            try:
-                f = _get_fernet()
-                self._custom_llm_api_key = f.encrypt(val_clean.encode("utf-8")).decode("utf-8")
-            except Exception as e:
-                logger.warning(f"Encryption failed, saving as is: {e}")
-                self._custom_llm_api_key = val_clean
-
 
     # ------------------------------------------------------------------ #
     # Password helpers
@@ -205,9 +154,8 @@ class User(db.Model):
             "full_name": self.full_name,
             "is_verified": self.is_verified,
             "is_active": self.is_active,
-            "has_custom_api_key": bool(self.custom_llm_api_key),
-            "custom_llm_base_url": self.custom_llm_base_url,
-            "custom_llm_model_name": self.custom_llm_model_name,
+            "role": self.role or "user",
+            "is_admin": (self.role or "user") == "admin",
             "created_at": self.created_at.isoformat() if self.created_at else None,
             "last_login_at": self.last_login_at.isoformat() if self.last_login_at else None,
         }

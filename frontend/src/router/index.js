@@ -13,6 +13,11 @@ const routes = [
     component: () => import('../views/ConsoleView.vue')
   },
   {
+    path: '/demo',
+    name: 'Demo',
+    component: () => import('../views/DemoView.vue')
+  },
+  {
     path: '/process/:projectId',
     name: 'Process',
     component: () => import('../views/MainView.vue'),

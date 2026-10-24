@@ -31,6 +31,7 @@ import bcrypt
 
 from flask import Blueprint, request, jsonify, g
 
+from ..config import Config
 from ..models.user import User, db
 from ..utils.jwt_utils import (
     create_access_token, create_refresh_token,
@@ -141,6 +142,8 @@ def register():
         # Create user
         user = User(email=email, full_name=full_name)
         user.set_password(password)
+        if email in Config.admin_emails():
+            user.role = "admin"
         token = user.generate_verification_token(ttl_hours=24)
 
         db.session.add(user)
@@ -216,8 +219,10 @@ def login():
             status=403
         )
 
-    # Update last login
+    # Update last login and keep the operator allowlist authoritative
     user.last_login_at = datetime.now(timezone.utc)
+    if user.email in Config.admin_emails() and user.role != "admin":
+        user.role = "admin"
     db.session.commit()
 
     logger.info(f"User logged in: {email} (verified={user.is_verified})")
@@ -490,15 +495,15 @@ def me():
 
 
 # ------------------------------------------------------------------ #
-# PUT /api/auth/profile (Update name & BYOK settings)
+# PUT /api/auth/profile (Update name)
 # ------------------------------------------------------------------ #
 
 @auth_bp.route("/profile", methods=["PUT", "PATCH"])
 @require_auth
 def update_profile():
-    """
-    Update profile fields, including BYOK (Bring Your Own Key) LLM settings.
-    Body: { full_name?, custom_llm_api_key?, custom_llm_base_url?, custom_llm_model_name? }
+    """Update editable profile fields.
+
+    Body: { full_name? }
     """
     user = db.session.get(User, g.user_id)
     if not user:
@@ -512,27 +517,6 @@ def update_profile():
             return _err(err)
         user.full_name = name
 
-    # BYOK settings
-    if "custom_llm_api_key" in data:
-        key = (data["custom_llm_api_key"] or "").strip()
-        user.custom_llm_api_key = key if key else None
-        
-        # Zero-Config: If user sets API key without explicitly providing Base URL or Model, auto-detect!
-        if key and ("custom_llm_base_url" not in data or not data["custom_llm_base_url"]):
-            from ..utils.byok_detector import detect_provider_from_key
-            detected = detect_provider_from_key(key, hint_provider=data.get("provider_hint"))
-            user.custom_llm_base_url = detected["base_url"]
-            if "custom_llm_model_name" not in data or not data["custom_llm_model_name"]:
-                user.custom_llm_model_name = detected["default_model"]
-
-    if "custom_llm_base_url" in data and data["custom_llm_base_url"]:
-        base_url = data["custom_llm_base_url"].strip()
-        user.custom_llm_base_url = base_url if base_url else None
-
-    if "custom_llm_model_name" in data and data["custom_llm_model_name"]:
-        model = data["custom_llm_model_name"].strip()
-        user.custom_llm_model_name = model if model else None
-
     db.session.commit()
     logger.info(f"User profile updated: {user.email}")
 
@@ -540,33 +524,6 @@ def update_profile():
         "message": "Profile updated successfully.",
         "user": user.to_public_dict()
     })
-
-
-# ------------------------------------------------------------------ #
-# POST /api/auth/probe-llm-key
-# ------------------------------------------------------------------ #
-
-@auth_bp.route("/probe-llm-key", methods=["POST"])
-@require_auth
-def probe_key():
-    """Probe an API key live to detect provider, check credentials, and discover active models."""
-    data = request.get_json(silent=True) or {}
-    api_key = (data.get("api_key") or "").strip()
-    if not api_key:
-        return _err("API key is required.", code="MISSING_KEY", status=400)
-    
-    base_url = data.get("base_url")
-    model = data.get("model")
-    hint_provider = data.get("hint_provider")
-    
-    from ..utils.byok_detector import probe_llm_key
-    result = probe_llm_key(
-        api_key=api_key,
-        base_url=base_url,
-        model=model,
-        hint_provider=hint_provider
-    )
-    return jsonify(result), (200 if result.get("success") else 400)
 
 
 # ------------------------------------------------------------------ #

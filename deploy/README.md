@@ -75,13 +75,27 @@ SMTP_PASS=your-brevo-smtp-key
 SMTP_FROM_EMAIL=ai@obrive.com
 SMTP_FROM_NAME=Brain
 
-# Default Platform LLM (Fallback if user does not provide custom BYOK key)
+# Platform LLM (server-side only; users never supply their own key)
 LLM_API_KEY=your-default-llm-key
 LLM_BASE_URL=https://api.openai.com/v1
 LLM_MODEL_NAME=gpt-4o-mini
 
 # Zep Knowledge Graph Cloud
 ZEP_API_KEY=your-zep-api-key
+
+# Subscription billing (create plans with backend/scripts/setup_razorpay_plans.py)
+RAZORPAY_KEY_ID=rzp_live_or_test_key_id
+RAZORPAY_KEY_SECRET=rzp_key_secret
+RAZORPAY_WEBHOOK_SECRET=rzp_webhook_secret
+RAZORPAY_PLAN_ID_STARTER_MONTHLY=plan_xxx
+RAZORPAY_PLAN_ID_STARTER_ANNUAL=plan_xxx
+RAZORPAY_PLAN_ID_PRO_MONTHLY=plan_xxx
+RAZORPAY_PLAN_ID_PRO_ANNUAL=plan_xxx
+RAZORPAY_PLAN_ID_PREMIUM_MONTHLY=plan_xxx
+RAZORPAY_PLAN_ID_PREMIUM_ANNUAL=plan_xxx
+
+# Unlimited accounts
+ADMIN_EMAILS=owner@example.com
 ```
 
 ---
@@ -147,5 +161,7 @@ sudo systemctl reload nginx
 2. Customer clicks **Sign Up** -> Enters Name, Email, Password.
 3. Brevo SMTP sends branded HTML verification link: `https://brain.obrive.com/verify-email?token=...`.
 4. Customer verifies email -> Verification badge unlocks simulation & ontology builder features.
-5. Customer can optionally open **Profile Modal** -> **BYOK (Bring Your Own Key)** section to enter their own OpenAI / Claude / DeepSeek API key.
-6. The entire agent swarm and OASIS engine runs using their custom key without any server credit consumption!
+5. Free accounts can open `/demo` to read a pre-recorded sample report; they cannot run live simulations.
+6. Clicking **Start Engine**, or any plan-gated API call, opens the pricing popup (Monthly or Annual).
+7. Razorpay Checkout completes the purchase, the signed callback/webhook binds the plan to the account, and the interrupted Start Engine action resumes with that plan's run and round limits.
+8. Accounts listed in `ADMIN_EMAILS` bypass all run and round limits.

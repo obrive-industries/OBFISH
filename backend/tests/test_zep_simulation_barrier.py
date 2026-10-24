@@ -13,12 +13,10 @@ from app.services.simulation_runner import (
     SimulationRunner,
     SimulationStopPending,
 )
-from app.utils import auth_middleware
-
-
 @pytest.fixture(autouse=True)
 def mock_auth_permissions(monkeypatch):
-    monkeypatch.setattr(auth_middleware, "check_simulation_permission", lambda *args, **kwargs: (True, None))
+    allow = lambda *args, **kwargs: None
+    monkeypatch.setattr(simulation_api, "active_plan_denial", allow)
 
 
 def test_manual_stop_surfaces_graph_ingestion_failure(monkeypatch):

@@ -25,8 +25,9 @@ from ..models.project import ProjectManager, ProjectStatus
 from ..services.simulation_manager import SimulationManager
 from ..services.simulation_runner import SimulationRunner, RunnerStatus
 from ..services.zep_graph_memory_updater import ZepGraphMemoryManager
-from ..utils.llm_client import LLMResponseError
+from ..utils.llm_client import LLMClient, LLMResponseError
 from ..utils.auth_middleware import require_auth, get_current_user_id
+from ..services.entitlements import active_plan_denial, deny_reason, get_entitlement, record_run
 from ..utils.zep import get_zep_key_pool
 
 # 获取日志器
@@ -348,8 +349,8 @@ def generate_ontology():
                 "error": t('api.requireSimulationRequirement')
             }), 400
         
-        # 创建项目（要求用户登录且完成邮箱验证）
-        from ..utils.auth_middleware import get_current_user, get_user_llm_client, check_simulation_permission
+        # 创建项目（要求登录、邮箱验证与可用的付费计划）
+        from ..utils.auth_middleware import get_current_user
         user = get_current_user()
         if not user:
             return jsonify({
@@ -358,14 +359,16 @@ def generate_ontology():
                 "code": "MISSING_TOKEN"
             }), 401
 
-        allowed, reason = check_simulation_permission(user)
-        if not allowed:
-            code = "BYOK_KEY_REQUIRED" if "LLM API Key" in (reason or "") else "EMAIL_NOT_VERIFIED"
+        entitlement = get_entitlement(user)
+        denied = deny_reason(user, entitlement)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
             return jsonify({
                 "success": False,
                 "error": reason,
                 "code": code
-            }), 403
+            }), status
 
         user_id = user.id
         project = ProjectManager.create_project(name=project_name, user_id=user_id)
@@ -427,7 +430,7 @@ def generate_ontology():
         
         # 生成本体
         logger.info("调用 LLM 生成本体定义...")
-        user_llm = get_user_llm_client(user)
+        user_llm = LLMClient()
         try:
             generator = OntologyGenerator(llm_client=user_llm)
         except TypeError:
@@ -450,6 +453,13 @@ def generate_ontology():
         project.analysis_summary = ontology.get("analysis_summary", "")
         project.status = ProjectStatus.ONTOLOGY_GENERATED
         ProjectManager.save_project(project)
+        if not record_run(user, project.project_id):
+            ProjectManager.delete_project(project.project_id)
+            return jsonify({
+                "success": False,
+                "error": "You have used every simulation run included in this billing period.",
+                "code": "PLAN_LIMIT_REACHED"
+            }), 402
         logger.info(f"=== 本体生成完成 === 项目ID: {project.project_id}")
         
         return jsonify({
@@ -474,10 +484,25 @@ def generate_ontology():
             logger.exception("LLM returned an unusable ontology response")
         elif isinstance(provider_status, int):
             public_error = f"LLM provider request failed (HTTP {provider_status})"
-            if provider_status == 413:
+            if provider_status == 402:
+                public_error += (
+                    ": Payment Required / Insufficient credits on your LLM API account. "
+                    "Please check your provider billing/credits or configure a new API key in Settings."
+                )
+            elif provider_status == 401:
+                public_error += (
+                    ": Authentication failed / Invalid API key. "
+                    "Please check and re-enter your LLM API key in Settings."
+                )
+            elif provider_status == 413:
                 public_error += (
                     "; the uploaded content is too large for the configured "
                     "LLM request. Try fewer or smaller documents"
+                )
+            elif provider_status == 429:
+                public_error += (
+                    ": Rate limit or quota exceeded. "
+                    "Please wait a moment or check your provider limits."
                 )
             if request_id:
                 safe_request_id = re.sub(
@@ -591,16 +616,17 @@ def _build_graph_impl():
             }), 404
 
         # 权限与归属检查
-        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        from ..utils.auth_middleware import get_current_user
         user = get_current_user()
-        allowed, reason = check_simulation_permission(user)
-        if not allowed:
-            code = "BYOK_KEY_REQUIRED" if "LLM API Key" in (reason or "") else "EMAIL_NOT_VERIFIED"
+        denied = active_plan_denial(user)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
             return jsonify({
                 "success": False,
                 "error": reason,
                 "code": code
-            }), 403
+            }), status
 
         if project.user_id and (not user or project.user_id != user.id):
             return jsonify({

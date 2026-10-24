@@ -24,8 +24,26 @@ from ..utils.locale import t, get_locale, set_locale
 from ..utils.zep_lifecycle import get_graph_readers, graph_lifecycle_lock
 from ..utils.zep import get_zep_key_pool
 from ..models.project import ProjectManager
+from ..services.entitlements import active_plan_denial, clamp_rounds
 
 logger = get_logger('brain.api.simulation')
+
+
+@simulation_bp.before_request
+def _gate_conversation_endpoints():
+    """Follow-up interviews consume model tokens and require an active plan."""
+
+    path = request.path.rstrip('/')
+    if not path.endswith(('/interview', '/interview/batch', '/interview/all')):
+        return None
+    from ..utils.auth_middleware import get_current_user
+
+    denied = active_plan_denial(get_current_user())
+    if denied:
+        code, reason = denied
+        status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+        return jsonify({"success": False, "error": reason, "code": code}), status
+    return None
 
 
 def _get_default_platform(simulation_id: str) -> str:
@@ -239,8 +257,14 @@ def create_simulation():
                 "error": t('api.projectNotFound', id=project_id)
             }), 404
 
-        from ..utils.auth_middleware import get_current_user_id
-        user_id = get_current_user_id()
+        from ..utils.auth_middleware import get_current_user
+        user = get_current_user()
+        denied = active_plan_denial(user)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+            return jsonify({"success": False, "error": reason, "code": code}), status
+        user_id = user.id
         if project.user_id and project.user_id != user_id:
             return jsonify({
                 "success": False,
@@ -488,20 +512,14 @@ def prepare_simulation():
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
         
-        # 权限检查（邮箱验证要求）
-        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        # 权限检查（邮箱验证 + 有效计划）
+        from ..utils.auth_middleware import get_current_user
         user = get_current_user()
-        allowed, reason = check_simulation_permission(user)
-        if not allowed:
-            return jsonify({
-                "success": False,
-                "error": reason,
-                "code": "EMAIL_NOT_VERIFIED"
-            }), 403
-
-        user_byok_api_key = user.custom_llm_api_key if user else None
-        user_byok_base_url = user.custom_llm_base_url if user else None
-        user_byok_model_name = user.custom_llm_model_name if user else None
+        denied = active_plan_denial(user)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+            return jsonify({"success": False, "error": reason, "code": code}), status
 
         # 检查是否强制重新生成
         force_regenerate = data.get('force_regenerate', False)
@@ -675,10 +693,7 @@ def prepare_simulation():
                     defined_entity_types=entity_types_list,
                     use_llm_for_profiles=use_llm_for_profiles,
                     progress_callback=progress_callback,
-                    parallel_profile_count=parallel_profile_count,
-                    custom_llm_api_key=user_byok_api_key,
-                    custom_llm_base_url=user_byok_base_url,
-                    custom_llm_model_name=user_byok_model_name
+                    parallel_profile_count=parallel_profile_count
                 )
 
                 if result_state.status == SimulationStatus.FAILED:
@@ -1550,21 +1565,15 @@ def generate_profiles():
                 "error": t('api.noMatchingEntities')
             }), 400
         
-        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        from ..utils.auth_middleware import get_current_user
         user = get_current_user()
-        allowed, reason = check_simulation_permission(user)
-        if not allowed:
-            return jsonify({
-                "success": False,
-                "error": reason,
-                "code": "EMAIL_NOT_VERIFIED"
-            }), 403
+        denied = active_plan_denial(user)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+            return jsonify({"success": False, "error": reason, "code": code}), status
 
-        generator = OasisProfileGenerator(
-            api_key=user.custom_llm_api_key if (user and user.custom_llm_api_key) else None,
-            base_url=user.custom_llm_base_url if (user and user.custom_llm_base_url) else None,
-            model_name=user.custom_llm_model_name if (user and user.custom_llm_model_name) else None
-        )
+        generator = OasisProfileGenerator()
         profiles = generator.generate_profiles_from_entities(
             entities=filtered.entities,
             use_llm=use_llm
@@ -1684,16 +1693,16 @@ def start_simulation():
                 "error": t('api.invalidPlatform', platform=platform)
             }), 400
 
-        # 权限检查（邮箱验证要求）
-        from ..utils.auth_middleware import get_current_user, check_simulation_permission
+        # 权限检查（邮箱验证 + 有效计划）
+        from ..utils.auth_middleware import get_current_user
         user = get_current_user()
-        allowed, reason = check_simulation_permission(user)
-        if not allowed:
-            return jsonify({
-                "success": False,
-                "error": reason,
-                "code": "EMAIL_NOT_VERIFIED"
-            }), 403
+        denied = active_plan_denial(user)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+            return jsonify({"success": False, "error": reason, "code": code}), status
+
+        max_rounds = clamp_rounds(user, max_rounds)
 
         # 检查模拟是否已准备好
         manager = SimulationManager()
@@ -1875,10 +1884,7 @@ def start_simulation():
                 platform=platform,
                 max_rounds=max_rounds,
                 enable_graph_memory_update=enable_graph_memory_update,
-                graph_id=graph_id,
-                custom_llm_api_key=user.custom_llm_api_key if user else None,
-                custom_llm_base_url=user.custom_llm_base_url if user else None,
-                custom_llm_model_name=user.custom_llm_model_name if user else None
+                graph_id=graph_id
             )
         
         response_data = run_state.to_dict()

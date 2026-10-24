@@ -292,10 +292,7 @@ class SimulationManager:
         defined_entity_types: Optional[List[str]] = None,
         use_llm_for_profiles: bool = True,
         progress_callback: Optional[callable] = None,
-        parallel_profile_count: int = 3,
-        custom_llm_api_key: Optional[str] = None,
-        custom_llm_base_url: Optional[str] = None,
-        custom_llm_model_name: Optional[str] = None
+        parallel_profile_count: int = 3
     ) -> SimulationState:
         """
         准备模拟环境（全程自动化）
@@ -376,13 +373,8 @@ class SimulationManager:
                     total=total_entities
                 )
             
-            # 传入graph_id以启用Zep检索功能，获取更丰富的上下文，并注入BYOK配置
-            generator = OasisProfileGenerator(
-                graph_id=state.graph_id,
-                api_key=custom_llm_api_key,
-                base_url=custom_llm_base_url,
-                model_name=custom_llm_model_name
-            )
+            # 传入graph_id以启用Zep检索功能，获取更丰富的上下文
+            generator = OasisProfileGenerator(graph_id=state.graph_id)
             
             def profile_progress(current, total, msg):
                 if progress_callback:
@@ -461,11 +453,7 @@ class SimulationManager:
                     total=3
                 )
             
-            config_generator = SimulationConfigGenerator(
-                api_key=custom_llm_api_key,
-                base_url=custom_llm_base_url,
-                model_name=custom_llm_model_name
-            )
+            config_generator = SimulationConfigGenerator()
             
             if progress_callback:
                 progress_callback(

@@ -24,7 +24,7 @@ def test_ontology_generation_text_only_hypothesis(tmp_path, monkeypatch):
                 "analysis_summary": "Summary of text-only hypothesis."
             }
 
-    mock_user = MagicMock(id="test-user-id", is_verified=True, custom_llm_api_key="sk-test-key")
+    mock_user = MagicMock(id="test-user-id", is_verified=True, role="admin")
     monkeypatch.setattr("app.utils.auth_middleware.get_current_user", lambda: mock_user)
     monkeypatch.setattr(ProjectManager, "PROJECTS_DIR", str(tmp_path))
     monkeypatch.setattr(graph_api, "OntologyGenerator", MockGenerator)
@@ -69,7 +69,7 @@ def test_ontology_generation_with_docx_upload(tmp_path, monkeypatch):
                 "analysis_summary": "DOCX analysis summary."
             }
 
-    mock_user = MagicMock(id="test-user-id", is_verified=True, custom_llm_api_key="sk-test-key")
+    mock_user = MagicMock(id="test-user-id", is_verified=True, role="admin")
     monkeypatch.setattr("app.utils.auth_middleware.get_current_user", lambda: mock_user)
     monkeypatch.setattr(ProjectManager, "PROJECTS_DIR", str(tmp_path))
     monkeypatch.setattr(graph_api, "OntologyGenerator", MockGenerator)

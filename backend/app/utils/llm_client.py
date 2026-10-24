@@ -89,9 +89,9 @@ def _contains_additional_json_container(content: str) -> bool:
 
 
 def resolve_default_model(base_url: Optional[str], model: Optional[str]) -> str:
-    """Resolve sensible default model based on provider base_url."""
-    from .byok_detector import resolve_model_for_base_url
-    return resolve_model_for_base_url(base_url, model)
+    """Return the configured platform model, allowing an explicit override."""
+
+    return (model or "").strip() or Config.LLM_MODEL_NAME
 
 
 class LLMClient:

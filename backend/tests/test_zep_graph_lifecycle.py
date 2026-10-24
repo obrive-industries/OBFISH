@@ -10,12 +10,12 @@ from app.api import simulation as simulation_api
 from app.models.project import Project, ProjectStatus
 from app.services.simulation_manager import SimulationStatus
 from app.models.task import TaskStatus
-from app.utils import auth_middleware
-
-
 @pytest.fixture(autouse=True)
 def mock_auth_permissions(monkeypatch):
-    monkeypatch.setattr(auth_middleware, "check_simulation_permission", lambda *args, **kwargs: (True, None))
+    allow = lambda *args, **kwargs: None
+    monkeypatch.setattr(graph_api, "active_plan_denial", allow)
+    monkeypatch.setattr(graph_api, "deny_reason", allow)
+    monkeypatch.setattr(simulation_api, "active_plan_denial", allow)
 
 
 def _project(status, graph_id="graph-1"):

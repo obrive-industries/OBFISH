@@ -46,7 +46,9 @@ service.interceptors.response.use(
 
     if (!res.success && res.success !== undefined) {
       console.error('API Error:', res.error || res.message || 'Unknown error')
-      return Promise.reject(new Error(res.error || res.message || 'Error'))
+      const apiError = new Error(res.error || res.message || 'Error')
+      if (res.code) apiError.code = res.code
+      return Promise.reject(apiError)
     }
 
     return res
@@ -134,6 +136,15 @@ service.interceptors.response.use(
     const apiError = error.response?.data?.error || error.response?.data?.message
     if (typeof apiError === 'string' && apiError) {
       error.message = apiError
+    }
+    if (errorCode) error.code = errorCode
+    error.status = responseStatus
+
+    // Any plan-gated endpoint can raise the pricing popup, not just Start Engine.
+    if (responseStatus === 402 && String(errorCode || '').startsWith('PLAN_')) {
+      window.dispatchEvent(
+        new CustomEvent('brain-plan-required', { detail: { code: errorCode } })
+      )
     }
 
     return Promise.reject(error)

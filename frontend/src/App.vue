@@ -3,22 +3,30 @@
   <!-- Global Modals -->
   <AuthModal />
   <UserProfileModal />
+  <PricingModal />
 </template>
 
 <script setup>
 import { onMounted, onUnmounted } from 'vue'
 import AuthModal from './components/AuthModal.vue'
 import UserProfileModal from './components/UserProfileModal.vue'
+import PricingModal from './components/PricingModal.vue'
 import authStore from './store/auth'
 import authApi from './api/auth'
+import billingStore from './store/billing'
 
 const handleLogoutEvent = () => {
   authStore.clearSession()
 }
 
+const handlePlanRequired = () => {
+  billingStore.openPricing({ resume: false })
+}
+
 onMounted(async () => {
   window.addEventListener('brain-auth-logout', handleLogoutEvent)
   window.addEventListener('obmind-auth-logout', handleLogoutEvent)
+  window.addEventListener('brain-plan-required', handlePlanRequired)
 
   // Sync profile if token exists
   if (authStore.state.accessToken) {
@@ -31,12 +39,14 @@ onMounted(async () => {
       // If token expired, interceptor will try refresh or trigger logout
       console.warn('Initial auth sync:', e.message)
     }
+    billingStore.refresh()
   }
 })
 
 onUnmounted(() => {
   window.removeEventListener('brain-auth-logout', handleLogoutEvent)
   window.removeEventListener('obmind-auth-logout', handleLogoutEvent)
+  window.removeEventListener('brain-plan-required', handlePlanRequired)
 })
 </script>
 

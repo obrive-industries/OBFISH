@@ -46,7 +46,7 @@ export const authApi = {
     return service.get('/api/auth/me')
   },
 
-  // Update profile & BYOK LLM settings
+  // Update editable profile fields
   updateProfile(data) {
     return service.put('/api/auth/profile', data)
   },
@@ -54,11 +54,6 @@ export const authApi = {
   // Change password while logged in
   changePassword(data) {
     return service.post('/api/auth/change-password', data)
-  },
-
-  // Probe & auto-detect BYOK API key
-  probeLlmKey(data) {
-    return service.post('/api/auth/probe-llm-key', data)
   }
 }
 

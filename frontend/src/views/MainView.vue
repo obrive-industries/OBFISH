@@ -79,6 +79,7 @@ import Step1GraphBuild from '../components/Step1GraphBuild.vue'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
 import authStore from '../store/auth'
+import billingStore from '../store/billing'
 
 const route = useRoute()
 const router = useRouter()
@@ -210,15 +211,6 @@ const handleNewProject = async () => {
     return
   }
 
-  // BYOK LLM Key Gate Check
-  if (!authStore.user.value?.has_custom_api_key) {
-    loading.value = false
-    error.value = 'LLM API Key required (BYOK). Please configure your API key in profile settings.'
-    addLog('Warning: Brain is a Bring-Your-Own-Key platform. Please configure your LLM API Key to start.')
-    authStore.openProfileModal()
-    return
-  }
-  
   try {
     loading.value = true
     currentPhase.value = 0
@@ -246,15 +238,18 @@ const handleNewProject = async () => {
     } else {
       error.value = res.error || 'Ontology generation failed'
       addLog(`Error generating ontology: ${error.value}`)
+      ontologyProgress.value = null
     }
   } catch (err) {
     error.value = err.message
     addLog(`Exception in handleNewProject: ${err.message}`)
-    if (err.message?.includes('LLM API Key') || err.message?.includes('BYOK') || err.code === 'BYOK_KEY_REQUIRED') {
-      authStore.openProfileModal()
+    ontologyProgress.value = null
+    if (String(err.code || '').startsWith('PLAN_') || err.status === 402) {
+      billingStore.openPricing({ resume: false })
     }
   } finally {
     loading.value = false
+    ontologyProgress.value = null
   }
 }
 

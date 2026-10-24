@@ -13,12 +13,13 @@ from app.utils.zep_lifecycle import (
     get_graph_readers,
     unregister_graph_reader,
 )
-from app.utils import auth_middleware
-
-
 @pytest.fixture(autouse=True)
 def mock_auth_permissions(monkeypatch):
-    monkeypatch.setattr(auth_middleware, "check_simulation_permission", lambda *args, **kwargs: (True, None))
+    allow = lambda *args, **kwargs: None
+    monkeypatch.setattr(graph_api, "active_plan_denial", allow)
+    monkeypatch.setattr(graph_api, "deny_reason", allow)
+    monkeypatch.setattr(report_api, "active_plan_denial", allow)
+    monkeypatch.setattr(simulation_api, "active_plan_denial", allow)
 
 
 def _json_result(result):

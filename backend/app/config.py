@@ -61,7 +61,6 @@ class Config:
     LLM_API_KEY = os.environ.get('LLM_API_KEY')
     LLM_BASE_URL = os.environ.get('LLM_BASE_URL', 'https://api.openai.com/v1')
     LLM_MODEL_NAME = os.environ.get('LLM_MODEL_NAME', 'gpt-4o-mini')
-    REQUIRE_BYOK = os.environ.get('REQUIRE_BYOK', 'false').lower() in ('true', '1', 'yes')
     ONTOLOGY_MAX_TEXT_LENGTH = int(
         os.environ.get('ONTOLOGY_MAX_TEXT_LENGTH', '30000')
     )
@@ -73,6 +72,32 @@ class Config:
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
     ZEP_BACKUP_API_KEY = os.environ.get('ZEP_BACKUP_API_KEY')
     ZEP_API_KEYS_ENV = os.environ.get('ZEP_API_KEYS')
+
+    # Accounts listed here receive unlimited plan access (comma separated).
+    ADMIN_EMAILS_ENV = os.environ.get('ADMIN_EMAILS', '')
+
+    # Razorpay subscription billing (USD plans created by setup_razorpay_plans.py)
+    RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID')
+    RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET')
+    RAZORPAY_WEBHOOK_SECRET = os.environ.get('RAZORPAY_WEBHOOK_SECRET')
+    RAZORPAY_PLAN_ID_STARTER_MONTHLY = os.environ.get('RAZORPAY_PLAN_ID_STARTER_MONTHLY')
+    RAZORPAY_PLAN_ID_STARTER_ANNUAL = os.environ.get('RAZORPAY_PLAN_ID_STARTER_ANNUAL')
+    RAZORPAY_PLAN_ID_PRO_MONTHLY = os.environ.get('RAZORPAY_PLAN_ID_PRO_MONTHLY')
+    RAZORPAY_PLAN_ID_PRO_ANNUAL = os.environ.get('RAZORPAY_PLAN_ID_PRO_ANNUAL')
+    RAZORPAY_PLAN_ID_PREMIUM_MONTHLY = os.environ.get('RAZORPAY_PLAN_ID_PREMIUM_MONTHLY')
+    RAZORPAY_PLAN_ID_PREMIUM_ANNUAL = os.environ.get('RAZORPAY_PLAN_ID_PREMIUM_ANNUAL')
+
+    @classmethod
+    def admin_emails(cls) -> set[str]:
+        """Return the normalized set of admin email addresses."""
+
+        import re
+
+        return {
+            email.strip().lower()
+            for email in re.split(r'[,;\s]+', getattr(cls, 'ADMIN_EMAILS_ENV', '') or '')
+            if email.strip()
+        }
 
     @classmethod
     def get_zep_api_keys(cls) -> list[str]:

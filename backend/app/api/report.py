@@ -19,6 +19,8 @@ from ..models.task import TaskManager, TaskStatus
 from ..utils.logger import get_logger
 from ..utils.locale import t, get_locale, set_locale
 from ..utils.auth_middleware import require_auth
+from ..utils.llm_client import LLMClient
+from ..services.entitlements import active_plan_denial
 from ..utils.zep_lifecycle import (
     graph_lifecycle_lock,
     register_graph_reader,
@@ -82,18 +84,16 @@ def generate_report():
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
 
-        # 权限检查（邮箱验证要求）
-        from ..utils.auth_middleware import get_current_user, check_simulation_permission, get_user_llm_client
+        # 权限检查（邮箱验证 + 有效计划）
+        from ..utils.auth_middleware import get_current_user
         user = get_current_user()
-        allowed, reason = check_simulation_permission(user)
-        if not allowed:
-            return jsonify({
-                "success": False,
-                "error": reason,
-                "code": "EMAIL_NOT_VERIFIED"
-            }), 403
+        denied = active_plan_denial(user)
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+            return jsonify({"success": False, "error": reason, "code": code}), status
 
-        user_llm = get_user_llm_client(user)
+        user_llm = LLMClient()
 
         run_state = SimulationRunner.get_run_state(simulation_id)
         updater = ZepGraphMemoryManager.get_updater(simulation_id)
@@ -733,6 +733,13 @@ def chat_with_report_agent():
                 "success": False,
                 "error": t('api.requireSimulationId')
             }), 400
+
+        from ..utils.auth_middleware import get_current_user
+        denied = active_plan_denial(get_current_user())
+        if denied:
+            code, reason = denied
+            status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
+            return jsonify({"success": False, "error": reason, "code": code}), status
 
         from .simulation import _check_simulation_access
         allowed, err, status, state = _check_simulation_access(simulation_id)

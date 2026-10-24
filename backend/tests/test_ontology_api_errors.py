@@ -31,7 +31,7 @@ def test_ontology_api_returns_safe_truncation_error_and_failed_project(
                 finish_reason="length",
             )
 
-    mock_user = MagicMock(id="test-user-id", is_verified=True, custom_llm_api_key="sk-test-key")
+    mock_user = MagicMock(id="test-user-id", is_verified=True, role="admin")
     monkeypatch.setattr("app.utils.auth_middleware.get_current_user", lambda: mock_user)
     monkeypatch.setattr(ProjectManager, "PROJECTS_DIR", str(tmp_path))
     monkeypatch.setattr(graph_api, "OntologyGenerator", FailingGenerator)
@@ -61,7 +61,7 @@ def test_ontology_api_does_not_expose_provider_error_body(tmp_path, monkeypatch)
         def generate(self, **kwargs):
             raise ProviderError("SECRET-PROVIDER-BODY")
 
-    mock_user = MagicMock(id="test-user-id", is_verified=True, custom_llm_api_key="sk-test-key")
+    mock_user = MagicMock(id="test-user-id", is_verified=True, role="admin")
     monkeypatch.setattr("app.utils.auth_middleware.get_current_user", lambda: mock_user)
     monkeypatch.setattr(ProjectManager, "PROJECTS_DIR", str(tmp_path))
     monkeypatch.setattr(graph_api, "OntologyGenerator", FailingGenerator)
