@@ -15,5 +15,8 @@ echo "Configuring administrator account: $EMAIL"
 docker compose exec -T mirofish mkdir -p /app/backend/scripts 2>/dev/null || true
 docker cp backend/scripts/create_or_reset_admin.py mirofish:/app/backend/scripts/create_or_reset_admin.py 2>/dev/null || true
 
-# Run the admin creator inside the container
-docker compose exec -T mirofish uv run python backend/scripts/create_or_reset_admin.py "$EMAIL" "$PASSWORD" "Obrive Admin"
+# Run the admin creator inside the container using the backend virtual environment
+if ! docker compose exec -T mirofish uv run --directory backend python scripts/create_or_reset_admin.py "$EMAIL" "$PASSWORD" "Obrive Admin"; then
+    echo "Falling back to direct virtualenv python..."
+    docker compose exec -T mirofish /app/backend/.venv/bin/python /app/backend/scripts/create_or_reset_admin.py "$EMAIL" "$PASSWORD" "Obrive Admin"
+fi
