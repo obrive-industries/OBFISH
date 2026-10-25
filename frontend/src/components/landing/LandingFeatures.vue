@@ -52,17 +52,17 @@
           </div>
 
           <!-- Step Number -->
-          <div class="relative text-gray-400 font-mono text-sm mb-4 group-hover:text-white transition-colors">
+          <div class="relative text-[#2d554c] font-mono text-sm mb-4 group-hover:text-[#0a1c17] transition-colors">
             {{ card.step }}
           </div>
 
           <!-- Title -->
-          <h3 class="relative text-xl font-semibold text-white mb-2">
+          <h3 class="relative text-xl font-semibold text-[#0a1c17] mb-2">
             {{ card.title }}
           </h3>
 
           <!-- Description -->
-          <p class="relative text-gray-400 text-sm leading-relaxed">
+          <p class="relative text-[#163830] text-sm leading-relaxed">
             {{ card.description }}
           </p>
         </div>
@@ -135,7 +135,7 @@ const getSpotlightStyle = (index) => {
 .features-section {
   position: relative;
   z-index: 10;
-  background-color: #000000;
+  background-color: transparent;
   overflow: hidden;
   padding-top: 70px;
   padding-bottom: 70px;
@@ -152,7 +152,7 @@ const getSpotlightStyle = (index) => {
   font-size: 3rem;
   line-height: 1.15;
   font-weight: 700;
-  color: #ffffff;
+  color: #0a1c17;
   margin-bottom: 1.25rem;
   letter-spacing: -0.025em;
 }
@@ -167,7 +167,7 @@ const getSpotlightStyle = (index) => {
   font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   line-height: 1.85rem;
-  color: #71717a;
+  color: #163830;
   max-width: 44rem;
   margin-left: auto;
   margin-right: auto;
@@ -249,8 +249,8 @@ const getSpotlightStyle = (index) => {
   --spot-x: 50%;
   --spot-y: 50%;
   padding: 1.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: #ffffff0a;
+  border: 1px solid rgba(10, 28, 23, 0.12);
+  background: rgba(255, 255, 255, 0.45);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
   backdrop-filter: blur(16px) saturate(1.2);
   min-height: 230px;
@@ -260,17 +260,17 @@ const getSpotlightStyle = (index) => {
 }
 
 .feat-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: #ffffff0f;
+  border-color: rgba(10, 28, 23, 0.25);
+  background: rgba(255, 255, 255, 0.8);
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 28px -6px rgba(10, 28, 23, 0.1);
 }
 
 .spot {
   position: absolute;
   inset: 0;
   opacity: 0;
-  background: radial-gradient(200px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.1), transparent 60%);
+  background: radial-gradient(200px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.6), transparent 60%);
   transition: opacity 0.3s;
   pointer-events: none;
 }
@@ -284,7 +284,7 @@ const getSpotlightStyle = (index) => {
   inset: -1px;
   border-radius: inherit;
   opacity: 0;
-  background: radial-gradient(250px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.25), transparent 50%);
+  background: radial-gradient(250px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.8), transparent 50%);
   transition: opacity 0.3s;
   pointer-events: none;
   -webkit-mask: linear-gradient(#000, #000) content-box, linear-gradient(#000, #000);
@@ -302,7 +302,7 @@ const getSpotlightStyle = (index) => {
   position: absolute;
   top: 10px;
   right: 10px;
-  color: #ffffff0f;
+  color: rgba(10, 28, 23, 0.08);
   filter: blur(2px);
   transition: color 0.35s ease, filter 0.35s ease;
   pointer-events: none;
@@ -310,7 +310,7 @@ const getSpotlightStyle = (index) => {
 }
 
 .feat-card:hover .feat-icon-bg {
-  color: #ffffff1a;
+  color: rgba(10, 28, 23, 0.16);
   filter: blur(1.5px);
 }
 </style>

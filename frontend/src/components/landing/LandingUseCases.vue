@@ -4,12 +4,12 @@
     <div class="orb orb-2" aria-hidden="true"></div>
     <div class="container-main relative z-[2]">
       <div class="sec-header">
-        <h2 class="sec-title">
+        <h2 class="sec-title text-[#0a1c17]">
           BRAIN is Built to Explore
         </h2>
-        <p class="sec-subtitle">
+        <p class="sec-subtitle text-[#163830]">
           <span class="block">From a question to a structured exploration of possibilities</span>
-          <span class="block text-gray-500">across all strategic and creative dimensions.</span>
+          <span class="block text-[#163830]/80">across all strategic and creative dimensions.</span>
         </p>
       </div>
 
@@ -25,13 +25,13 @@
           <div class="spot" aria-hidden="true"></div>
           <div class="border-glow" aria-hidden="true"></div>
           <div class="accent" aria-hidden="true"></div>
-          <span class="relative block text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">
+          <span class="relative block text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3">
             {{ card.tag }}
           </span>
-          <h3 class="relative text-lg font-semibold text-white mb-2 leading-snug">
+          <h3 class="relative text-lg font-semibold text-[#0a1c17] mb-2 leading-snug">
             {{ card.title }}
           </h3>
-          <p class="relative text-sm text-gray-400 leading-relaxed">
+          <p class="relative text-sm text-[#163830] leading-relaxed">
             {{ card.description }}
           </p>
         </div>
@@ -104,7 +104,7 @@ const getSpotlightStyle = (index) => {
 .usecases-section {
   position: relative;
   z-index: 10;
-  background-color: #000000;
+  background-color: transparent;
   overflow: hidden;
   padding-top: 70px;
   padding-bottom: 80px;
@@ -121,7 +121,7 @@ const getSpotlightStyle = (index) => {
   font-size: 3rem;
   line-height: 1.15;
   font-weight: 700;
-  color: #ffffff;
+  color: #0a1c17;
   margin-bottom: 1.25rem;
   letter-spacing: -0.025em;
 }
@@ -136,7 +136,7 @@ const getSpotlightStyle = (index) => {
   font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   line-height: 1.85rem;
-  color: #71717a;
+  color: #163830;
   max-width: 44rem;
   margin-left: auto;
   margin-right: auto;
@@ -208,8 +208,8 @@ const getSpotlightStyle = (index) => {
   --spot-x: 50%;
   --spot-y: 50%;
   padding: 1.5rem 1.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: #ffffff0a;
+  border: 1px solid rgba(10, 28, 23, 0.12);
+  background: rgba(255, 255, 255, 0.45);
   -webkit-backdrop-filter: blur(16px) saturate(1.2);
   backdrop-filter: blur(16px) saturate(1.2);
   min-height: 180px;
@@ -219,17 +219,17 @@ const getSpotlightStyle = (index) => {
 }
 
 .case-card:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: #ffffff0f;
+  border-color: rgba(10, 28, 23, 0.25);
+  background: rgba(255, 255, 255, 0.8);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px -8px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 12px 28px -6px rgba(10, 28, 23, 0.1);
 }
 
 .spot {
   position: absolute;
   inset: 0;
   opacity: 0;
-  background: radial-gradient(320px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.08), transparent 60%);
+  background: radial-gradient(320px circle at var(--spot-x) var(--spot-y), rgba(255, 255, 255, 0.6), transparent 60%);
   transition: opacity 0.3s;
   pointer-events: none;
 }

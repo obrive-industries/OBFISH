@@ -6,18 +6,18 @@
     <div class="container-main relative z-[2]">
       <div class="hero-content">
         <!-- Main Headline -->
-        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight hero-heading">
+        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[#074139] mb-8 tracking-tight hero-heading">
           <span>Predictive</span>
           <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
             Intelligence
             <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="#074139" stroke-width="3" stroke-linecap="round" />
             </svg>
           </span>
         </h1>
 
         <!-- Tagline -->
-        <p class="text-xl md:text-2xl text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-xl md:text-2xl text-[#163830] mb-12 max-w-2xl mx-auto leading-relaxed">
           Brain helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
         </p>
 
@@ -36,17 +36,17 @@
             rel="noopener noreferrer"
             class="hero-btn-github group"
           >
-            <img src="/obrive-white-logo.svg" alt="Obrive" class="hero-btn-logo" />
+            <img src="/obrive-logo.svg" alt="Obrive" class="hero-btn-logo" />
             <span class="relative z-[1]">Explore Obrive</span>
           </a>
         </div>
 
         <!-- Wishlist Form (MiroFish Style) -->
         <div class="wishlist-wrapper mt-4 mb-4 w-full max-w-xl mx-auto">
-          <h2 class="wishlist-heading text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3" style="font-family: 'Caveat', cursive; font-style: italic;">
+          <h2 class="wishlist-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#074139] mb-3" style="font-family: 'Caveat', cursive; font-style: italic;">
             Join the Wishlist to get notified about offers !
           </h2>
-          <p class="wishlist-subtitle text-sm sm:text-base text-gray-400 mb-6 leading-relaxed">
+          <p class="wishlist-subtitle text-sm sm:text-base text-[#163830] mb-6 leading-relaxed">
             <span class="block">Proposed product positioning.</span>
             <span class="block">Capabilities should be enabled and validated before being presented as live features.</span>
           </p>
@@ -57,17 +57,17 @@
               type="email"
               placeholder="Enter your email"
               required
-              class="wishlist-input flex-1 px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+              class="wishlist-input"
               :disabled="submitting"
             />
             <button
               type="submit"
-              class="wishlist-submit inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 bg-white text-black hover:bg-gray-200 px-6 py-3 text-base cursor-pointer"
+              class="wishlist-submit"
               :disabled="submitting || !emailInput"
             >
               <span v-if="!submitting">Send</span>
               <span v-else class="flex items-center gap-2">
-                <svg class="animate-spin h-4 w-4 text-black" viewBox="0 0 24 24" fill="none">
+                <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                 </svg>
@@ -80,7 +80,7 @@
           <div
             v-if="feedbackMsg"
             class="mt-4 p-4 rounded-xl text-sm font-medium transition-all max-w-md mx-auto flex items-center justify-center gap-2.5 shadow-xl"
-            :class="isSuccess ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300' : 'bg-rose-500/15 border border-rose-500/40 text-rose-300'"
+            :class="isSuccess ? 'bg-emerald-900/15 border border-emerald-800/40 text-emerald-950 font-semibold' : 'bg-rose-900/15 border border-rose-800/40 text-rose-950 font-semibold'"
           >
             <span class="text-base font-bold">{{ isSuccess ? '✓' : '⚠️' }}</span>
             <span>{{ feedbackMsg }}</span>
@@ -91,7 +91,7 @@
 
     <!-- Pulsing Down Indicator -->
     <div class="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer pulse-down" @click="scrollDown">
-      <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <svg class="w-6 h-6 text-[#0a1c17]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
       </svg>
     </div>
@@ -150,7 +150,7 @@ const scrollDown = () => {
   justify-content: center;
   padding-top: 7rem;
   padding-bottom: 3.5rem;
-  background-color: #000000;
+  background-color: transparent;
   overflow: hidden;
   box-sizing: border-box;
 }
@@ -221,7 +221,7 @@ const scrollDown = () => {
   width: 600px;
   height: 400px;
   border-radius: 50%;
-  background: #6482dc0f;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.45) 0%, transparent 70%);
   filter: blur(80px);
   top: 30%;
   left: 50%;
@@ -307,15 +307,16 @@ const scrollDown = () => {
   gap: 0.625rem;
   position: relative;
   overflow: hidden;
-  background: #ffffff0f;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(10, 28, 23, 0.18);
   -webkit-backdrop-filter: blur(16px);
   backdrop-filter: blur(16px);
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-decoration: none;
-  color: #ffffff;
+  color: #0a1c17;
   box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(10, 28, 23, 0.08);
 }
 
 .hero-btn-github:before {
@@ -323,15 +324,16 @@ const scrollDown = () => {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.08) 50%, transparent 60%);
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.5) 50%, transparent 60%);
   background-size: 300% 100%;
   background-position: 50% 0;
 }
 
 .hero-btn-github:hover {
-  background: #ffffff1a;
-  border-color: #ffffff38;
+  background: #ffffff;
+  border-color: rgba(10, 28, 23, 0.35);
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(10, 28, 23, 0.12);
 }
 
 .hero-btn-github:active {
@@ -354,6 +356,11 @@ const scrollDown = () => {
 
 .pulse-down {
   animation: pulse-sink 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  color: #074139;
+}
+
+.pulse-down svg {
+  stroke: #074139 !important;
 }
 
 @keyframes pulse-sink {
@@ -374,39 +381,57 @@ const scrollDown = () => {
 }
 
 .wishlist-input {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #ffffff;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1rem;
-  font-size: 0.95rem;
+  flex: 1;
+  background: #ffffff !important;
+  border: 2px solid #074139 !important;
+  color: #074139 !important;
+  border-radius: 0.65rem;
+  padding: 0.85rem 1.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.08);
   transition: all 0.2s ease;
+  box-sizing: border-box;
+}
+
+.wishlist-input::placeholder {
+  color: #074139 !important;
+  opacity: 0.65;
+  font-weight: 500;
 }
 
 .wishlist-input:focus {
-  border-color: #ffffff;
+  border-color: #042823 !important;
   outline: none;
-  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(7, 65, 57, 0.25);
 }
 
 .wishlist-submit {
-  background-color: #ffffff;
-  color: #000000;
-  border-radius: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #074139 !important;
+  color: #ffffff !important;
+  border-radius: 0.65rem;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 700;
   transition: all 0.2s ease;
   cursor: pointer;
-  border: none;
+  border: 2px solid #074139;
+  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.25);
+  box-sizing: border-box;
 }
 
 .wishlist-submit:hover:not(:disabled) {
-  background-color: #e5e7eb;
+  background-color: #042823 !important;
+  border-color: #042823 !important;
   transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(7, 65, 57, 0.35);
 }
 
 .wishlist-submit:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
 }
 </style>

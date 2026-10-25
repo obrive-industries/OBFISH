@@ -206,8 +206,8 @@ const stageStyle = computed(() => {
 
 // Styles per person wrapper - continuous infinite keyframe motion
 const getPersonWrapperStyle = (p) => {
-  const baseWidth = 260
-  const baseHeight = 350
+  const baseWidth = 325
+  const baseHeight = 440
   const w = Math.round(baseWidth * p.scale)
   const h = Math.round(baseHeight * p.scale)
 
@@ -352,9 +352,9 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 42vh;
-  min-height: 330px;
-  max-height: 410px;
+  height: 48vh;
+  min-height: 380px;
+  max-height: 470px;
   overflow: hidden;
   pointer-events: none;
   z-index: 1000;
@@ -443,19 +443,19 @@ onUnmounted(() => {
 
 @keyframes crowd-walk-ltr {
   0% {
-    transform: translate3d(-260px, 0, 0);
+    transform: translate3d(-325px, 0, 0);
   }
   100% {
-    transform: translate3d(calc(100vw + 260px), 0, 0);
+    transform: translate3d(calc(100vw + 325px), 0, 0);
   }
 }
 
 @keyframes crowd-walk-rtl {
   0% {
-    transform: translate3d(calc(100vw + 260px), 0, 0);
+    transform: translate3d(calc(100vw + 325px), 0, 0);
   }
   100% {
-    transform: translate3d(-260px, 0, 0);
+    transform: translate3d(-325px, 0, 0);
   }
 }
 
@@ -485,7 +485,7 @@ onUnmounted(() => {
 }
 
 .person-svg {
-  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.7));
+  filter: drop-shadow(0 4px 12px rgba(10, 28, 23, 0.22));
   image-rendering: optimizeQuality;
 }
 

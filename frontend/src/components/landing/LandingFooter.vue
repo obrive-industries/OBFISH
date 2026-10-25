@@ -1,20 +1,20 @@
 <template>
-  <footer class="bg-black py-8 relative z-10" aria-label="Site footer">
+  <footer class="bg-transparent py-8 relative z-10" aria-label="Site footer">
     <div class="container-main">
       <div class="flex flex-col md:flex-row items-center justify-between gap-6">
         <!-- Left: Logo & Social Links -->
         <div class="flex items-center gap-4">
           <router-link to="/" class="logo" aria-label="Brain Home">
-            <img src="/obrive-white-logo.svg" alt="Obrive" class="logo-img" />
+            <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" />
             <span class="logo-divider">/</span>
             <span class="logo-text">BRAIN</span>
           </router-link>
-          <span class="text-gray-600">|</span>
+          <span class="text-[#0a1c17]/30">|</span>
           <a
             href="https://www.linkedin.com/company/obrive-industries"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-gray-500 hover:text-white transition-colors"
+            class="text-[#163830] hover:text-[#0a1c17] transition-colors"
             aria-label="LinkedIn"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -25,7 +25,7 @@
             href="https://x.com/obriveinc"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-gray-500 hover:text-white transition-colors"
+            class="text-[#163830] hover:text-[#0a1c17] transition-colors"
             aria-label="X"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -36,7 +36,7 @@
             href="https://www.instagram.com/obrive.inc"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-gray-500 hover:text-white transition-colors"
+            class="text-[#163830] hover:text-[#0a1c17] transition-colors"
             aria-label="Instagram"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -46,27 +46,27 @@
         </div>
 
         <!-- Right: FAQs, Legal, Terms Links & Admin Wishlist -->
-        <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-gray-500">
-          <a href="https://obrive.com/legal" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">Legal</a>
-          <a href="https://obrive.com/terms-accessibility" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">Terms</a>
+        <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-[#163830]">
+          <a href="https://obrive.com/legal" target="_blank" rel="noopener noreferrer" class="hover:text-[#0a1c17] transition-colors">Legal</a>
+          <a href="https://obrive.com/terms-accessibility" target="_blank" rel="noopener noreferrer" class="hover:text-[#0a1c17] transition-colors">Terms</a>
           <router-link
             v-if="authStore.isAdmin.value"
             to="/admin/wishlist"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg font-medium text-sm hover:bg-gray-200 transition-colors"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-[#074139] text-white hover:bg-[#042823] rounded-lg font-semibold text-sm transition-all shadow-md"
             title="View Wishlist Submissions (Admin)"
           >
-            Wishlist Leads
+            📋 Wishlist Leads
           </router-link>
           <a
             href="/faqs"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-white text-black rounded-lg font-medium text-sm hover:bg-gray-200 transition-colors"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-[#074139] text-white hover:bg-[#042823] rounded-lg font-semibold text-sm transition-all shadow-md"
           >
             FAQs
           </a>
         </div>
       </div>
 
-      <div class="mt-6 pt-4 text-center text-xs text-gray-600">
+      <div class="mt-6 pt-4 text-center text-xs text-[#2d554c]">
         © 2026 Obrive Industries. All rights reserved.
       </div>
     </div>
@@ -113,24 +113,25 @@ import authStore from '../../store/auth'
 }
 
 .logo-img {
-  height: 24px;
+  height: 28px;
   width: auto;
   object-fit: contain;
 }
 
 .logo-divider {
-  color: rgba(255, 255, 255, 0.25);
-  font-size: 1.15rem;
-  font-weight: 300;
+  color: #074139;
+  font-size: 1.35rem;
+  font-weight: 500;
   line-height: 1;
+  opacity: 0.85;
 }
 
 .logo-text {
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.15rem;
+  font-weight: 800;
+  font-size: 1.35rem;
   letter-spacing: 0.08em;
-  color: #ffffff;
+  color: #074139;
   line-height: 1;
 }
 </style>

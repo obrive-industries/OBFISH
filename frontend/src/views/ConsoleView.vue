@@ -4,7 +4,7 @@
     <header class="console-navbar">
       <div class="nav-left">
         <router-link to="/" class="brand-link" title="Return to Brain Home">
-          <img src="../assets/icons/obrive-white-logo.svg" alt="Brain Logo" class="brand-logo-img" />
+          <img src="/obrive-logo.svg" alt="Brain Logo" class="brand-logo-img" />
           <span class="brand-name font-microgramma">BRAIN</span>
           <span class="console-tag font-microgramma">CONSOLE</span>
         </router-link>
@@ -14,8 +14,7 @@
           <router-link
             v-if="authStore.isAdmin.value"
             to="/admin/wishlist"
-            class="console-nav-link font-microgramma text-amber-400 hover:text-amber-300"
-            style="color: #F59E0B;"
+            class="console-nav-link wishlist-leads-link font-microgramma"
           >
             📋 Wishlist Leads
           </router-link>
@@ -514,16 +513,16 @@ const handleStartEngine = async () => {
   font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
 }
 
-/* Minimal Application Header (MiroFish 60px black bar) */
+/* Minimal Application Header (#A2F1DF Obrive Mint Header) */
 .console-navbar {
   height: 60px;
-  background: #000000;
-  color: #FFFFFF;
+  background: #A2F1DF;
+  color: #0a1c17;
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 32px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(10, 28, 23, 0.12);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -540,20 +539,20 @@ const handleStartEngine = async () => {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: #FFFFFF;
+  color: #0a1c17;
 }
 
 .brand-logo-img {
-  height: 24px;
+  height: 32px;
   width: auto;
 }
 
 .brand-name {
   font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-weight: 700;
-  font-size: 1.1rem;
+  font-weight: 800;
+  font-size: 1.4rem;
   letter-spacing: 0.05em;
-  color: #FFFFFF;
+  color: #074139;
 }
 
 .console-tag {
@@ -561,9 +560,9 @@ const handleStartEngine = async () => {
   font-size: 0.65rem;
   font-weight: 700;
   padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #FFFFFF;
+  background: rgba(7, 65, 57, 0.08);
+  border: 1px solid rgba(7, 65, 57, 0.25);
+  color: #074139;
   border-radius: 4px;
   letter-spacing: 0.08em;
 }
@@ -576,7 +575,7 @@ const handleStartEngine = async () => {
 
 .console-nav-link {
   font-family: var(--font-mono, monospace);
-  color: rgba(255, 255, 255, 0.65);
+  color: #163830;
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
@@ -585,7 +584,16 @@ const handleStartEngine = async () => {
 }
 
 .console-nav-link:hover {
-  color: #FFFFFF;
+  color: #0a1c17;
+}
+
+.wishlist-leads-link {
+  color: #074139 !important;
+  font-weight: 700;
+}
+
+.wishlist-leads-link:hover {
+  color: #000000 !important;
 }
 
 .nav-right {
@@ -599,22 +607,22 @@ const handleStartEngine = async () => {
   align-items: center;
   gap: 8px;
   padding: 4px 12px 4px 5px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(10, 28, 23, 0.15);
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .user-pill:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.95);
+  border-color: rgba(10, 28, 23, 0.3);
 }
 
 .console-signin-btn {
   padding: 6px 16px;
-  background: #FFFFFF;
-  color: #000000;
+  background: #0a1c17;
+  color: #FFFFFF;
   border: none;
   border-radius: 9999px;
   font-size: 0.72rem;
@@ -625,16 +633,16 @@ const handleStartEngine = async () => {
 }
 
 .console-signin-btn:hover {
-  background: #A2F1DF;
-  box-shadow: 0 0 16px rgba(162, 241, 223, 0.4);
+  background: #000000;
+  transform: translateY(-1px);
 }
 
 .avatar {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #FFFFFF;
-  color: #000000;
+  background: #0a1c17;
+  color: #FFFFFF;
   font-size: 0.7rem;
   font-weight: 700;
   display: flex;
@@ -646,7 +654,7 @@ const handleStartEngine = async () => {
   font-family: var(--font-mono, monospace);
   font-size: 0.8rem;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #0a1c17;
 }
 
 .status-dot {
@@ -669,8 +677,8 @@ const handleStartEngine = async () => {
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  background: #FFFFFF;
-  color: #000000;
+  background: #0a1c17;
+  color: #FFFFFF;
   text-decoration: none;
   font-family: var(--font-mono, monospace);
   font-size: 0.82rem;
@@ -680,7 +688,8 @@ const handleStartEngine = async () => {
 }
 
 .link-obrive:hover {
-  background: #E5E5E5;
+  background: #000000;
+  transform: translateY(-1px);
 }
 
 .link-obrive .arrow {

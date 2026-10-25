@@ -1,14 +1,14 @@
 <template>
-  <section id="decision-dynamics" class="decision-section py-20 bg-black relative z-10 overflow-hidden">
+  <section id="decision-dynamics" class="decision-section py-20 bg-transparent relative z-10 overflow-hidden">
     <!-- Ambient Glow Orb -->
     <div class="orb orb-1" aria-hidden="true"></div>
 
     <div class="container-main relative z-[2]">
       <!-- Section Header -->
       <div class="text-center mb-16">
-        <p class="text-sm font-medium text-gray-400 uppercase tracking-wider mb-4">Decision Dynamics</p>
-        <h2 class="text-4xl md:text-5xl font-bold text-white mb-4">Simulate Before You Commit</h2>
-        <p class="text-gray-400 max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+        <p class="text-sm font-semibold text-[#2d554c] uppercase tracking-wider mb-4">Decision Dynamics</p>
+        <h2 class="text-4xl md:text-5xl font-bold text-[#0a1c17] mb-4">Simulate Before You Commit</h2>
+        <p class="text-[#163830] max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
           Navigate emergent complexity by testing every strategic assumption against an autonomous multi-agent swarm.
         </p>
       </div>
@@ -26,15 +26,15 @@
             <div class="flex items-start gap-4">
               <span
                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-mono shrink-0 mt-0.5"
-                :class="activeIdx === 0 ? 'bg-white/10 text-white font-semibold' : 'bg-white/5 text-gray-500'"
+                :class="activeIdx === 0 ? 'bg-[#0a1c17] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
               >
                 1
               </span>
               <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-white text-base sm:text-lg leading-snug">
+                <h3 class="font-semibold text-[#0a1c17] text-base sm:text-lg leading-snug">
                   The Future Is Uncertain
                 </h3>
-                <p class="text-sm text-gray-400 mt-3 leading-relaxed">
+                <p class="text-sm text-[#163830] mt-3 leading-relaxed">
                   Traditional planning often relies on historical data, assumptions, and individual opinions.
                 </p>
               </div>
@@ -50,15 +50,15 @@
             <div class="flex items-start gap-4">
               <span
                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-mono shrink-0 mt-0.5"
-                :class="activeIdx === 1 ? 'bg-white/10 text-white font-semibold' : 'bg-white/5 text-gray-500'"
+                :class="activeIdx === 1 ? 'bg-[#0a1c17] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
               >
                 2
               </span>
               <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-white text-base sm:text-lg leading-snug">
+                <h3 class="font-semibold text-[#0a1c17] text-base sm:text-lg leading-snug">
                   Your Decisions Don’t Have to Be Blind.
                 </h3>
-                <p class="text-sm text-gray-400 mt-3 leading-relaxed">
+                <p class="text-sm text-[#163830] mt-3 leading-relaxed">
                   But real-world outcomes are shaped by multiple people, competing interests, changing conditions, and unexpected reactions.
                 </p>
               </div>
@@ -67,12 +67,12 @@
         </div>
 
         <!-- Right Side: Brain Image Frame (In place of video block) -->
-        <div class="decision-col-right md:w-[62%]">
-          <div class="player-frame relative w-full h-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
+        <div class="decision-col-right md:w-[62%] flex items-center justify-center">
+          <div class="player-frame relative w-full h-full bg-transparent flex items-center justify-center">
             <img
-              src="/images/cosmic-brain.jpg"
+              src="/images/cosmic-brain.png"
               alt="Predictive Intelligence Brain"
-              class="w-full h-full object-cover object-center rounded-2xl"
+              class="brain-transparent-img w-full h-full object-contain object-center"
               loading="lazy"
             />
           </div>
@@ -123,7 +123,7 @@ const activeIdx = ref(0)
 .video-btn {
   padding: 1.75rem 1.5rem;
   border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(10, 28, 23, 0.12);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   user-select: none;
@@ -137,21 +137,22 @@ const activeIdx = ref(0)
 }
 
 .video-btn.is-active {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: #ffffff;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #0a1c17;
+  color: #0a1c17;
+  box-shadow: 0 10px 25px -5px rgba(10, 28, 23, 0.12);
 }
 
 .video-btn.is-idle {
-  background: rgba(255, 255, 255, 0.02);
-  border-color: rgba(255, 255, 255, 0.06);
-  color: #9ca3af;
+  background: rgba(255, 255, 255, 0.45);
+  border-color: rgba(10, 28, 23, 0.12);
+  color: #163830;
 }
 
 .video-btn.is-idle:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.12);
-  color: #e5e7eb;
+  background: rgba(255, 255, 255, 0.7);
+  border-color: rgba(10, 28, 23, 0.25);
+  color: #0a1c17;
 }
 
 .player-frame {
@@ -159,6 +160,17 @@ const activeIdx = ref(0)
   background: transparent;
   aspect-ratio: 16 / 9;
   min-height: 260px;
+}
+
+.brain-transparent-img {
+  filter: drop-shadow(0 14px 28px rgba(7, 65, 57, 0.18));
+  transition: transform 0.4s ease, filter 0.4s ease;
+  user-select: none;
+}
+
+.brain-transparent-img:hover {
+  transform: scale(1.02);
+  filter: drop-shadow(0 18px 36px rgba(7, 65, 57, 0.25));
 }
 
 @media (min-width: 768px) {

@@ -1,65 +1,65 @@
 <template>
   <section id="philosophy" class="philosophy-section">
     <div class="container-main relative z-[2] max-w-3xl mx-auto px-6">
-      <h2 :class="['text-3xl md:text-4xl font-bold text-white mb-10 anim', { show: isVisible }]" style="transition-delay: 100ms;">
-        <span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-gray-400 to-gray-600">
+      <h2 :class="['text-3xl md:text-4xl font-bold text-[#0a1c17] mb-10 anim', { show: isVisible }]" style="transition-delay: 100ms;">
+        <span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#0a1c17] to-[#163830]">
           About BRAIN:
         </span>
         Simulate Possibilities. Make Smarter Decisions.
       </h2>
 
-      <p :class="['text-base text-gray-400 leading-relaxed mb-6 anim', { show: isVisible }]" style="transition-delay: 200ms;">
+      <p :class="['text-base text-[#163830] leading-relaxed mb-6 anim', { show: isVisible }]" style="transition-delay: 200ms;">
         BRAIN is an AI-powered simulation and predictive intelligence platform designed to explore possibilities, understand complex behaviours, and evaluate potential outcomes.
       </p>
 
-      <p :class="['text-base text-gray-400 leading-relaxed mb-12 anim', { show: isVisible }]" style="transition-delay: 250ms;">
+      <p :class="['text-base text-[#163830] leading-relaxed mb-12 anim', { show: isVisible }]" style="transition-delay: 250ms;">
         By transforming real-world information, business challenges, research materials, and creative ideas into interactive scenarios, BRAIN helps users examine how different factors, decisions, and interactions could shape future outcomes. It creates a virtual environment where possibilities can be explored before decisions are made in the real world.
       </p>
 
-      <h3 :class="['text-xl font-semibold text-white mb-4 anim', { show: isVisible }]" style="transition-delay: 300ms;">
+      <h3 :class="['text-xl font-semibold text-[#0a1c17] mb-4 anim', { show: isVisible }]" style="transition-delay: 300ms;">
         How It Works
       </h3>
-      <ul :class="['text-base text-gray-400 leading-relaxed mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 350ms;">
+      <ul :class="['text-base text-[#163830] leading-relaxed mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 350ms;">
         <li class="flex gap-2">
-          <span class="text-gray-600 shrink-0">—</span>
+          <span class="text-[#2d554c] shrink-0">—</span>
           <span>You provide source materials such as data reports, research dossiers, or policy drafts and define your scenario in natural language.</span>
         </li>
         <li class="flex gap-2">
-          <span class="text-gray-600 shrink-0">—</span>
+          <span class="text-[#2d554c] shrink-0">—</span>
           <span>BRAIN constructs ontological knowledge graphs, runs multi-agent swarms in a virtual environment, and synthesizes structured intelligence reports.</span>
         </li>
       </ul>
 
-      <h3 :class="['text-xl font-semibold text-white mb-4 anim', { show: isVisible }]" style="transition-delay: 400ms;">
+      <h3 :class="['text-xl font-semibold text-[#0a1c17] mb-4 anim', { show: isVisible }]" style="transition-delay: 400ms;">
         Our Vision
       </h3>
-      <p :class="['text-base text-gray-400 leading-relaxed mb-4 anim', { show: isVisible }]" style="transition-delay: 450ms;">
+      <p :class="['text-base text-[#163830] leading-relaxed mb-4 anim', { show: isVisible }]" style="transition-delay: 450ms;">
         Making advanced multi-agent simulation accessible to everyone — from founders and enterprise leaders to researchers and creative storytellers:
       </p>
 
-      <ul :class="['text-base text-gray-400 leading-relaxed mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 500ms;">
+      <ul :class="['text-base text-[#163830] leading-relaxed mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 500ms;">
         <li class="flex gap-2">
-          <span class="text-gray-600 shrink-0">—</span>
-          <span><strong class="text-gray-200">01 // Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
+          <span class="text-[#2d554c] shrink-0">—</span>
+          <span><strong class="text-[#0a1c17]">01 // Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
         </li>
         <li class="flex gap-2">
-          <span class="text-gray-600 shrink-0">—</span>
-          <span><strong class="text-gray-200">02 // Creative Level:</strong> A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.</span>
+          <span class="text-[#2d554c] shrink-0">—</span>
+          <span><strong class="text-[#0a1c17]">02 // Creative Level:</strong> A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.</span>
         </li>
         <li class="flex gap-2">
-          <span class="text-gray-600 shrink-0">—</span>
-          <span><strong class="text-gray-200">03 // Research Level:</strong> Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.</span>
+          <span class="text-[#2d554c] shrink-0">—</span>
+          <span><strong class="text-[#0a1c17]">03 // Research Level:</strong> Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.</span>
         </li>
       </ul>
 
       <div :class="['text-center anim mt-24', { show: isVisible }]" style="transition-delay: 600ms; font-family: 'Caveat', cursive;">
-        <p class="text-4xl md:text-5xl text-gray-400 leading-snug">
+        <p class="text-4xl md:text-5xl text-[#163830] leading-snug">
           “Every possibility begins with a question.
         </p>
-        <p class="text-4xl md:text-5xl text-white leading-snug mt-1">
+        <p class="text-4xl md:text-5xl text-[#0a1c17] leading-snug mt-1">
           BRAIN helps you explore what comes next.”
         </p>
-        <p class="text-xs font-mono tracking-widest text-gray-500 uppercase mt-4" style="font-family: 'Space Grotesk', sans-serif;">
+        <p class="text-xs font-mono tracking-widest text-[#2d554c] uppercase mt-4" style="font-family: 'Space Grotesk', sans-serif;">
           — BRAIN by Obrive Industries
         </p>
       </div>
@@ -94,7 +94,7 @@ onUnmounted(() => {
 .philosophy-section {
   position: relative;
   z-index: 10;
-  background-color: #000000;
+  background-color: transparent;
   padding-top: 70px;
   padding-bottom: 90px;
 }

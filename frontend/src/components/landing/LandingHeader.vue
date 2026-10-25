@@ -1,13 +1,13 @@
 <template>
   <header
     class="fixed top-0 left-0 right-0 z-[100] transition-all duration-300"
-    :class="isScrolled ? 'bg-black/85 backdrop-blur-md border-b border-white/[0.08]' : 'bg-transparent'"
+    :class="isScrolled ? 'bg-[#A2F1DF]/90 backdrop-blur-md border-b border-[#0a1c17]/10' : 'bg-transparent'"
   >
     <div class="container-main">
       <div class="flex items-center justify-between h-20">
         <!-- Logo -->
         <router-link to="/" class="logo" aria-label="Brain Home">
-          <img src="/obrive-white-logo.svg" alt="Obrive" class="logo-img" />
+          <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" />
           <span class="logo-divider">/</span>
           <span class="logo-text">BRAIN</span>
         </router-link>
@@ -125,24 +125,25 @@ onUnmounted(() => {
 }
 
 .logo-img {
-  height: 24px;
+  height: 32px;
   width: auto;
   object-fit: contain;
 }
 
 .logo-divider {
-  color: rgba(255, 255, 255, 0.25);
-  font-size: 1.15rem;
-  font-weight: 300;
+  color: #074139;
+  font-size: 1.45rem;
+  font-weight: 500;
   line-height: 1;
+  opacity: 0.85;
 }
 
 .logo-text {
   font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
-  font-weight: 700;
-  font-size: 1.15rem;
+  font-weight: 800;
+  font-size: 1.45rem;
   letter-spacing: 0.08em;
-  color: #ffffff;
+  color: #074139;
   line-height: 1;
 }
 
@@ -151,20 +152,20 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1.25rem;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #0a1c17;
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-size: 0.875rem;
   font-weight: 600;
   border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.9);
+  border: 1px solid #0a1c17;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(10, 28, 23, 0.15);
 }
 
 .nav-signin-btn:hover {
-  background-color: #e5e7eb;
+  background-color: #000000;
   transform: translateY(-1px);
 }
 
@@ -177,8 +178,8 @@ onUnmounted(() => {
   align-items: center;
   gap: 8px;
   padding: 4px 12px 4px 5px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(10, 28, 23, 0.15);
   border-radius: 9999px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -186,8 +187,8 @@ onUnmounted(() => {
 }
 
 .user-pill:hover {
-  background: rgba(255, 255, 255, 0.16);
-  border-color: rgba(255, 255, 255, 0.35);
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(10, 28, 23, 0.3);
   transform: translateY(-1px);
 }
 
@@ -195,8 +196,8 @@ onUnmounted(() => {
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: #ffffff;
-  color: #000000;
+  background: #0a1c17;
+  color: #ffffff;
   font-size: 0.7rem;
   font-weight: 700;
   display: flex;
@@ -208,7 +209,7 @@ onUnmounted(() => {
   font-family: 'Space Grotesk', 'Inter', monospace;
   font-size: 0.8rem;
   font-weight: 600;
-  color: #ffffff;
+  color: #0a1c17;
   max-width: 140px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -236,19 +237,19 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   padding: 0.5rem 1.15rem;
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #0a1c17;
+  color: #ffffff;
   font-family: 'Inter', sans-serif;
   font-size: 0.85rem;
   font-weight: 600;
   border-radius: 0.5rem;
   text-decoration: none;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 1px 3px rgba(10, 28, 23, 0.15);
 }
 
 .nav-console-btn:hover {
-  background-color: #e5e7eb;
+  background-color: #000000;
   transform: translateY(-1px);
 }
 

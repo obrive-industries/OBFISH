@@ -1,5 +1,5 @@
 <template>
-  <div class="marketing-page relative min-h-screen bg-black overflow-x-hidden text-white font-sans">
+  <div class="marketing-page relative min-h-screen overflow-x-hidden text-[#0a1c17] font-sans">
     <main class="relative z-10">
       <LandingHeader @open-auth="openAuth" />
       <LandingHero />
@@ -35,7 +35,7 @@ const openAuth = () => {
 }
 
 onMounted(() => {
-  document.body.style.backgroundColor = '#000000'
+  document.body.style.backgroundColor = '#A2F1DF'
   if (route.query.auth === 'login') {
     authStore.openAuthModal('login', 'Please sign in to access protected simulation views.')
   }
@@ -52,7 +52,7 @@ onUnmounted(() => {
 <style scoped>
 .marketing-page {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #000000;
-  color: #ffffff;
+  background-color: #A2F1DF;
+  color: #0a1c17;
 }
 </style>
