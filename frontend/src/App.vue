@@ -85,7 +85,7 @@ onUnmounted(() => {
   --color-gray-900: #111827;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-display: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
 
   /* Obrive compatibility tokens */
@@ -124,7 +124,7 @@ body {
 
 /* Typography Classes */
 .font-microgramma {
-  font-family: 'Space Grotesk', 'Inter', sans-serif !important;
+  font-family: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', sans-serif !important;
   font-weight: 700;
   letter-spacing: -0.01em;
 }

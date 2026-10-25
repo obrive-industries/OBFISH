@@ -52,14 +52,14 @@
           <router-link
             v-if="authStore.isAdmin.value"
             to="/admin/wishlist"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-[#074139] text-white hover:bg-[#042823] rounded-lg font-semibold text-sm transition-all shadow-md"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-[#064139] text-white hover:bg-[#032a24] rounded-lg font-semibold text-sm transition-all shadow-md"
             title="View Wishlist Submissions (Admin)"
           >
             📋 Wishlist Leads
           </router-link>
           <a
             href="/faqs"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-[#074139] text-white hover:bg-[#042823] rounded-lg font-semibold text-sm transition-all shadow-md"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-[#064139] text-white hover:bg-[#032a24] rounded-lg font-semibold text-sm transition-all shadow-md"
           >
             FAQs
           </a>
@@ -119,7 +119,7 @@ import authStore from '../../store/auth'
 }
 
 .logo-divider {
-  color: #074139;
+  color: #064139;
   font-size: 1.35rem;
   font-weight: 500;
   line-height: 1;
@@ -127,11 +127,11 @@ import authStore from '../../store/auth'
 }
 
 .logo-text {
-  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-family: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', system-ui, sans-serif;
   font-weight: 800;
   font-size: 1.35rem;
   letter-spacing: 0.08em;
-  color: #074139;
+  color: #064139;
   line-height: 1;
 }
 </style>

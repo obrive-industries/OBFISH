@@ -131,7 +131,7 @@ onUnmounted(() => {
 }
 
 .logo-divider {
-  color: #074139;
+  color: #064139;
   font-size: 1.45rem;
   font-weight: 500;
   line-height: 1;
@@ -139,11 +139,11 @@ onUnmounted(() => {
 }
 
 .logo-text {
-  font-family: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  font-family: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', system-ui, sans-serif;
   font-weight: 800;
   font-size: 1.45rem;
   letter-spacing: 0.08em;
-  color: #074139;
+  color: #064139;
   line-height: 1;
 }
 

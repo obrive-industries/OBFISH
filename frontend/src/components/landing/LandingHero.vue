@@ -6,12 +6,12 @@
     <div class="container-main relative z-[2]">
       <div class="hero-content">
         <!-- Main Headline -->
-        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-[#074139] mb-8 tracking-tight hero-heading">
+        <h1 class="hero-heading font-microgramma">
           <span>Predictive</span>
           <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
             Intelligence
-            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="#074139" stroke-width="3" stroke-linecap="round" />
+            <svg class="absolute -bottom-2 sm:-bottom-3 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="#064139" stroke-width="4" stroke-linecap="round" />
             </svg>
           </span>
         </h1>
@@ -43,7 +43,7 @@
 
         <!-- Wishlist Form (MiroFish Style) -->
         <div class="wishlist-wrapper mt-4 mb-4 w-full max-w-xl mx-auto">
-          <h2 class="wishlist-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#074139] mb-3" style="font-family: 'Caveat', cursive; font-style: italic;">
+          <h2 class="wishlist-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#064139] mb-3" style="font-family: 'Caveat', cursive; font-style: italic;">
             Join the Wishlist to get notified about offers !
           </h2>
           <p class="wishlist-subtitle text-sm sm:text-base text-[#163830] mb-6 leading-relaxed">
@@ -142,6 +142,14 @@ const scrollDown = () => {
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
 
+@font-face {
+  font-family: 'Microgramma';
+  src: url('../../assets/fonts/microgramma-bold.otf') format('opentype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 .hero-section {
   position: relative;
   min-height: 75vh;
@@ -179,7 +187,7 @@ const scrollDown = () => {
 }
 
 .hero-content {
-  max-width: 56rem;
+  max-width: 72rem;
   width: 100%;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -190,6 +198,11 @@ const scrollDown = () => {
 }
 
 .hero-heading {
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
+  font-size: clamp(3.2rem, 8vw, 6.4rem) !important;
+  line-height: 1.05 !important;
+  font-weight: 900 !important;
+  color: #064139 !important;
   text-align: center;
   width: 100%;
   display: flex;
@@ -197,6 +210,14 @@ const scrollDown = () => {
   justify-content: center;
   gap: 0.35em;
   flex-wrap: nowrap;
+  letter-spacing: -0.02em;
+  margin-bottom: 2rem;
+}
+
+.hero-heading span {
+  color: #064139 !important;
+  font-family: inherit !important;
+  font-weight: inherit !important;
 }
 
 @media (max-width: 640px) {
@@ -356,11 +377,11 @@ const scrollDown = () => {
 
 .pulse-down {
   animation: pulse-sink 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  color: #074139;
+  color: #064139;
 }
 
 .pulse-down svg {
-  stroke: #074139 !important;
+  stroke: #064139 !important;
 }
 
 @keyframes pulse-sink {
@@ -383,34 +404,34 @@ const scrollDown = () => {
 .wishlist-input {
   flex: 1;
   background: #ffffff !important;
-  border: 2px solid #074139 !important;
-  color: #074139 !important;
+  border: 2px solid #064139 !important;
+  color: #064139 !important;
   border-radius: 0.65rem;
   padding: 0.85rem 1.25rem;
   font-size: 1rem;
   font-weight: 500;
-  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.08);
+  box-shadow: 0 2px 8px rgba(6, 65, 57, 0.08);
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
 .wishlist-input::placeholder {
-  color: #074139 !important;
+  color: #064139 !important;
   opacity: 0.65;
   font-weight: 500;
 }
 
 .wishlist-input:focus {
-  border-color: #042823 !important;
+  border-color: #032a24 !important;
   outline: none;
-  box-shadow: 0 0 0 3px rgba(7, 65, 57, 0.25);
+  box-shadow: 0 0 0 3px rgba(6, 65, 57, 0.25);
 }
 
 .wishlist-submit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #074139 !important;
+  background-color: #064139 !important;
   color: #ffffff !important;
   border-radius: 0.65rem;
   padding: 0.85rem 1.75rem;
@@ -418,16 +439,16 @@ const scrollDown = () => {
   font-weight: 700;
   transition: all 0.2s ease;
   cursor: pointer;
-  border: 2px solid #074139;
-  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.25);
+  border: 2px solid #064139;
+  box-shadow: 0 2px 10px rgba(6, 65, 57, 0.25);
   box-sizing: border-box;
 }
 
 .wishlist-submit:hover:not(:disabled) {
-  background-color: #042823 !important;
-  border-color: #042823 !important;
+  background-color: #032a24 !important;
+  border-color: #032a24 !important;
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(7, 65, 57, 0.35);
+  box-shadow: 0 4px 14px rgba(6, 65, 57, 0.35);
 }
 
 .wishlist-submit:disabled {
