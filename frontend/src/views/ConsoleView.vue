@@ -374,7 +374,7 @@ const planSubtitle = computed(() => {
     const used = plan.value.runs_used || 0
     const limit = plan.value.runs_limit || 1
     if (used < limit) {
-      return 'Run your first live scenario (up to 5 rounds) for free'
+      return 'Run your first live scenario (up to 10 rounds) for free'
     }
     return 'Choose a plan to continue running simulations'
   }

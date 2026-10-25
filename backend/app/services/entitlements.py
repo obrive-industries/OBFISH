@@ -105,7 +105,7 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
         "configured": False,
         "runs_used": 0,
         "runs_limit": 1,
-        "max_rounds": 5,
+        "max_rounds": 10,
         "period_start": None,
         "period_end": None,
         "renews_at": None,
@@ -142,7 +142,7 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
                 "interval": latest.billing_interval,
                 "runs_used": runs_used,
                 "runs_limit": 0 if is_halted else 1,
-                "max_rounds": 5,
+                "max_rounds": 10,
                 "can_start": False if is_halted else (runs_used < 1),
             }
         return {
@@ -152,7 +152,7 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
             "interval": None,
             "runs_used": runs_used,
             "runs_limit": 1,
-            "max_rounds": 5,
+            "max_rounds": 10,
             "can_start": runs_used < 1,
         }
 
@@ -163,7 +163,7 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
             **free,
             "runs_used": runs_used,
             "runs_limit": 1,
-            "max_rounds": 5,
+            "max_rounds": 10,
             "can_start": runs_used < 1,
         }
 

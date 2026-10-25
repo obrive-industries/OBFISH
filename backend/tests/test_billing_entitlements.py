@@ -64,11 +64,11 @@ def test_free_user_gets_one_demo_run(app_ctx):
     assert entitlement["plan"] == "free"
     assert entitlement["runs_limit"] == 1
     assert entitlement["runs_used"] == 0
-    assert entitlement["max_rounds"] == 5
+    assert entitlement["max_rounds"] == 10
     assert entitlement["can_start"] is True
     assert deny_reason(user, entitlement) is None
     assert active_plan_denial(user) is None
-    assert clamp_rounds(user, 10) == 5
+    assert clamp_rounds(user, 15) == 10
 
     # Consumes the 1 free demo run:
     assert record_run(user, "proj_free_1") is True
