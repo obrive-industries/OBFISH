@@ -68,11 +68,11 @@
 
         <!-- Right Side: Brain Image Frame (In place of video block) -->
         <div class="decision-col-right md:w-[62%]">
-          <div class="player-frame relative w-full h-full rounded-2xl overflow-hidden bg-white/5 border border-white/10 shadow-2xl flex items-center justify-center">
+          <div class="player-frame relative w-full h-full rounded-2xl overflow-hidden bg-transparent flex items-center justify-center">
             <img
               src="/images/cosmic-brain.jpg"
               alt="Predictive Intelligence Brain"
-              class="w-full h-full object-cover object-center"
+              class="w-full h-full object-cover object-center rounded-2xl"
               loading="lazy"
             />
           </div>
@@ -155,10 +155,8 @@ const activeIdx = ref(0)
 }
 
 .player-frame {
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  border: none;
+  background: transparent;
   aspect-ratio: 16 / 9;
   min-height: 260px;
 }
