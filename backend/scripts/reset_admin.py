@@ -31,7 +31,6 @@ def main():
         print(" Brain - Administrator Account Synchronization")
         print("=" * 60)
         print(f"Target Admin Accounts: {', '.join(admin_emails)}")
-        print(f"Password will be set to: {custom_pass}")
         print("-" * 60)
 
         for email in admin_emails:
@@ -57,8 +56,7 @@ def main():
         print("=" * 60)
         print("✅ SUCCESS: Admin accounts are fully synchronized and active!")
         print("   Sign in at: https://brain.obrive.com/console (or http://localhost:3000/console)")
-        print(f"   Email:    ai@obrive.com (or admin@obrive.com)")
-        print(f"   Password: {custom_pass}")
+        print(f"   Admin Emails: {', '.join(admin_emails)}")
         print("=" * 60)
 
 
