@@ -47,7 +47,8 @@
             Join the Wishlist to get notified about offers !
           </h2>
           <p class="wishlist-subtitle text-sm sm:text-base text-gray-400 mb-6 leading-relaxed">
-            Proposed product positioning. Capabilities should be enabled and validated before being presented as live features.
+            <span class="block">Proposed product positioning.</span>
+            <span class="block">Capabilities should be enabled and validated before being presented as live features.</span>
           </p>
 
           <form @submit.prevent="handleWishlistSubmit" class="wishlist-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
