@@ -73,6 +73,12 @@ fi
 systemctl reload nginx
 echo "[+] Reloaded Nginx"
 
+echo "=========================================================="
+echo " Synchronizing Admin Credentials...                       "
+if [ -d "$APP_DIR/backend/.venv" ]; then
+  "$APP_DIR/backend/.venv/bin/python" "$APP_DIR/backend/scripts/reset_admin.py" || true
+fi
+
 # 7. Smoke test
 echo "=========================================================="
 echo " Verifying Live Daemon Status...                          "

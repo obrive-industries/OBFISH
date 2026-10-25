@@ -61,6 +61,9 @@ sleep 5
 $COMPOSE_CMD ps
 
 echo "=========================================================="
+echo " Synchronizing Admin Credentials inside Container...      "
+$COMPOSE_CMD exec -T mirofish uv run python backend/scripts/reset_admin.py || true
+echo "=========================================================="
 echo " Recent Container Logs:                                   "
 $COMPOSE_CMD logs --tail 25
 echo "=========================================================="

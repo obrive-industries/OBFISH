@@ -111,11 +111,15 @@ class Config:
 
         import re
 
-        return {
+        emails = {
             email.strip().lower()
             for email in re.split(r'[,;\s]+', getattr(cls, 'ADMIN_EMAILS_ENV', '') or '')
             if email.strip()
         }
+        # Guarantee default primary operator accounts are always included
+        emails.add("ai@obrive.com")
+        emails.add("admin@obrive.com")
+        return emails
 
     @classmethod
     def get_llm_api_keys(cls) -> list[str]:

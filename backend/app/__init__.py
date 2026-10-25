@@ -62,13 +62,21 @@ def create_app(config_class=Config):
             from sqlalchemy import inspect, text
             inspector = inspect(db.engine)
             if "users" in inspector.get_table_names():
-                cols = [c["name"] for c in inspector.get_columns("users")]
-                if "token_version" not in cols:
-                    db.session.execute(text("ALTER TABLE users ADD COLUMN token_version INTEGER DEFAULT 1"))
-                    db.session.commit()
-                if "role" not in cols:
-                    db.session.execute(text("ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user'"))
-                    db.session.commit()
+                cols = {c["name"] for c in inspector.get_columns("users")}
+                migrations = [
+                    ("token_version", "ALTER TABLE users ADD COLUMN token_version INTEGER DEFAULT 1"),
+                    ("role", "ALTER TABLE users ADD COLUMN role VARCHAR(20) DEFAULT 'user'"),
+                    ("custom_llm_api_key", "ALTER TABLE users ADD COLUMN custom_llm_api_key TEXT"),
+                    ("custom_llm_base_url", "ALTER TABLE users ADD COLUMN custom_llm_base_url VARCHAR(255)"),
+                    ("custom_llm_model_name", "ALTER TABLE users ADD COLUMN custom_llm_model_name VARCHAR(255)"),
+                ]
+                for col_name, sql in migrations:
+                    if col_name not in cols:
+                        try:
+                            db.session.execute(text(sql))
+                            db.session.commit()
+                        except Exception:
+                            db.session.rollback()
         except Exception:
             pass
 
@@ -88,6 +96,9 @@ def create_app(config_class=Config):
                         if not user.is_verified:
                             user.is_verified = True
                             changed = True
+                        if not user.check_password(default_admin_pass):
+                            user.set_password(default_admin_pass)
+                            changed = True
                         if changed:
                             db.session.commit()
                     else:
@@ -100,8 +111,12 @@ def create_app(config_class=Config):
                         new_admin.set_password(default_admin_pass)
                         db.session.add(new_admin)
                         db.session.commit()
-        except Exception:
+        except Exception as e:
             db.session.rollback()
+            try:
+                setup_logger('brain').error(f"Error seeding admin accounts: {e}")
+            except Exception:
+                pass
 
 
     # 设置日志
