@@ -5,6 +5,7 @@
 from .task import TaskManager, TaskStatus
 from .project import Project, ProjectStatus, ProjectManager
 from .billing import BillingEvent, Subscription, UsageEvent
+from .wishlist import WishlistSubscriber
 
 __all__ = [
     'TaskManager',
@@ -15,4 +16,5 @@ __all__ = [
     'BillingEvent',
     'Subscription',
     'UsageEvent',
+    'WishlistSubscriber',
 ]

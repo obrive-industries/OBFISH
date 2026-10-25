@@ -18,6 +18,11 @@ const routes = [
     component: () => import('../views/ConsoleView.vue')
   },
   {
+    path: '/admin/wishlist',
+    name: 'AdminWishlist',
+    component: () => import('../views/AdminWishlistView.vue')
+  },
+  {
     path: '/demo',
     name: 'Demo',
     component: () => import('../views/DemoView.vue')

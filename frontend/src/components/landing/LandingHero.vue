@@ -40,6 +40,46 @@
             <span class="relative z-[1]">Explore Obrive</span>
           </a>
         </div>
+
+        <!-- Wishlist Form (MiroFish Style) -->
+        <div class="wishlist-wrapper mt-4 mb-4 w-full max-w-xl mx-auto">
+          <h2 class="wishlist-heading text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-3" style="font-family: 'Caveat', cursive; font-style: italic;">
+            Join the Wishlist to get notified about offers !
+          </h2>
+          <p class="wishlist-subtitle text-sm sm:text-base text-gray-400 mb-6 leading-relaxed">
+            Proposed product positioning. Capabilities should be enabled and validated before being presented as live features.
+          </p>
+
+          <form @submit.prevent="handleWishlistSubmit" class="wishlist-form flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              v-model="emailInput"
+              type="email"
+              placeholder="Enter your email"
+              required
+              class="wishlist-input flex-1 px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+              :disabled="submitting"
+            />
+            <button
+              type="submit"
+              class="wishlist-submit inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 bg-white text-black hover:bg-gray-200 px-6 py-3 text-base cursor-pointer"
+              :disabled="submitting || !emailInput"
+            >
+              <span v-if="!submitting">Send</span>
+              <span v-else class="flex items-center gap-2">
+                <svg class="animate-spin h-4 w-4 text-black" viewBox="0 0 24 24" fill="none">
+                  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+                </svg>
+                Sending...
+              </span>
+            </button>
+          </form>
+
+          <!-- Feedback alerts -->
+          <div v-if="feedbackMsg" class="mt-3 text-sm font-medium transition-all" :class="isSuccess ? 'text-emerald-400' : 'text-rose-400'">
+            {{ feedbackMsg }}
+          </div>
+        </div>
       </div>
     </div>
 
@@ -53,6 +93,36 @@
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import wishlistApi from '../../api/wishlist'
+
+const emailInput = ref('')
+const submitting = ref(false)
+const feedbackMsg = ref('')
+const isSuccess = ref(false)
+
+const handleWishlistSubmit = async () => {
+  if (!emailInput.value || submitting.value) return
+  submitting.value = true
+  feedbackMsg.value = ''
+  try {
+    const res = await wishlistApi.subscribe(emailInput.value, 'landing_hero')
+    if (res.data?.success) {
+      isSuccess.value = true
+      feedbackMsg.value = res.data.message || 'Thank you for joining our wishlist!'
+      emailInput.value = ''
+    } else {
+      isSuccess.value = false
+      feedbackMsg.value = res.data?.error || 'Something went wrong. Please try again.'
+    }
+  } catch (err) {
+    isSuccess.value = false
+    feedbackMsg.value = err.response?.data?.error || 'Failed to submit. Please try again.'
+  } finally {
+    submitting.value = false
+  }
+}
+
 const scrollDown = () => {
   const el = document.getElementById('features')
   if (el) {
@@ -62,6 +132,8 @@ const scrollDown = () => {
 </script>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
+
 .hero-section {
   position: relative;
   min-height: 75vh;
@@ -279,5 +351,54 @@ const scrollDown = () => {
 @keyframes pulse-sink {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(8px); }
+}
+
+.wishlist-wrapper {
+  position: relative;
+  z-index: 5;
+}
+
+.wishlist-heading {
+  font-family: 'Caveat', cursive !important;
+  font-style: italic !important;
+  letter-spacing: 0.02em;
+  font-weight: 700;
+}
+
+.wishlist-input {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.wishlist-input:focus {
+  border-color: #ffffff;
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.wishlist-submit {
+  background-color: #ffffff;
+  color: #000000;
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.wishlist-submit:hover:not(:disabled) {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.wishlist-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 </style>

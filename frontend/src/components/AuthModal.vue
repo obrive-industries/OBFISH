@@ -214,14 +214,33 @@
           </button>
         </p>
       </form>
+
+      <!-- Modal Footer Admin Access -->
+      <div class="modal-admin-footer">
+        <button
+          type="button"
+          class="admin-wishlist-link"
+          @click="openWishlistSubmissions"
+        >
+          📋 View Wishlist Submissions (Admin)
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onUnmounted } from 'vue'
+import { useRouter } from 'vue-router'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
+
+const router = useRouter()
+
+const openWishlistSubmissions = () => {
+  authStore.closeAuthModal()
+  router.push('/admin/wishlist')
+}
 
 const loading = ref(false)
 const resending = ref(false)
@@ -714,5 +733,33 @@ const handleForgot = async () => {
   color: #999999;
   cursor: not-allowed;
   text-decoration: none;
+}
+
+.modal-admin-footer {
+  margin-top: 1.5rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  text-align: center;
+}
+
+.admin-wishlist-link {
+  background: transparent;
+  border: 1px dashed rgba(0, 0, 0, 0.25);
+  border-radius: 9999px;
+  color: #555555;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.35rem 0.85rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.admin-wishlist-link:hover {
+  color: #000000;
+  border-color: #000000;
+  background: rgba(0, 0, 0, 0.04);
 }
 </style>
