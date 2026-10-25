@@ -168,7 +168,8 @@ def generate_report():
             }), 404
         
         project_user_id = getattr(project, "user_id", None)
-        if project_user_id and (not user or project_user_id != user.id):
+        is_admin = user and getattr(user, "role", "user") == "admin"
+        if project_user_id and not is_admin and (not user or project_user_id != user.id):
             return jsonify({
                 "success": False,
                 "error": "Access denied to this project"
@@ -467,9 +468,11 @@ def _check_report_access(report_id: str):
     if not report:
         return False, t('api.reportNotFound', id=report_id), 404, None
 
-    from ..utils.auth_middleware import get_current_user_id
+    from ..utils.auth_middleware import get_current_user
     from ..models.project import ProjectManager
-    user_id = get_current_user_id()
+    user = get_current_user()
+    user_id = user.id if user else None
+    is_admin = user and getattr(user, "role", "user") == "admin"
     manager = SimulationManager()
     state = manager.get_simulation(report.simulation_id)
     if state:
@@ -477,7 +480,7 @@ def _check_report_access(report_id: str):
         if project_id:
             project = ProjectManager.get_project(project_id)
             p_user_id = getattr(project, "user_id", None) if project else None
-            if p_user_id and p_user_id != user_id:
+            if p_user_id and p_user_id != user_id and not is_admin:
                 return False, "Access denied", 403, None
 
     return True, None, 200, report
@@ -538,16 +541,18 @@ def get_report_by_simulation(simulation_id: str):
         }
     """
     try:
-        from ..utils.auth_middleware import get_current_user_id
+        from ..utils.auth_middleware import get_current_user
         from ..models.project import ProjectManager
-        user_id = get_current_user_id()
+        user = get_current_user()
+        user_id = user.id if user else None
+        is_admin = user and getattr(user, "role", "user") == "admin"
         state = SimulationManager().get_simulation(simulation_id)
         if state:
             project_id = getattr(state, "project_id", None)
             if project_id:
                 project = ProjectManager.get_project(project_id)
                 p_user_id = getattr(project, "user_id", None) if project else None
-                if p_user_id and p_user_id != user_id:
+                if p_user_id and p_user_id != user_id and not is_admin:
                     return jsonify({
                         "success": False,
                         "error": "Access denied"

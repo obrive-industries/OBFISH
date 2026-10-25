@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 
 from app import create_app
 from app.config import Config
+from app.models.billing import UsageEvent
 from app.models.user import db, User
 from app.models.project import ProjectManager
 from app.models.task import TaskManager
@@ -85,12 +86,19 @@ def test_user_registration_and_plan_barrier(app_instance):
     assert verified.status_code == 200
     verified_token = verified.get_json()["access_token"]
 
-    # A verified free account still has no live-run capacity.
+    # A verified free account receives exactly 1 free demo run.
     free_check = client.get("/api/billing/me", headers=_auth_header(verified_token))
     assert free_check.status_code == 200
     entitlement = free_check.get_json()["entitlement"]
     assert entitlement["plan"] == "free"
-    assert entitlement["can_start"] is False
+    assert entitlement["runs_limit"] == 1
+    assert entitlement["can_start"] is True
+
+    # Once the free run is used, further runs are paywalled:
+    with app.app_context():
+        user = User.query.filter_by(email="customer@example.com").first()
+        db.session.add(UsageEvent(user_id=user.id, kind="run", ref_id="used_free_run"))
+        db.session.commit()
 
     gated = client.post(
         "/api/graph/ontology/generate",

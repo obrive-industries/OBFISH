@@ -528,29 +528,27 @@ class ParallelIPCHandler:
             return result
         
         try:
-            conn = sqlite3.connect(db_path)
-            cursor = conn.cursor()
-            
-            # 查询最新的Interview记录
-            cursor.execute("""
-                SELECT user_id, info, created_at
-                FROM trace
-                WHERE action = ? AND user_id = ?
-                ORDER BY created_at DESC
-                LIMIT 1
-            """, (ActionType.INTERVIEW.value, agent_id))
-            
-            row = cursor.fetchone()
-            if row:
-                user_id, info_json, created_at = row
-                try:
-                    info = json.loads(info_json) if info_json else {}
-                    result["response"] = info.get("response", info)
-                    result["timestamp"] = created_at
-                except json.JSONDecodeError:
-                    result["response"] = info_json
-            
-            conn.close()
+            with sqlite3.connect(db_path, timeout=15.0) as conn:
+                cursor = conn.cursor()
+                
+                # 查询最新的Interview记录
+                cursor.execute("""
+                    SELECT user_id, info, created_at
+                    FROM trace
+                    WHERE action = ? AND user_id = ?
+                    ORDER BY created_at DESC
+                    LIMIT 1
+                """, (ActionType.INTERVIEW.value, agent_id))
+                
+                row = cursor.fetchone()
+                if row:
+                    user_id, info_json, created_at = row
+                    try:
+                        info = json.loads(info_json) if info_json else {}
+                        result["response"] = info.get("response", info)
+                        result["timestamp"] = created_at
+                    except json.JSONDecodeError:
+                        result["response"] = info_json
             
         except Exception as e:
             print(f"  读取Interview结果失败: {e}")
@@ -679,7 +677,7 @@ def fetch_new_actions_from_db(
         return actions, new_last_rowid
     
     try:
-        conn = sqlite3.connect(db_path)
+        conn = sqlite3.connect(db_path, timeout=15.0)
         cursor = conn.cursor()
         
         # 使用 rowid 来追踪已处理的记录（rowid 是 SQLite 的内置自增字段）
@@ -1235,6 +1233,12 @@ async def run_twitter_simulation(
     )
     
     await result.env.reset()
+    try:
+        with sqlite3.connect(db_path, timeout=15.0) as wal_conn:
+            wal_conn.execute("PRAGMA journal_mode=WAL;")
+            wal_conn.execute("PRAGMA synchronous=NORMAL;")
+    except Exception as wal_err:
+        log_info(f"设置 WAL 模式提示: {wal_err}")
     log_info("环境已启动")
     
     if action_logger:
@@ -1302,6 +1306,7 @@ async def run_twitter_simulation(
             log_info(f"轮数已截断: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
     
     start_time = datetime.now()
+    consecutive_step_errors = 0
     
     for round_num in range(total_rounds):
         # 检查是否收到退出信号
@@ -1329,10 +1334,23 @@ async def run_twitter_simulation(
             continue
         
         actions = {agent: LLMAction() for _, agent in active_agents}
-        try:
-            await result.env.step(actions)
-        except Exception as step_err:
-            log_info(f"第 {round_num + 1} 轮执行遇到非致命异常: {step_err}，跳过并继续下一轮")
+        for attempt in range(2):
+            try:
+                await result.env.step(actions)
+                consecutive_step_errors = 0
+                break
+            except Exception as step_err:
+                err_str = str(step_err).lower()
+                is_rate_limit = "429" in err_str or "rate" in err_str or "limit" in err_str
+                if is_rate_limit and attempt == 0:
+                    log_info(f"第 {round_num + 1} 轮遇到速率限制 (429/rate-limit)，等待 3 秒后重试...")
+                    await asyncio.sleep(3.0)
+                    continue
+                consecutive_step_errors += 1
+                log_info(f"第 {round_num + 1} 轮执行遇到异常: {step_err}")
+                if consecutive_step_errors >= 5:
+                    log_info("连续多轮执行失败，请检查 LLM API Key 配额或并发限制。")
+                break
         
         # 从数据库获取实际执行的动作并记录
         actual_actions, last_rowid = fetch_new_actions_from_db(
@@ -1432,6 +1450,12 @@ async def run_reddit_simulation(
     )
     
     await result.env.reset()
+    try:
+        with sqlite3.connect(db_path, timeout=15.0) as wal_conn:
+            wal_conn.execute("PRAGMA journal_mode=WAL;")
+            wal_conn.execute("PRAGMA synchronous=NORMAL;")
+    except Exception as wal_err:
+        log_info(f"设置 WAL 模式提示: {wal_err}")
     log_info("环境已启动")
     
     if action_logger:
@@ -1507,6 +1531,7 @@ async def run_reddit_simulation(
             log_info(f"轮数已截断: {original_rounds} -> {total_rounds} (max_rounds={max_rounds})")
     
     start_time = datetime.now()
+    consecutive_step_errors = 0
     
     for round_num in range(total_rounds):
         # 检查是否收到退出信号
@@ -1534,10 +1559,23 @@ async def run_reddit_simulation(
             continue
         
         actions = {agent: LLMAction() for _, agent in active_agents}
-        try:
-            await result.env.step(actions)
-        except Exception as step_err:
-            log_info(f"第 {round_num + 1} 轮执行遇到非致命异常: {step_err}，跳过并继续下一轮")
+        for attempt in range(2):
+            try:
+                await result.env.step(actions)
+                consecutive_step_errors = 0
+                break
+            except Exception as step_err:
+                err_str = str(step_err).lower()
+                is_rate_limit = "429" in err_str or "rate" in err_str or "limit" in err_str
+                if is_rate_limit and attempt == 0:
+                    log_info(f"第 {round_num + 1} 轮遇到速率限制 (429/rate-limit)，等待 3 秒后重试...")
+                    await asyncio.sleep(3.0)
+                    continue
+                consecutive_step_errors += 1
+                log_info(f"第 {round_num + 1} 轮执行遇到异常: {step_err}")
+                if consecutive_step_errors >= 5:
+                    log_info("连续多轮执行失败，请检查 LLM API Key 配额或并发限制。")
+                break
         
         # 从数据库获取实际执行的动作并记录
         actual_actions, last_rowid = fetch_new_actions_from_db(

@@ -113,8 +113,8 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 
 <style scoped>
 .section-about {
-  padding: 110px 24px 80px;
-  background: #f8fbfa;
+  padding: 120px 24px 90px;
+  background: #000000;
   position: relative;
 }
 
@@ -126,7 +126,7 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 .section-header {
   text-align: center;
   max-width: 860px;
-  margin: 0 auto 56px;
+  margin: 0 auto 60px;
 }
 
 .category-pill {
@@ -134,29 +134,32 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
   align-items: center;
   gap: 10px;
   padding: 6px 14px;
-  background: rgba(7, 65, 57, 0.06);
-  border: 1px solid rgba(7, 65, 57, 0.18);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .pill-text {
+  font-family: var(--font-mono, monospace);
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  color: #074139;
+  letter-spacing: 0.12em;
+  color: #ffffff;
 }
 
 .section-title {
-  font-size: clamp(2.2rem, 3.8vw, 3.2rem);
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: clamp(2.2rem, 3.8vw, 3.4rem);
   font-weight: 700;
-  color: #074139;
+  color: #ffffff;
   margin: 0;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 .title-sub {
-  color: #0d5c52;
+  color: rgba(255, 255, 255, 0.7);
 }
 
 /* Narrative Grid */
@@ -164,73 +167,79 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 28px;
-  margin-bottom: 60px;
+  margin-bottom: 70px;
 }
 
 .narrative-card {
-  background: #ffffff;
-  border: 1px solid rgba(7, 65, 57, 0.16);
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 18px;
-  padding: 36px 32px;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.03);
+  padding: 40px 36px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
 .narrative-lead {
-  font-size: 1.15rem;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.18rem;
   font-weight: 600;
   line-height: 1.6;
-  color: #074139;
-  margin: 0 0 16px 0;
+  color: #ffffff;
+  margin: 0 0 18px 0;
 }
 
 .narrative-text {
   font-size: 0.95rem;
-  line-height: 1.65;
-  color: rgba(7, 65, 57, 0.85);
-  margin: 0 0 16px 0;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 18px 0;
+}
+
+.narrative-text:last-child {
+  margin-bottom: 0;
 }
 
 .narrative-highlight {
   font-size: 1.05rem;
   font-weight: 600;
   line-height: 1.6;
-  color: #074139;
-  background: rgba(162, 241, 223, 0.35);
-  padding: 16px 20px;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 20px 22px;
   border-radius: 12px;
-  border-left: 3px solid #074139;
+  border-left: 3px solid #ffffff;
   margin: 0;
 }
 
 /* Vision */
 .vision-wrapper {
-  margin-bottom: 60px;
+  margin-bottom: 70px;
 }
 
 .vision-header {
   text-align: center;
   max-width: 820px;
-  margin: 0 auto 40px;
+  margin: 0 auto 44px;
 }
 
 .vision-eyebrow {
   display: inline-block;
+  font-family: var(--font-mono, monospace);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.12em;
-  color: #074139;
-  opacity: 0.75;
-  margin-bottom: 12px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 14px;
 }
 
 .vision-title {
-  font-size: clamp(1.2rem, 2vw, 1.55rem);
-  font-weight: 700;
-  color: #074139;
-  line-height: 1.4;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: clamp(1.25rem, 2vw, 1.65rem);
+  font-weight: 600;
+  color: #ffffff;
+  line-height: 1.45;
   margin: 0;
 }
 
@@ -242,73 +251,84 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 }
 
 .pillar-card {
-  background: #ffffff;
-  padding: 32px 28px;
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  padding: 34px 30px;
   min-height: 260px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pillar-card:hover {
+  transform: translateY(-4px);
+  background: #111114;
+  border-color: rgba(255, 255, 255, 0.32);
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.8), 0 0 24px rgba(255, 255, 255, 0.05);
 }
 
 .pillar-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .pillar-level {
+  font-family: var(--font-mono, monospace);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: #074139;
-  transition: color 0.4s ease;
+  color: rgba(255, 255, 255, 0.6);
+  transition: color 0.3s ease;
 }
 
 .pillar-dot {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #00E5A3;
+  background: #ffffff;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.6);
 }
 
 .pillar-card:hover .pillar-level {
-  color: #a2f1df !important;
+  color: #ffffff;
 }
 
 .pillar-name {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #074139;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #ffffff;
   margin: 0 0 14px 0;
-  line-height: 1.3;
-  transition: color 0.4s ease;
-}
-
-.pillar-card:hover .pillar-name {
-  color: #ffffff !important;
+  line-height: 1.35;
+  transition: color 0.3s ease;
 }
 
 .pillar-desc {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   line-height: 1.65;
-  color: rgba(7, 65, 57, 0.85);
+  color: rgba(255, 255, 255, 0.68);
   margin: 0;
   flex: 1;
-  transition: color 0.4s ease;
+  transition: color 0.3s ease;
 }
 
 .pillar-card:hover .pillar-desc {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-/* Quote Card in Primary Dark Teal */
+/* Quote Card in MiroFish High Impact Card */
 .quote-card {
-  background: #074139;
+  background: linear-gradient(135deg, #131318 0%, #09090b 100%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 20px;
-  padding: 44px 40px;
-  margin-bottom: 30px;
-  box-shadow: 0 16px 40px -8px rgba(7, 65, 57, 0.25);
+  padding: 48px 44px;
+  margin-bottom: 36px;
+  box-shadow: 0 16px 40px -8px rgba(0, 0, 0, 0.8);
   position: relative;
   overflow: hidden;
 }
@@ -318,34 +338,36 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
   position: absolute;
   top: -50px;
   right: -50px;
-  width: 200px;
-  height: 200px;
+  width: 220px;
+  height: 220px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(162, 241, 223, 0.15), transparent 70%);
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.06), transparent 70%);
   pointer-events: none;
 }
 
 .quote-content {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 26px;
 }
 
 .quote-body {
-  font-size: clamp(1.2rem, 2.2vw, 1.7rem);
-  font-weight: 700;
-  line-height: 1.35;
-  color: #caede5;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: clamp(1.25rem, 2.2vw, 1.8rem);
+  font-weight: 600;
+  line-height: 1.4;
+  color: #ffffff;
   margin: 0;
-  max-width: 900px;
+  max-width: 920px;
+  letter-spacing: -0.01em;
 }
 
 .quote-author {
   display: flex;
   align-items: center;
   gap: 16px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(202, 237, 229, 0.2);
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .quote-logo {
@@ -359,22 +381,23 @@ import RoundedBallIcon from '../common/RoundedBallIcon.vue'
 }
 
 .author-name {
+  font-family: var(--font-mono, monospace);
   font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   color: #ffffff;
 }
 
 .author-tag {
   font-size: 11px;
-  color: rgba(202, 237, 229, 0.7);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .about-disclaimer {
   text-align: center;
   font-size: 11px;
-  line-height: 1.5;
-  color: rgba(7, 65, 57, 0.65);
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.5);
   max-width: 780px;
   margin: 0 auto;
   font-style: italic;

@@ -24,17 +24,29 @@ class LLMResponseError(ValueError):
         self.finish_reason = finish_reason
 
 
+def _extract_error_details(error: Exception) -> Optional[Dict[str, Any]]:
+    """Safely extract provider error detail payload from SDK or response exceptions."""
+    body = getattr(error, "body", None)
+    if isinstance(body, dict):
+        return body.get("error", body) if isinstance(body.get("error"), dict) else body
+    response = getattr(error, "response", None)
+    if response is not None:
+        try:
+            data = response.json()
+            if isinstance(data, dict):
+                return data.get("error", data) if isinstance(data.get("error"), dict) else data
+        except Exception:
+            pass
+    return None
+
+
 def _is_response_format_unsupported(error: Exception) -> bool:
     """Detect an explicit provider rejection of JSON response_format."""
 
     if getattr(error, "status_code", None) not in {400, 422}:
         return False
 
-    body = getattr(error, "body", None)
-    if not isinstance(body, dict):
-        return False
-
-    details = body.get("error", body)
+    details = _extract_error_details(error)
     if not isinstance(details, dict):
         return False
 
@@ -42,11 +54,17 @@ def _is_response_format_unsupported(error: Exception) -> bool:
     if param == "response_format" or param.startswith("response_format."):
         return True
 
+    code = str(details.get("code") or "").lower()
+    if code in {"json_validate_failed", "json_format_error"}:
+        return True
+
     message = str(details.get("message") or "").lower()
+    if "failed to generate json" in message:
+        return True
+
     if "response_format" not in message:
         return False
 
-    code = str(details.get("code") or "").lower()
     unsupported_codes = {
         "unsupported_parameter",
         "unsupported_value",
@@ -88,14 +106,47 @@ def _contains_additional_json_container(content: str) -> bool:
     return False
 
 
+def is_retryable_llm_error(err: Exception) -> bool:
+    """Return True if an error from an LLM provider warrants failover/retry."""
+    status = getattr(err, "status_code", None)
+    err_str = str(err).lower()
+    err_type = type(err).__name__.lower()
+
+    # HTTP status codes: rate limits, timeouts, server errors, quota exceeded
+    if status in {403, 408, 429, 500, 502, 503, 504}:
+        return True
+
+    # Connection and timeout errors (status_code is often None in OpenAI SDK)
+    if any(k in err_type for k in ("connection", "timeout", "remotedisconnected", "apiconnectionerror", "apitimeouterror")):
+        return True
+
+    # Text indicators in message or error body
+    retry_keywords = (
+        "rate", "limit", "quota", "timeout", "timed out", "connect", "overloaded",
+        "capacity", "exhausted", "temporarily unavailable", "try again",
+        "credit", "resource has been exhausted", "service unavailable"
+    )
+    return any(k in err_str for k in retry_keywords)
+
+
 def resolve_default_model(base_url: Optional[str], model: Optional[str]) -> str:
     """Return the configured platform model, allowing an explicit override."""
 
     return (model or "").strip() or Config.LLM_MODEL_NAME
 
 
+from dataclasses import dataclass
+
+@dataclass
+class LLMTarget:
+    client: OpenAI
+    model: str
+    base_url: str
+    name: str
+
+
 class LLMClient:
-    """LLM客户端"""
+    """LLM客户端，支持多 Provider 负载均衡与自动跨 Provider 故障转移"""
     
     def __init__(
         self,
@@ -128,6 +179,66 @@ class LLMClient:
         self._key_index = 0
         self.client = self.clients[0]
 
+        # 注册多 Provider 目标池（支持通用 LLM、加速 LLM、备份 LLM 组合）
+        self.targets: List[LLMTarget] = []
+        for idx, client in enumerate(self.clients):
+            self.targets.append(LLMTarget(
+                client=client,
+                model=self.model,
+                base_url=self.base_url or "",
+                name=f"Primary-{idx+1}"
+            ))
+
+        # 仅在使用全局系统配置时挂载 Boost 和 Backup Provider
+        if api_key is None:
+            boost_key = getattr(Config, "LLM_BOOST_API_KEY", None)
+            if boost_key:
+                boost_base = getattr(Config, "LLM_BOOST_BASE_URL", None) or "https://api.mistral.ai/v1"
+                boost_model = (
+                    getattr(Config, "LLM_BOOST_MODEL_NAME", None)
+                    or ("open-mistral-nemo" if "mistral" in boost_base.lower() else self.model)
+                )
+                for b_idx, bk in enumerate([k.strip() for k in boost_key.split(",") if k.strip()]):
+                    self.targets.append(LLMTarget(
+                        client=OpenAI(api_key=bk, base_url=boost_base),
+                        model=boost_model,
+                        base_url=boost_base,
+                        name=f"Boost-{b_idx+1}"
+                    ))
+            
+            backup_key = getattr(Config, "LLM_BACKUP_API_KEY", None)
+            if backup_key:
+                backup_base = getattr(Config, "LLM_BACKUP_BASE_URL", None) or "https://integrate.api.nvidia.com/v1"
+                backup_model = (
+                    getattr(Config, "LLM_BACKUP_MODEL_NAME", None)
+                    or ("minimaxai/minimax-m3.1-flash" if "nvidia" in backup_base.lower() else self.model)
+                )
+                for bk_idx, bkk in enumerate([k.strip() for k in backup_key.split(",") if k.strip()]):
+                    self.targets.append(LLMTarget(
+                        client=OpenAI(api_key=bkk, base_url=backup_base),
+                        model=backup_model,
+                        base_url=backup_base,
+                        name=f"Backup-{bk_idx+1}"
+                    ))
+
+            fallback_key = getattr(Config, "LLM_FALLBACK_API_KEY", None)
+            if fallback_key:
+                fallback_base = getattr(Config, "LLM_FALLBACK_BASE_URL", None) or "https://openrouter.ai/api/v1"
+                fallback_model = getattr(Config, "LLM_FALLBACK_MODEL_NAME", None) or "nvidia/nemotron-3.5-lightning:free"
+                fb_headers = {}
+                if "openrouter.ai" in fallback_base.lower():
+                    fb_headers = {
+                        "HTTP-Referer": "https://brain.obrive.com",
+                        "X-Title": "Brain"
+                    }
+                for fb_idx, fbk in enumerate([k.strip() for k in fallback_key.split(",") if k.strip()]):
+                    self.targets.append(LLMTarget(
+                        client=OpenAI(api_key=fbk, base_url=fallback_base, default_headers=fb_headers or None),
+                        model=fallback_model,
+                        base_url=fallback_base,
+                        name=f"Fallback-{fb_idx+1}"
+                    ))
+
     def _create_completion(
         self,
         *,
@@ -138,6 +249,49 @@ class LLMClient:
     ) -> Any:
         base_url = getattr(self, "base_url", None)
         fallback_model = resolve_default_model(base_url, None)
+        
+        # 优先使用多 Provider Target 池
+        targets = getattr(self, "targets", None)
+        if targets and len(targets) > 1:
+            num_targets = len(targets)
+            max_attempts = num_targets * 2
+            last_error = None
+            for attempt in range(max_attempts):
+                idx = (getattr(self, "_key_index", 0) + attempt) % num_targets
+                target = targets[idx]
+                try:
+                    return create_chat_completion(
+                        target.client,
+                        model=target.model,
+                        messages=messages,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        response_format=response_format,
+                    )
+                except Exception as err:
+                    last_error = err
+                    is_retryable = is_retryable_llm_error(err)
+                    if is_retryable and attempt < max_attempts - 1:
+                        import time
+                        import random
+                        backoff = min(2.0 ** (attempt % num_targets) + random.uniform(0.1, 0.4), 4.0)
+                        next_target = targets[(idx + 1) % num_targets]
+                        logger.warning(
+                            "LLM Target '%s' (%s) transient or quota/rate error (%s: %s); failing over to '%s' (%s) in %.1fs...",
+                            target.name,
+                            target.model,
+                            type(err).__name__,
+                            str(err)[:100],
+                            next_target.name,
+                            next_target.model,
+                            backoff,
+                        )
+                        time.sleep(backoff)
+                        continue
+                    raise
+            if last_error:
+                raise last_error
+
         clients = getattr(self, "clients", [self.client])
         num_clients = len(clients)
         if num_clients <= 1:
@@ -181,16 +335,16 @@ class LLMClient:
                 )
             except Exception as err:
                 last_error = err
-                status = getattr(err, "status_code", None)
-                is_retryable = status in {429, 500, 502, 503, 504} or "rate" in str(err).lower()
+                is_retryable = is_retryable_llm_error(err)
                 if is_retryable and attempt < max_attempts - 1:
                     import time
                     import random
                     backoff = min(2.0 ** attempt + random.uniform(0.1, 0.5), 5.0)
                     logger.warning(
-                        "LLM Key #%d request failed with %s; rotating and retrying in %.1fs...",
+                        "LLM Key #%d request failed with %s (%s); rotating and retrying in %.1fs...",
                         idx + 1,
                         type(err).__name__,
+                        str(err)[:100],
                         backoff,
                     )
                     time.sleep(backoff)
@@ -266,12 +420,24 @@ class LLMClient:
                         response_format=response_format,
                     )
                 except Exception as error:
+                    details = _extract_error_details(error)
+                    if isinstance(details, dict) and "failed_generation" in details:
+                        raw = str(details.get("failed_generation") or "")
+                        if raw:
+                            try:
+                                recovered, _ = json.JSONDecoder().raw_decode(_clean_chat_text(raw))
+                                if isinstance(recovered, dict) and recovered:
+                                    logger.info("Successfully recovered JSON from provider failed_generation payload")
+                                    return recovered
+                            except Exception:
+                                pass
+
                     if (
                         response_format is not None
                         and _is_response_format_unsupported(error)
                     ):
                         logger.warning(
-                            "LLM provider explicitly rejected response_format; "
+                            "LLM provider explicitly rejected or failed response_format; "
                             "retrying once with prompt-only JSON guidance"
                         )
                         response_format = None
@@ -286,16 +452,13 @@ class LLMClient:
                 if attempt >= max_attempts:
                     raise
 
-                # A caller-supplied cap is the common cause of a partial JSON
-                # object. Omit it for the one bounded retry so the provider can
-                # use its model-specific output limit.
-                had_token_cap = request_max_tokens is not None
-                request_max_tokens = None
+                if error.finish_reason == "length":
+                    request_max_tokens = None
                 logger.warning(
                     "LLM returned unusable JSON (finish_reason=%s); "
-                    "retrying content generation%s",
+                    "retrying content generation with max_tokens=%s",
                     error.finish_reason or "unknown",
-                    " without an output token cap" if had_token_cap else "",
+                    request_max_tokens,
                 )
 
         if last_error is not None:  # pragma: no cover - defensive loop guard
@@ -311,6 +474,14 @@ class LLMClient:
         choice = choices[0]
         finish_reason = getattr(choice, "finish_reason", None)
         if finish_reason == "length":
+            content = _clean_chat_text(extract_chat_completion_text(response))
+            if content:
+                try:
+                    value, _ = json.JSONDecoder().raw_decode(content)
+                    if isinstance(value, dict) and value:
+                        return value
+                except Exception:
+                    pass
             raise LLMResponseError(
                 "LLM JSON output was truncated at the token limit",
                 finish_reason=finish_reason,

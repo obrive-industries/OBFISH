@@ -375,8 +375,8 @@
                   <path d="M16.24 7.76L14.12 14.12L7.76 16.24L9.88 9.88L16.24 7.76Z" fill="url(#paint0_linear)" stroke="url(#paint0_linear)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                   <defs>
                     <linearGradient id="paint0_linear" x1="2" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
-                      <stop stop-color="#074139"/>
-                      <stop offset="1" stop-color="#10B981"/>
+                      <stop stop-color="#FF4500"/>
+                      <stop offset="1" stop-color="#000000"/>
                     </linearGradient>
                   </defs>
                 </svg>
@@ -1134,8 +1134,8 @@ onUnmounted(() => {
 }
 
 .step-card.active {
-  border-color: #074139;
-  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.12);
+  border-color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card-header {
@@ -1160,7 +1160,7 @@ onUnmounted(() => {
 
 .step-card.active .step-num,
 .step-card.completed .step-num {
-  color: #074139;
+  color: #000000;
 }
 
 .step-title {
@@ -1178,9 +1178,9 @@ onUnmounted(() => {
 }
 
 .badge.success { background: #E8F5E9; color: #2E7D32; }
-.badge.processing { background: #074139; color: #a2f1df; }
+.badge.processing { background: #000000; color: #FFFFFF; }
 .badge.pending { background: #F5F5F5; color: #999; }
-.badge.accent { background: rgba(162, 241, 223, 0.2); color: #074139; }
+.badge.accent { background: rgba(255, 69, 0, 0.1); color: #FF4500; }
 
 .card-content {
   /* No extra padding - uses step-card's padding */
@@ -1224,7 +1224,8 @@ onUnmounted(() => {
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  opacity: 0.8;
+  background: #FF4500;
+  opacity: 1;
 }
 
 .action-btn.secondary {
@@ -1959,7 +1960,7 @@ onUnmounted(() => {
 
 .info-value.mbti {
   font-family: 'JetBrains Mono', monospace;
-  color: #074139;
+  color: #000000;
 }
 
 /* 模块区域 */
@@ -2132,7 +2133,7 @@ onUnmounted(() => {
   width: 16px;
   height: 16px;
   border: 2px solid #E5E5E5;
-  border-top-color: #074139;
+  border-top-color: #FF4500;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }

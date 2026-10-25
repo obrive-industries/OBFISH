@@ -22,12 +22,15 @@ class Config:
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
     
     # Database (SQLAlchemy)
-    # Default: SQLite for local dev. Set DATABASE_URL to postgres:// for production.
+    # Default: SQLite for local dev. Set DATABASE_URL to postgres:// or postgresql:// for production.
     _brain_db = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../instance/brain_users.db'))
     _legacy_db = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../instance/obmind_users.db'))
     _default_db = _legacy_db if (not os.path.exists(_brain_db) and os.path.exists(_legacy_db)) else _brain_db
     
     _raw_db_url = os.environ.get('DATABASE_URL')
+    if _raw_db_url and _raw_db_url.startswith('postgres://'):
+        _raw_db_url = _raw_db_url.replace('postgres://', 'postgresql://', 1)
+
     if _raw_db_url and 'sqlite' in _raw_db_url:
         _sqlite_file = _raw_db_url.replace('sqlite:///', '')
         try:
@@ -43,6 +46,10 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = _raw_db_url or f'sqlite:///{_default_db}'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    }
 
     # JWT
     JWT_ACCESS_TTL_MINUTES = int(os.environ.get('JWT_ACCESS_TTL_MINUTES', '60'))
@@ -67,6 +74,12 @@ class Config:
     LLM_BOOST_API_KEY = os.environ.get('LLM_BOOST_API_KEY')
     LLM_BOOST_BASE_URL = os.environ.get('LLM_BOOST_BASE_URL')
     LLM_BOOST_MODEL_NAME = os.environ.get('LLM_BOOST_MODEL_NAME')
+    LLM_BACKUP_API_KEY = os.environ.get('LLM_BACKUP_API_KEY')
+    LLM_BACKUP_BASE_URL = os.environ.get('LLM_BACKUP_BASE_URL')
+    LLM_BACKUP_MODEL_NAME = os.environ.get('LLM_BACKUP_MODEL_NAME')
+    LLM_FALLBACK_API_KEY = os.environ.get('LLM_FALLBACK_API_KEY')
+    LLM_FALLBACK_BASE_URL = os.environ.get('LLM_FALLBACK_BASE_URL')
+    LLM_FALLBACK_MODEL_NAME = os.environ.get('LLM_FALLBACK_MODEL_NAME')
     
     # Zep配置
     ZEP_API_KEY = os.environ.get('ZEP_API_KEY')
@@ -98,6 +111,20 @@ class Config:
             for email in re.split(r'[,;\s]+', getattr(cls, 'ADMIN_EMAILS_ENV', '') or '')
             if email.strip()
         }
+
+    @classmethod
+    def get_llm_api_keys(cls) -> list[str]:
+        """返回所有配置的 LLM API Key 列表（去重且保序）"""
+        import re
+        raw = getattr(cls, 'LLM_API_KEY', '') or ''
+        seen = set()
+        keys: list[str] = []
+        for k in re.split(r'[,;\s]+', str(raw)):
+            clean = k.strip().strip("'\"")
+            if clean and clean not in seen:
+                seen.add(clean)
+                keys.append(clean)
+        return keys
 
     @classmethod
     def get_zep_api_keys(cls) -> list[str]:
@@ -149,6 +176,20 @@ class Config:
     REPORT_AGENT_TEMPERATURE = float(os.environ.get('REPORT_AGENT_TEMPERATURE', '0.5'))
     
     @classmethod
+    def get_cors_origins(cls) -> list[str]:
+        """返回允许跨域访问的 Origin 列表"""
+        raw = os.environ.get('CORS_ORIGINS', '')
+        if raw:
+            import re
+            return [o.strip() for o in re.split(r'[,;\s]+', raw) if o.strip()]
+        return [
+            cls.APP_BASE_URL,
+            'https://brain.obrive.com',
+            'http://localhost:3000',
+            'http://127.0.0.1:3000',
+        ]
+
+    @classmethod
     def validate(cls) -> list[str]:
         """验证必要配置"""
         errors: list[str] = []
@@ -158,6 +199,9 @@ class Config:
             errors.append("ZEP_API_KEY 未配置")
         if os.environ.get("ZEP_API_URL"):
             errors.append('ZEP_API_URL not supported; Brain only connects to Zep Cloud')
+        if not cls.DEBUG and cls.SECRET_KEY == 'brain-secret-key':
+            import warnings
+            warnings.warn("Using default SECRET_KEY in production is insecure. Set SECRET_KEY in .env", RuntimeWarning)
         if cls.DEBUG:
             import warnings
             warnings.warn("Flask DEBUG mode is enabled. Do not use in production.", RuntimeWarning)

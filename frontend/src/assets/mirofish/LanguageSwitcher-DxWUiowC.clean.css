@@ -1,0 +1,1 @@
+.lang-switcher{display:flex;align-items:center;gap:4px;cursor:pointer;font-size:12px;font-weight:600;color:#999;padding:4px 10px;border:1px solid #999;border-radius:4px;transition:all .2s;-webkit-user-select:none;user-select:none}.lang-switcher:hover{border-color:#666;background:#f0f0f0}.lang-label .active{color:#000;font-weight:700}.lang-icon{font-size:14px}

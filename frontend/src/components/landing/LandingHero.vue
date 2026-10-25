@@ -1,136 +1,283 @@
 <template>
-  <section class="landing-hero" id="overview">
-    <div class="hero-container">
+  <section id="hero" class="hero-section">
+    <!-- Ambient Glowing Hero Orb -->
+    <div class="hero-orb" aria-hidden="true"></div>
+
+    <div class="container-main relative z-[2]">
       <div class="hero-content">
-        <!-- Main Heading in Microgramma Bold matching Owning the Future -->
-        <h1 class="hero-title font-microgramma">
-          Predictive Intelligence
+        <!-- Main Headline -->
+        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight hero-heading">
+          <span>Predict</span>
+          <span class="relative inline-block whitespace-nowrap">
+            Everything
+            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+            </svg>
+          </span>
         </h1>
 
-        <!-- Subheading in Michroma font matching Obrive hero body -->
-        <p class="hero-subtitle font-michroma">
+        <!-- Tagline -->
+        <p class="text-xl md:text-2xl text-gray-500 mb-12 max-w-2xl mx-auto leading-relaxed">
           Brain helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
         </p>
 
-        <!-- Primary Dual Pill Buttons (Matched to Obrive.com screenshot) -->
-        <div class="hero-ctas">
-          <AnimatedButton
+        <!-- CTA Buttons -->
+        <div class="flex flex-wrap gap-5 justify-center mb-8">
+          <router-link
             to="/console"
-            variant="primary"
-            size="lg"
-            :pill="true"
-            :iconSize="16"
-            class="hero-btn-pill font-michroma"
+            class="hero-btn-primary group"
           >
-            Predict Now
-          </AnimatedButton>
+            <span class="relative z-[1]">Predict Now</span>
+          </router-link>
 
-          <AnimatedButton
+          <a
             href="https://obrive.com"
             target="_blank"
             rel="noopener noreferrer"
-            variant="outline"
-            size="lg"
-            :pill="true"
-            :showArrow="false"
-            class="hero-btn-pill font-michroma"
+            class="hero-btn-github group"
           >
-            Explore Obrive
-          </AnimatedButton>
+            <img src="/obrive-white-logo.svg" alt="Obrive" class="hero-btn-logo" />
+            <span class="relative z-[1]">Explore Obrive</span>
+          </a>
         </div>
       </div>
+    </div>
+
+    <!-- Pulsing Down Indicator -->
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 cursor-pointer pulse-down" @click="scrollDown">
+      <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path d="M19 14l-7 7m0 0l-7-7m7 7V3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+      </svg>
     </div>
   </section>
 </template>
 
 <script setup>
-import AnimatedButton from '../common/AnimatedButton.vue'
+const scrollDown = () => {
+  const el = document.getElementById('features')
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth' })
+  }
+}
 </script>
 
 <style scoped>
-.landing-hero {
+.hero-section {
   position: relative;
-  min-height: 72vh;
+  min-height: 75vh;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
   align-items: center;
-  padding: 170px 24px 100px;
-  background: linear-gradient(
-    90deg,
-    #caede5 0%,
-    #beeee3 25%,
-    #b2f0e1 50%,
-    #a5f1df 75%,
-    #98f2dd 100%
-  );
+  justify-content: center;
+  padding-top: 7rem;
+  padding-bottom: 3.5rem;
+  background-color: #000000;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
-.hero-container {
-  max-width: 1080px;
-  margin: 0 auto;
+.container-main {
+  max-width: 80rem;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
   width: 100%;
-  position: relative;
-  z-index: 2;
+}
+
+@media (min-width: 640px) {
+  .container-main {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-main {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
 }
 
 .hero-content {
+  max-width: 56rem;
+  width: 100%;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.hero-heading {
   text-align: center;
-}
-
-/* Main Heading matched to Owning the Future in Microgramma Bold font */
-.hero-title {
-  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-size: clamp(2.25rem, 4.5vw, 3.75rem);
-  font-weight: 800;
-  line-height: 1.15;
-  color: #074139;
-  margin: 0 0 24px 0;
-  letter-spacing: 0;
-  text-transform: none; /* Exact Title Case matching screenshot */
-}
-
-/* Subheading in Michroma font matched to Obrive hero body */
-.hero-subtitle {
-  font-family: 'Michroma', sans-serif !important;
-  font-size: clamp(0.875rem, 1.1vw, 1rem);
-  line-height: 1.75;
-  color: #074139;
-  max-width: 896px;
-  padding: 0 16px;
-  margin: 0 auto 36px auto;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  text-align: center;
-  text-wrap: balance;
-}
-
-/* CTAs centered pills */
-.hero-ctas {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 20px;
-  margin-bottom: 0;
-  flex-wrap: wrap;
+  gap: 0.35em;
+  flex-wrap: nowrap;
 }
 
-.hero-btn-pill {
-  font-family: 'Michroma', sans-serif !important;
-  font-size: 12px !important;
-  letter-spacing: 0.06em !important;
-  padding: 13px 32px !important;
-  text-transform: uppercase;
-}
-
-@media (max-width: 768px) {
-  .landing-hero {
-    padding: 130px 16px 60px;
-    min-height: auto;
+@media (max-width: 640px) {
+  .hero-heading {
+    flex-wrap: wrap;
+    gap: 8px 12px;
   }
+}
+
+.underline-path {
+  stroke-dasharray: 210;
+  stroke-dashoffset: 210;
+  animation: draw-underline 0.6s ease-out 0.5s forwards;
+}
+
+@keyframes draw-underline {
+  to { stroke-dashoffset: 0; }
+}
+
+.hero-orb {
+  position: absolute;
+  width: 600px;
+  height: 400px;
+  border-radius: 50%;
+  background: #6482dc0f;
+  filter: blur(80px);
+  top: 30%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 1;
+  animation: drift-hero 30s ease-in-out infinite;
+}
+
+@keyframes drift-hero {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(calc(-50% + 20px), calc(-50% - 15px)); }
+}
+
+.hero-btn-primary {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  padding: 0.875rem 2.25rem;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #1e1e22, #35353c, #62626e, #8a8a98 45%, #a0a0b0, #8a8a98 55%, #62626e, #35353c, #1e1e22);
+  background-size: 200% 200%;
+  animation: metal-shift 8s ease infinite;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 1px #ffffff40, inset 0 -1px #0000004d, 0 2px 12px #0006, 0 0 30px #b4b4c81a;
+  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  text-decoration: none;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.hero-btn-primary:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0.15) 55%, transparent 80%);
+  background-size: 300% 100%;
+  animation: metal-shimmer 6s ease-in-out infinite;
+}
+
+.hero-btn-primary:hover {
+  transform: translateY(-2px);
+  background: linear-gradient(135deg, #252529, #3e3e46, #70707e, #9898a8 45%, #b0b0c0, #9898a8 55%, #70707e, #3e3e46, #252529);
+  background-size: 200% 200%;
+  border-color: #ffffff4d;
+  box-shadow: inset 0 1px #ffffff59, inset 0 -1px #0000004d, 0 4px 20px #00000080, 0 0 40px #c8c8dc33;
+}
+
+.hero-btn-primary:active {
+  transform: translateY(0) scale(0.98);
+}
+
+@keyframes metal-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes metal-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.hero-btn-github {
+  font-family: 'Inter', sans-serif;
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  padding: 0.875rem 2rem;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff0f;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  text-decoration: none;
+  color: #ffffff;
+  box-sizing: border-box;
+}
+
+.hero-btn-github:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.08) 50%, transparent 60%);
+  background-size: 300% 100%;
+  background-position: 50% 0;
+}
+
+.hero-btn-github:hover {
+  background: #ffffff1a;
+  border-color: #ffffff38;
+  transform: translateY(-1px);
+}
+
+.hero-btn-github:active {
+  transform: translateY(0);
+}
+
+.hero-btn-logo {
+  height: 1.25rem;
+  width: auto;
+  position: relative;
+  z-index: 1;
+  object-fit: contain;
+  opacity: 0.9;
+  transition: transform 0.3s ease;
+}
+
+.hero-btn-github:hover .hero-btn-logo {
+  transform: scale(1.1);
+}
+
+.pulse-down {
+  animation: pulse-sink 2.4s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@keyframes pulse-sink {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
 }
 </style>

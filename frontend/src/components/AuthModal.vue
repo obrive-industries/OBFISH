@@ -413,9 +413,9 @@ const handleForgot = async () => {
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(7, 65, 57, 0.45);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -426,13 +426,13 @@ const handleForgot = async () => {
 .modal-card {
   position: relative;
   background: #FFFFFF;
-  border: 1px solid rgba(7, 65, 57, 0.16);
-  border-radius: 16px;
+  border: 1px solid #CCCCCC;
+  border-radius: 12px;
   width: 100%;
   max-width: 440px;
   padding: 34px 32px 30px;
-  box-shadow: 0 20px 45px rgba(7, 65, 57, 0.2);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
   animation: modalEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -453,44 +453,52 @@ const handleForgot = async () => {
   right: 18px;
   background: transparent;
   border: none;
-  font-size: 1.6rem;
-  color: #526361;
+  font-size: 1.5rem;
+  color: #888888;
   cursor: pointer;
   line-height: 1;
+  transition: color 0.2s ease;
 }
 
 .close-btn:hover {
-  color: #074139;
+  color: #000000;
 }
 
 .modal-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
   margin-bottom: 20px;
 }
 
 .modal-logo {
+  display: block;
   height: 34px;
-  margin-bottom: 8px;
+  width: auto;
+  margin: 0 auto 10px auto;
+  object-fit: contain;
 }
 
 .modal-brand {
-  font-family: 'Microgramma', sans-serif !important;
-  font-weight: 800;
+  font-family: var(--font-display, "Space Grotesk", sans-serif) !important;
+  font-weight: 700;
   font-size: 1.45rem;
-  color: #074139;
-  letter-spacing: 0.05em;
+  color: #000000;
+  letter-spacing: -0.01em;
   margin: 0;
 }
 
 .modal-subtitle {
-  font-size: 0.8rem;
-  color: #526361;
+  font-size: 0.82rem;
+  color: #666666;
   margin-top: 4px;
 }
 
 .tabs {
   display: flex;
-  border-bottom: 1.5px solid rgba(7, 65, 57, 0.12);
+  border-bottom: 1px solid #E5E5E5;
   margin-bottom: 20px;
 }
 
@@ -500,23 +508,25 @@ const handleForgot = async () => {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #526361;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #888888;
   cursor: pointer;
   transition: all 0.2s ease;
-  margin-bottom: -1.5px;
+  margin-bottom: -1px;
 }
 
 .tab-btn.active {
-  color: #074139;
-  border-bottom-color: #074139;
+  color: #000000;
+  border-bottom-color: #000000;
 }
 
 .alert {
   padding: 10px 14px;
-  border-radius: 8px;
-  font-size: 0.85rem;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
   margin-bottom: 16px;
   line-height: 1.4;
 }
@@ -528,9 +538,9 @@ const handleForgot = async () => {
 }
 
 .notice-alert {
-  background: rgba(7, 65, 57, 0.08);
-  color: #074139;
-  border: 1px solid rgba(7, 65, 57, 0.25);
+  background: #FFFDF0;
+  color: #A08940;
+  border: 1px solid #F0E4B0;
   font-weight: 500;
   display: flex;
   align-items: center;
@@ -538,9 +548,9 @@ const handleForgot = async () => {
 }
 
 .success-alert {
-  background: #ECFDF5;
-  color: #065F46;
-  border: 1px solid #6EE7B7;
+  background: #F0FFF4;
+  color: #2E7D32;
+  border: 1px solid #B8E8C4;
 }
 
 .auth-form {
@@ -562,70 +572,81 @@ const handleForgot = async () => {
 }
 
 .form-label {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #074139;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #000000;
 }
 
 .input-field {
   padding: 10px 14px;
-  border: 1px solid rgba(7, 65, 57, 0.22);
-  border-radius: 8px;
-  font-size: 0.92rem;
+  background: #FAFAFA;
+  border: 1px solid #DDDDDD;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: #074139;
-  box-shadow: 0 0 0 2px rgba(7, 65, 57, 0.12);
+  border-color: #000000;
+  background: #FFFFFF;
+  box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.08);
 }
 
 .submit-btn {
-  background: #074139;
-  color: #A2F1DF;
-  border: none;
-  border-radius: 8px;
+  background: #000000;
+  color: #FFFFFF;
+  border: 1px solid #000000;
+  border-radius: 6px;
   padding: 12px;
-  font-size: 0.95rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.92rem;
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
   margin-top: 4px;
-  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.15);
+  letter-spacing: 0.5px;
 }
 
 .submit-btn:hover:not(:disabled) {
-  background: #052e28;
+  background: #FF4500;
+  border-color: #FF4500;
   transform: translateY(-1px);
 }
 
 .submit-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .switch-prompt {
   text-align: center;
   font-size: 0.82rem;
-  color: #526361;
+  color: #666666;
   margin-top: 6px;
 }
 
 .switch-link, .inline-link {
   background: transparent;
   border: none;
-  color: #074139;
+  color: #000000;
   font-weight: 700;
   cursor: pointer;
   padding: 0 4px;
   font-size: inherit;
   text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.switch-link:hover, .inline-link:hover {
+  color: #FF4500;
 }
 
 .forgot-desc {
   font-size: 0.88rem;
-  color: #526361;
+  color: #666666;
   line-height: 1.5;
   margin: 0;
 }
@@ -642,14 +663,15 @@ const handleForgot = async () => {
 
 .otp-title {
   margin: 0 0 6px 0;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
   font-size: 1.25rem;
-  color: #074139;
-  font-weight: 800;
+  color: #000000;
+  font-weight: 700;
 }
 
 .otp-desc {
   font-size: 0.85rem;
-  color: #526361;
+  color: #666666;
   line-height: 1.5;
   margin: 0;
 }
@@ -657,12 +679,12 @@ const handleForgot = async () => {
 .otp-input {
   text-align: center;
   font-size: 1.8rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 10px;
   padding: 12px;
-  color: #074139;
-  background: #F9FCFB;
-  font-family: 'Courier New', monospace;
+  color: #000000;
+  background: #FAFAFA;
+  font-family: var(--font-mono, monospace);
 }
 
 .otp-actions {
@@ -674,16 +696,22 @@ const handleForgot = async () => {
 .resend-btn {
   background: transparent;
   border: none;
-  color: #074139;
+  color: #000000;
+  font-family: var(--font-mono, monospace);
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
   padding: 4px 8px;
+  transition: color 0.2s ease;
+}
+
+.resend-btn:hover:not(:disabled) {
+  color: #FF4500;
 }
 
 .resend-btn:disabled {
-  color: #94a3b8;
+  color: #999999;
   cursor: not-allowed;
   text-decoration: none;
 }

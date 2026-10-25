@@ -25,7 +25,10 @@ from ..utils.zep import (
     ZEP_HTTP_REQUEST_TIMEOUT_SECONDS,
     ZEP_INGESTION_WAIT_TIMEOUT_SECONDS,
 )
-from .zep_graph_memory_updater import ZepGraphMemoryManager
+from .zep_graph_memory_updater import (
+    ZepGraphMemoryManager,
+    ZepIngestionIncompleteError,
+)
 from .simulation_ipc import SimulationIPCClient, CommandType, IPCResponse
 
 logger = get_logger('brain.simulation_runner')
@@ -285,6 +288,7 @@ class SimulationRunner:
                 return
             simulation.status = status
             simulation.error = error
+            cls._reconcile_simulation_projection(manager, simulation)
             manager._save_simulation_state(simulation)
         except Exception as sync_error:
             # state.json is a secondary projection. Never let a projection
@@ -296,18 +300,64 @@ class SimulationRunner:
                 runner_status.value,
                 sync_error,
             )
+
+    @classmethod
+    def _discard_stopped_updater(cls, simulation_id: str) -> None:
+        """Release an updater that drained with incomplete ingestion.
+
+        The worker is already stopped by the time it raises, so the registry
+        entry can never make progress. Leaving it registered keeps the report
+        and graph barriers reporting an ingestion that is still "pending".
+        """
+        try:
+            ZepGraphMemoryManager.discard_inactive_updater(simulation_id)
+        except Exception as error:
+            logger.warning(
+                "释放不完整图谱写入的更新器失败: simulation_id=%s, error=%s",
+                simulation_id,
+                error,
+            )
     
     @classmethod
     def get_run_state(cls, simulation_id: str) -> Optional[SimulationRunState]:
         """获取运行状态"""
-        if simulation_id in cls._run_states:
-            return cls._run_states[simulation_id]
+        cached = cls._run_states.get(simulation_id)
+        if cached is not None and not cls._stale_active_state(
+            simulation_id, cached
+        ):
+            return cached
         
-        # 尝试从文件加载
+        # 尝试从文件加载（同时对已被放弃的活动状态执行恢复）
         state = cls._load_run_state(simulation_id)
         if state:
             cls._run_states[simulation_id] = state
-        return state
+            return state
+        return cached
+
+    @classmethod
+    def _stale_active_state(
+        cls, simulation_id: str, state: SimulationRunState
+    ) -> bool:
+        """Whether a cached non-terminal state needs to be re-read from disk.
+
+        A state can stay "running" in memory after its monitor thread and its
+        process are gone (crashed monitor, restarted worker). Returning it
+        unchanged would keep every caller, including the report gate, believing
+        the simulation is still active.
+        """
+        active_statuses = {
+            RunnerStatus.STARTING,
+            RunnerStatus.RUNNING,
+            RunnerStatus.PAUSED,
+            RunnerStatus.STOPPING,
+        }
+        return (
+            state.runner_status in active_statuses
+            and simulation_id not in cls._processes
+            and os.path.exists(
+                os.path.join(cls.RUN_STATE_DIR, simulation_id, "run_state.json")
+            )
+        )
     
     @classmethod
     def _load_run_state(cls, simulation_id: str) -> Optional[SimulationRunState]:
@@ -375,6 +425,20 @@ class SimulationRunner:
                     except (OSError, ProcessLookupError):
                         is_alive = False
                 if not is_alive:
+                    # A retained updater means graph ingestion is still pending,
+                    # so the run is not finalizable yet. Leave the non-terminal
+                    # status for /stop to drain instead of publishing a terminal
+                    # state that would look authoritative.
+                    if ZepGraphMemoryManager.get_updater(simulation_id) is not None:
+                        return state
+
+                    # The monitor thread that normally owns this projection died
+                    # with the server, so whatever the file still holds is a
+                    # snapshot from when the run started. Rebuild progress from
+                    # the action logs the simulation process itself wrote before
+                    # deciding the terminal status.
+                    cls._rebuild_progress_from_action_logs(state)
+
                     log_file = os.path.join(cls.RUN_STATE_DIR, simulation_id, "simulation.log")
                     has_completed_marker = False
                     if os.path.exists(log_file):
@@ -403,13 +467,112 @@ class SimulationRunner:
                         state.twitter_running = False
                         state.reddit_running = False
                     
+                    if not state.completed_at:
+                        state.completed_at = datetime.now().isoformat()
+                    if state.runner_status == RunnerStatus.COMPLETED:
+                        state.error = None
+                    
                     cls._save_run_state(state)
-                    cls._sync_simulation_status(simulation_id, state.runner_status)
+                    cls._sync_simulation_status(simulation_id, state.runner_status, state.error)
             
             return state
         except Exception as e:
             logger.error(f"加载运行状态失败: {str(e)}")
             return None
+
+    @classmethod
+    def _rebuild_progress_from_action_logs(cls, state: SimulationRunState) -> None:
+        """Recompute run progress from the producers' own output.
+
+        The simulation process appends to ``<platform>/actions.jsonl`` while it
+        runs; ``run_state.json`` only mirrors that from a monitor thread. When
+        the thread is gone the mirror can still describe round 0 with zero
+        actions, so the action logs are treated as authoritative here: action
+        counts, per-platform rounds, simulated hours and platform completion are
+        all recomputed from them rather than trusted from the snapshot.
+        """
+        sim_dir = os.path.join(cls.RUN_STATE_DIR, state.simulation_id)
+        platform_fields = {
+            "twitter": (
+                "twitter_actions_count",
+                "twitter_current_round",
+                "twitter_simulated_hours",
+                "twitter_completed",
+            ),
+            "reddit": (
+                "reddit_actions_count",
+                "reddit_current_round",
+                "reddit_simulated_hours",
+                "reddit_completed",
+            ),
+        }
+
+        for platform, (count_key, round_key, hours_key, completed_key) in platform_fields.items():
+            log_path = os.path.join(sim_dir, platform, "actions.jsonl")
+            if not os.path.exists(log_path):
+                continue
+
+            actions = 0
+            last_round = 0
+            last_hours = 0
+            ended = False
+
+            try:
+                with open(log_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    for line in f:
+                        line = line.strip()
+                        if not line:
+                            continue
+                        try:
+                            entry = json.loads(line)
+                        except json.JSONDecodeError:
+                            continue
+
+                        if "event_type" in entry:
+                            if entry.get("event_type") == "simulation_end":
+                                ended = True
+                            elif entry.get("event_type") == "round_end":
+                                last_round = max(last_round, int(entry.get("round") or 0))
+                                last_hours = max(
+                                    last_hours, int(entry.get("simulated_hours") or 0)
+                                )
+                            continue
+
+                        if "agent_id" not in entry:
+                            continue
+
+                        actions += 1
+                        last_round = max(last_round, int(entry.get("round") or 0))
+            except OSError as error:
+                logger.warning(
+                    "重建运行进度时读取动作日志失败: %s, error=%s", log_path, error
+                )
+                continue
+
+            setattr(state, count_key, actions)
+            setattr(state, round_key, max(getattr(state, round_key, 0), last_round))
+            setattr(state, hours_key, max(getattr(state, hours_key, 0), last_hours))
+            state.current_round = max(state.current_round, last_round)
+            state.simulated_hours = max(state.simulated_hours, last_hours)
+            if ended:
+                setattr(state, completed_key, True)
+
+    @classmethod
+    def _reconcile_simulation_projection(cls, manager, simulation) -> None:
+        """Bring state.json in line with the authoritative run_state.json.
+
+        ``state.json`` is a projection: it has no progress of its own, so the
+        round reached during the run and the entity types discovered at prepare
+        time are re-derived here instead of being left stale or fabricated.
+        """
+        run_state = cls._run_states.get(simulation.simulation_id)
+        if run_state is not None and run_state.current_round:
+            simulation.current_round = run_state.current_round
+
+        if not simulation.entity_types:
+            _count, entity_types = manager.describe_profiles(simulation.simulation_id)
+            if entity_types:
+                simulation.entity_types = entity_types
     
     @classmethod
     def _save_run_state(cls, state: SimulationRunState):
@@ -600,6 +763,7 @@ class SimulationRunner:
             env = os.environ.copy()
             env['PYTHONUTF8'] = '1'  # Python 3.7+ 支持，让所有 open() 默认使用 UTF-8
             env['PYTHONIOENCODING'] = 'utf-8'  # 确保 stdout/stderr 使用 UTF-8
+            env['PYTHONUNBUFFERED'] = '1'  # 实时刷新日志输出，避免管道或文件缓冲延迟
 
             # 设置工作目录为模拟目录（数据库等文件会生成在此）
             # 使用 start_new_session=True 创建新的进程组，确保可以通过 os.killpg 终止所有子进程
@@ -1152,6 +1316,31 @@ class SimulationRunner:
                     try:
                         ZepGraphMemoryManager.stop_updater(simulation_id)
                         cls._graph_memory_enabled.pop(simulation_id, None)
+                    except ZepIngestionIncompleteError as error:
+                        # The simulation itself finished; only some activity
+                        # batches were rejected. Keep that visible on the run,
+                        # but do not promote an otherwise successful simulation
+                        # to FAILED, which would block report generation forever.
+                        cls._graph_memory_enabled.pop(simulation_id, None)
+                        cls._discard_stopped_updater(simulation_id)
+                        state.runner_status = RunnerStatus.STOPPED
+                        state.twitter_running = False
+                        state.reddit_running = False
+                        state.completed_at = datetime.now().isoformat()
+                        state.error = f"Zep图谱写入未完整完成: {error}"
+                        cls._save_run_state(state)
+                        cls._sync_simulation_status(
+                            simulation_id,
+                            RunnerStatus.STOPPED,
+                            state.error,
+                        )
+                        cls._manual_stop_requests.discard(simulation_id)
+                        logger.warning(
+                            "图谱写入不完整但模拟已正常停止: simulation_id=%s, error=%s",
+                            simulation_id,
+                            state.error,
+                        )
+                        return state
                     except Exception as error:
                         state.runner_status = RunnerStatus.FAILED
                         state.twitter_running = False

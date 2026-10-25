@@ -5,9 +5,11 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
+from flask import has_request_context, request
 from sqlalchemy.exc import IntegrityError
 
 from ..billing.catalog import PLAN_BY_ID
+from ..config import Config
 from ..models.billing import Subscription, UsageEvent, as_aware, db
 
 
@@ -48,6 +50,49 @@ def _count_runs(user_id: str, start: datetime | None, end: datetime | None) -> i
     return query.count()
 
 
+def is_admin_user(user: Any | None) -> bool:
+    """Check if the user has admin role or is listed in ADMIN_EMAILS."""
+    if user is None:
+        return False
+    if getattr(user, "role", "user") == "admin":
+        return True
+    email = getattr(user, "email", None)
+    if email and email.strip().lower() in Config.admin_emails():
+        return True
+    return False
+
+
+def _resolve_project_id(project_id: str | None = None) -> str | None:
+    """Extract project_id from argument, or discover it from the Flask request context."""
+    if project_id:
+        return str(project_id)
+    if not has_request_context():
+        return None
+    try:
+        data = request.get_json(silent=True) or {}
+        pid = (
+            data.get("project_id")
+            or request.args.get("project_id")
+            or (request.view_args and request.view_args.get("project_id"))
+        )
+        if pid:
+            return str(pid)
+        sim_id = (
+            data.get("simulation_id")
+            or request.args.get("simulation_id")
+            or (request.view_args and request.view_args.get("simulation_id"))
+        )
+        if sim_id:
+            from ..services.simulation_manager import SimulationManager
+
+            state = SimulationManager().get_simulation(str(sim_id))
+            if state and getattr(state, "project_id", None):
+                return str(state.project_id)
+    except Exception:
+        pass
+    return None
+
+
 def get_entitlement(user: Any | None) -> dict[str, Any]:
     """Return the effective plan, usage and limits for a user."""
 
@@ -59,19 +104,19 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
         "is_admin": False,
         "configured": False,
         "runs_used": 0,
-        "runs_limit": 0,
-        "max_rounds": UNLIMITED,
+        "runs_limit": 1,
+        "max_rounds": 5,
         "period_start": None,
         "period_end": None,
         "renews_at": None,
         "cancel_at_period_end": False,
-        "can_start": False,
+        "can_start": True,
         "unlimited": False,
     }
     if user is None:
-        return free
+        return {**free, "can_start": False}
 
-    if getattr(user, "role", "user") == "admin":
+    if is_admin_user(user):
         return {
             **free,
             "plan": "admin",
@@ -86,16 +131,41 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
 
     subscription = _active_subscription(user.id)
     if not subscription:
+        runs_used = _count_runs(user.id, None, None)
         latest = get_latest_subscription(user.id)
         if latest is not None:
-            free["status"] = latest.status
-            free["plan"] = latest.plan
-            free["interval"] = latest.billing_interval
-        return free
+            is_halted = latest.status in {"pending", "halted"}
+            return {
+                **free,
+                "status": latest.status,
+                "plan": latest.plan,
+                "interval": latest.billing_interval,
+                "runs_used": runs_used,
+                "runs_limit": 0 if is_halted else 1,
+                "max_rounds": 5,
+                "can_start": False if is_halted else (runs_used < 1),
+            }
+        return {
+            **free,
+            "status": "none",
+            "plan": "free",
+            "interval": None,
+            "runs_used": runs_used,
+            "runs_limit": 1,
+            "max_rounds": 5,
+            "can_start": runs_used < 1,
+        }
 
     plan = PLAN_BY_ID.get(subscription.plan)
     if plan is None:
-        return free
+        runs_used = _count_runs(user.id, None, None)
+        return {
+            **free,
+            "runs_used": runs_used,
+            "runs_limit": 1,
+            "max_rounds": 5,
+            "can_start": runs_used < 1,
+        }
 
     period_start = as_aware(subscription.current_period_start)
     period_end = as_aware(subscription.current_period_end)
@@ -120,13 +190,16 @@ def get_entitlement(user: Any | None) -> dict[str, Any]:
     }
 
 
-def active_plan_denial(user: Any | None) -> tuple[str, str] | None:
-    """Return (code, message) when the account has no usable paid plan."""
+def active_plan_denial(user: Any | None, project_id: str | None = None) -> tuple[str, str] | None:
+    """Return (code, message) when the account has no usable plan."""
 
     if user is None:
         return "MISSING_TOKEN", "Authentication required. Please sign in to run simulations."
     if not getattr(user, "is_verified", False):
         return "EMAIL_NOT_VERIFIED", "Please verify your email address before running simulations."
+
+    if is_admin_user(user):
+        return None
 
     entitlement = get_entitlement(user)
     if entitlement.get("unlimited"):
@@ -136,16 +209,39 @@ def active_plan_denial(user: Any | None) -> tuple[str, str] | None:
         return "PLAN_PAST_DUE", (
             "Your subscription payment needs attention. Update billing to continue."
         )
-    if entitlement.get("plan") == "free" or not entitlement.get("period_end"):
-        return "PLAN_REQUIRED", (
-            "An active plan is required to run your own simulations. "
-            "Explore the sample report, then choose a plan to continue."
-        )
-    return None
+
+    # Active paid subscription has full access to run features
+    if entitlement.get("period_end") and entitlement.get("plan") != "free":
+        return None
+
+    # Free tier: exactly 1 live demo run is included
+    runs_used = entitlement.get("runs_used", 0)
+    runs_limit = entitlement.get("runs_limit", 1)
+
+    # If the user has not yet used their 1 free run:
+    if runs_used < runs_limit:
+        return None
+
+    # If the user has used their 1 free run, allow operations on that specific recorded run
+    resolved_pid = _resolve_project_id(project_id)
+    if resolved_pid:
+        existing = UsageEvent.query.filter_by(
+            user_id=user.id, kind="run", ref_id=resolved_pid
+        ).first()
+        if existing:
+            return None
+
+    return "PLAN_REQUIRED", (
+        "You have used your 1 free demo simulation. "
+        "Choose a plan to continue running simulations."
+    )
 
 
 def deny_reason(user: Any | None, entitlement: dict[str, Any]) -> tuple[str, str] | None:
     """Return (code, message) when the user may not start a new run."""
+
+    if is_admin_user(user):
+        return None
 
     denied = active_plan_denial(user)
     if denied:
@@ -153,6 +249,11 @@ def deny_reason(user: Any | None, entitlement: dict[str, Any]) -> tuple[str, str
     if entitlement.get("unlimited"):
         return None
     if not entitlement.get("can_start"):
+        if entitlement.get("plan") == "free":
+            return "PLAN_REQUIRED", (
+                "You have used your 1 free demo simulation. "
+                "Choose a plan to continue running simulations."
+            )
         return "PLAN_LIMIT_REACHED", (
             "You have used every simulation run included in this billing period. "
             "Upgrade your plan or wait for the next period."
@@ -165,17 +266,17 @@ def record_run(user: Any | None, project_id: str) -> bool:
 
     if user is None or not project_id:
         return False
-    if getattr(user, "role", "user") == "admin":
+    if is_admin_user(user):
         return True
-
-    entitlement = get_entitlement(user)
-    if entitlement.get("unlimited") or not entitlement.get("period_end"):
-        return bool(entitlement.get("unlimited"))
 
     existing = UsageEvent.query.filter_by(
         user_id=user.id, kind="run", ref_id=project_id
     ).first()
     if existing:
+        return True
+
+    entitlement = get_entitlement(user)
+    if entitlement.get("unlimited"):
         return True
 
     if not entitlement.get("can_start"):
@@ -204,6 +305,8 @@ def clamp_rounds(user: Any | None, requested: int | None) -> int | None:
     """Cap a requested round count at the plan limit."""
 
     if user is None:
+        return requested
+    if is_admin_user(user):
         return requested
     limit = get_entitlement(user).get("max_rounds")
     if limit is None:

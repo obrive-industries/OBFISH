@@ -105,8 +105,9 @@ const steps = [
 
 <style scoped>
 .section-workflow {
-  padding: 110px 24px;
-  background: #f8fbfa;
+  padding: 120px 24px;
+  background: #000000;
+  color: #ffffff;
   position: relative;
 }
 
@@ -126,8 +127,8 @@ const steps = [
   align-items: center;
   gap: 10px;
   padding: 6px 14px;
-  background: rgba(7, 65, 57, 0.06);
-  border: 1px solid rgba(7, 65, 57, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   border-radius: 9999px;
   margin-bottom: 20px;
 }
@@ -136,13 +137,13 @@ const steps = [
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.1em;
-  color: #074139;
+  color: #ffffff;
 }
 
 .section-title {
   font-size: clamp(2.2rem, 3.8vw, 3.2rem);
   font-weight: 700;
-  color: #074139;
+  color: #ffffff;
   margin: 0 0 16px 0;
   letter-spacing: -0.01em;
 }
@@ -150,7 +151,7 @@ const steps = [
 .section-sub {
   font-size: 1.1rem;
   line-height: 1.6;
-  color: rgba(7, 65, 57, 0.85);
+  color: #9ca3af;
   margin: 0;
   font-weight: 450;
 }
@@ -164,18 +165,23 @@ const steps = [
 }
 
 .step-card {
-  background: #ffffff;
+  background: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
   padding: 28px 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   min-height: 320px;
   cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.step-card.is-active {
-  border-color: #074139;
-  box-shadow: 0 10px 30px -4px rgba(7, 65, 57, 0.15);
+.step-card.is-active,
+.step-card:hover {
+  border-color: rgba(255, 255, 255, 0.35);
+  box-shadow: 0 10px 30px -4px rgba(0, 0, 0, 0.6);
+  transform: translateY(-2px);
 }
 
 .step-card-header {
@@ -188,9 +194,10 @@ const steps = [
 .step-num {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #074139;
+  color: #ffffff;
+  opacity: 0.9;
   line-height: 1;
-  transition: color 0.4s ease;
+  transition: color 0.3s ease;
 }
 
 .step-tag {
@@ -198,50 +205,45 @@ const steps = [
   font-weight: 700;
   letter-spacing: 0.08em;
   padding: 4px 8px;
-  background: rgba(7, 65, 57, 0.08);
-  color: #074139;
+  background: rgba(255, 255, 255, 0.08);
+  color: #9ca3af;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 6px;
-  transition: all 0.4s ease;
+  transition: all 0.3s ease;
 }
 
 .step-card:hover .step-num {
-  color: #a2f1df !important;
+  color: #ffffff !important;
 }
 
 .step-card:hover .step-tag {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.16);
   color: #ffffff !important;
 }
 
 .step-title {
   font-size: 1.08rem;
   font-weight: 700;
-  color: #074139;
+  color: #ffffff;
   margin: 0 0 12px 0;
   line-height: 1.3;
-  transition: color 0.4s ease;
-}
-
-.step-card:hover .step-title {
-  color: #ffffff !important;
 }
 
 .step-body {
   font-size: 0.86rem;
   line-height: 1.6;
-  color: rgba(7, 65, 57, 0.85);
+  color: #a1a1aa;
   margin: 0 0 20px 0;
   flex: 1;
-  transition: color 0.4s ease;
 }
 
 .step-card:hover .step-body {
-  color: rgba(255, 255, 255, 0.9) !important;
+  color: #d1d5db;
 }
 
 .step-indicator {
   height: 3px;
-  background: rgba(7, 65, 57, 0.1);
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 9999px;
   overflow: hidden;
 }
@@ -250,7 +252,7 @@ const steps = [
   display: block;
   height: 100%;
   width: 0;
-  background: #00E5A3;
+  background: #ffffff;
   transition: width 0.3s ease;
 }
 
@@ -260,14 +262,14 @@ const steps = [
 
 /* Workflow Bottom Banner */
 .workflow-cta-banner {
-  background: #ffffff;
-  border: 1px solid rgba(7, 65, 57, 0.2);
+  background: #0d0d10;
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 16px;
-  padding: 22px 30px;
+  padding: 24px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 6px 24px -2px rgba(7, 65, 57, 0.06);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
 }
 
 .cta-left {
@@ -277,8 +279,9 @@ const steps = [
 }
 
 .cta-badge {
-  background: #a2f1df;
-  color: #074139;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.2);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.08em;
@@ -289,7 +292,7 @@ const steps = [
 .cta-text {
   font-size: 0.95rem;
   font-weight: 500;
-  color: #074139;
+  color: #ffffff;
   margin: 0;
 }
 

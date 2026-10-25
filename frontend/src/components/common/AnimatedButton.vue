@@ -131,67 +131,80 @@ const resolvedArrowColor = computed(() => {
   width: 100%;
 }
 
-/* Variants */
+/* MiroFish Variants */
 .btn-variant-primary {
-  background-color: #074139;
-  color: #caede5;
-  box-shadow: 0 4px 14px rgba(7, 65, 57, 0.25);
-  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.12);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #ffffff;
+  font-weight: 600;
 }
 
 .btn-variant-primary:hover {
-  background-color: #052e28;
-  color: #ffffff;
-  box-shadow: 0 6px 20px rgba(7, 65, 57, 0.35);
+  background-color: #e5e7eb;
+  color: #000000;
+  border-color: #e5e7eb;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .btn-variant-accent {
-  background-color: #a2f1df;
-  color: #074139;
-  box-shadow: 0 4px 14px rgba(162, 241, 223, 0.3);
-  transition: all 0.3s ease;
+  background-color: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.12);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid #ffffff;
+  font-weight: 600;
 }
 
 .btn-variant-accent:hover {
-  background-color: #8eead4;
-  color: #052e28;
-  box-shadow: 0 6px 20px rgba(162, 241, 223, 0.45);
+  background-color: #e5e7eb;
+  color: #000000;
+  border-color: #e5e7eb;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
 }
 
 .btn-variant-outline {
   background-color: transparent;
-  color: #074139;
-  border: 1px solid #074139;
-  transition: all 0.3s ease;
+  color: #ffffff;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 500;
 }
 
 .btn-variant-outline:hover {
-  background-color: rgba(7, 65, 57, 0.08);
-  color: #074139;
-  border-color: #074139;
+  background-color: #ffffff;
+  color: #000000;
+  border-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .btn-variant-outline-white {
   background-color: transparent;
   color: #ffffff;
-  border: 1px solid rgba(255, 255, 255, 0.45);
-  transition: all 0.3s ease;
+  border: 1.5px solid #ffffff;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 500;
 }
 
 .btn-variant-outline-white:hover {
   background-color: #ffffff;
-  color: #074139;
+  color: #000000;
   border-color: #ffffff;
+  transform: translateY(-1px);
 }
 
 .btn-variant-ghost {
   background-color: transparent;
-  color: #074139;
-  transition: all 0.3s ease;
+  color: #ffffff;
+  transition: all 0.2s ease;
 }
 
 .btn-variant-ghost:hover {
-  background-color: rgba(7, 65, 57, 0.08);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 /* Sizes */

@@ -66,7 +66,7 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "cta": "Choose Starter",
         "limits": {
             "runs_per_period": {"monthly": 3, "annual": 36},
-            "max_rounds": 10,
+            "max_rounds": 15,
         },
     },
     {
@@ -115,7 +115,7 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "cta": "Choose Pro",
         "limits": {
             "runs_per_period": {"monthly": 10, "annual": 120},
-            "max_rounds": 25,
+            "max_rounds": 40,
         },
     },
     {
@@ -164,7 +164,7 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "cta": "Choose Premium",
         "limits": {
             "runs_per_period": {"monthly": 30, "annual": 360},
-            "max_rounds": 50,
+            "max_rounds": 80,
         },
     },
 ]

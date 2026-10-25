@@ -9,8 +9,8 @@
             <span class="step-title">{{ $t('step1.ontologyGeneration') }}</span>
           </div>
           <div class="step-status">
-            <span v-if="currentPhase > 0" class="badge success">{{ $t('step1.ontologyCompleted') }}</span>
-            <span v-else-if="currentPhase === 0" class="badge processing">{{ $t('step1.ontologyGenerating') }}</span>
+            <span v-if="currentPhase > 0 || projectData?.ontology" class="badge success">{{ $t('step1.ontologyCompleted') }}</span>
+            <span v-else-if="currentPhase === 0 && ontologyProgress" class="badge processing">{{ $t('step1.ontologyGenerating') }}</span>
             <span v-else class="badge pending">{{ $t('step1.ontologyPending') }}</span>
           </div>
         </div>
@@ -310,8 +310,8 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .step-card.active {
-  border-color: #074139;
-  box-shadow: 0 4px 12px rgba(7, 65, 57, 0.12);
+  border-color: #000000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .card-header {
@@ -336,7 +336,7 @@ watch(() => props.systemLogs.length, () => {
 
 .step-card.active .step-num,
 .step-card.completed .step-num {
-  color: #074139;
+  color: #000000;
 }
 
 .step-title {
@@ -354,8 +354,8 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .badge.success { background: #E8F5E9; color: #2E7D32; }
-.badge.processing { background: #074139; color: #a2f1df; }
-.badge.accent { background: #074139; color: #a2f1df; }
+.badge.processing { background: #000000; color: #FFFFFF; }
+.badge.accent { background: rgba(255, 69, 0, 0.1); color: #FF4500; }
 .badge.pending { background: #F5F5F5; color: #999; }
 
 .api-note {
@@ -623,7 +623,8 @@ watch(() => props.systemLogs.length, () => {
 }
 
 .action-btn:hover:not(:disabled) {
-  opacity: 0.8;
+  background: #FF4500;
+  opacity: 1;
 }
 
 .action-btn:disabled {
@@ -636,15 +637,15 @@ watch(() => props.systemLogs.length, () => {
   align-items: center;
   gap: 10px;
   font-size: 12px;
-  color: #074139;
+  color: #000000;
   margin-bottom: 12px;
 }
 
 .spinner-sm {
   width: 14px;
   height: 14px;
-  border: 2px solid rgba(7, 65, 57, 0.2);
-  border-top-color: #074139;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-top-color: #FF4500;
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }

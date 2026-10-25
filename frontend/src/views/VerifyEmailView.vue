@@ -177,34 +177,30 @@ const goToDashboard = () => {
 <style scoped>
 .verify-page {
   min-height: 100vh;
-  background: linear-gradient(
-    135deg,
-    #caede5 0%,
-    #beeee3 35%,
-    #b2f0e1 70%,
-    #98f2dd 100%
-  );
+  background: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #074139;
+  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
+  color: #000000;
 }
 
 .verify-card {
   background: #FFFFFF;
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(7, 65, 57, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   width: 100%;
-  max-width: 500px;
-  padding: 44px 40px;
+  max-width: 480px;
+  padding: 40px 36px;
   text-align: center;
-  border: 1.5px solid rgba(7, 65, 57, 0.18);
+  border: 1px solid #CCCCCC;
 }
 
 .verify-header {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .brand-link {
@@ -213,23 +209,25 @@ const goToDashboard = () => {
 }
 
 .brand-logo {
-  height: 42px;
-  margin-bottom: 12px;
+  height: 38px;
+  margin-bottom: 10px;
 }
 
 .brand-title {
-  font-size: 1.6rem;
-  letter-spacing: 0.05em;
-  color: #074139;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.55rem;
+  letter-spacing: -0.01em;
+  color: #000000;
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .brand-sub {
-  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.74rem;
   font-weight: 600;
-  color: #526361;
-  letter-spacing: 0.08em;
+  color: #666666;
+  letter-spacing: 0.06em;
   margin-top: 4px;
 }
 
@@ -240,13 +238,13 @@ const goToDashboard = () => {
 }
 
 .spinner {
-  width: 44px;
-  height: 44px;
-  border: 3.5px solid rgba(7, 65, 57, 0.15);
-  border-top-color: #074139;
+  width: 40px;
+  height: 40px;
+  border: 3px solid #E5E5E5;
+  border-top-color: #000000;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 @keyframes spin {
@@ -254,77 +252,78 @@ const goToDashboard = () => {
 }
 
 .status-icon {
-  width: 60px;
-  height: 60px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .success-icon {
-  background: #CAEDE5;
-  color: #074139;
-  border: 2px solid #074139;
-  box-shadow: 0 0 20px rgba(7, 65, 57, 0.15);
+  background: #000000;
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .error-icon {
   background: #FEE2E2;
   color: #DC2626;
-  border: 2px solid #EF4444;
+  border: 1px solid #EF4444;
 }
 
 .state-title {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
   font-size: 1.35rem;
-  font-weight: 800;
-  color: #074139;
-  margin-bottom: 10px;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
 }
 
 .state-desc {
-  font-size: 0.95rem;
-  color: #526361;
-  line-height: 1.5;
-  margin-bottom: 28px;
+  font-size: 0.92rem;
+  color: #666666;
+  line-height: 1.55;
+  margin-bottom: 24px;
 }
 
 .error-desc {
-  font-size: 0.92rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
   color: #991B1B;
   background: #FEF2F2;
   border: 1px solid #FCA5A5;
-  padding: 12px 16px;
-  border-radius: 10px;
-  margin-bottom: 24px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  margin-bottom: 20px;
   width: 100%;
 }
 
 .primary-btn {
-  background: #074139;
-  color: #CAEDE5;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 32px;
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  background: #000000;
+  color: #FFFFFF;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 12px 28px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1);
-  box-shadow: 0 8px 24px rgba(7, 65, 57, 0.25);
+  transition: all 0.2s ease;
 }
 
 .primary-btn:hover {
-  background: #052e28;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(7, 65, 57, 0.35);
+  background: #FF4500;
+  border-color: #FF4500;
+  transform: translateY(-1px);
 }
 
 .btn-arrow {
@@ -337,20 +336,21 @@ const goToDashboard = () => {
 
 .resend-box {
   width: 100%;
-  background: #F9FCFB;
-  border: 1.5px solid rgba(7, 65, 57, 0.16);
-  border-radius: 14px;
-  padding: 20px;
-  margin-bottom: 20px;
+  background: #FAFAFA;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
   text-align: left;
 }
 
 .resend-label {
-  font-size: 0.78rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
   font-weight: 700;
-  color: #074139;
+  color: #000000;
   letter-spacing: 0.04em;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .resend-form {
@@ -360,65 +360,68 @@ const goToDashboard = () => {
 
 .input-field {
   flex: 1;
-  padding: 10px 14px;
+  padding: 9px 12px;
   background: #FFFFFF;
-  border: 1.5px solid rgba(7, 65, 57, 0.2);
-  border-radius: 8px;
-  color: #074139;
+  border: 1px solid #DDDDDD;
+  border-radius: 6px;
+  color: #000000;
+  font-family: var(--font-mono, monospace);
   font-size: 0.88rem;
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: #074139;
-  box-shadow: 0 0 0 3px rgba(162, 241, 223, 0.45);
+  border-color: #000000;
 }
 
 .secondary-btn {
-  background: #CAEDE5;
-  border: 1.5px solid #074139;
-  color: #074139;
-  border-radius: 8px;
-  padding: 10px 18px;
+  background: #000000;
+  border: 1px solid #000000;
+  color: #FFFFFF;
+  border-radius: 6px;
+  padding: 9px 16px;
+  font-family: var(--font-mono, monospace);
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .secondary-btn:hover:not(:disabled) {
-  background: #074139;
-  color: #CAEDE5;
+  background: #FF4500;
+  border-color: #FF4500;
 }
 
 .secondary-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
 .resend-success-msg {
-  font-size: 0.8rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
   font-weight: 600;
-  color: #074139;
-  margin-top: 10px;
+  color: #2E7D32;
+  margin-top: 8px;
 }
 
 .text-link {
   background: transparent;
   border: none;
-  color: #074139;
+  color: #000000;
+  font-family: var(--font-mono, monospace);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
   text-decoration: underline;
-  margin-top: 10px;
-  transition: opacity 0.2s;
+  margin-top: 8px;
+  transition: color 0.2s ease;
 }
 
 .text-link:hover {
-  opacity: 0.75;
+  color: #FF4500;
 }
 </style>

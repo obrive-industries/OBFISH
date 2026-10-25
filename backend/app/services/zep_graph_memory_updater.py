@@ -23,6 +23,24 @@ from ..utils.zep import (
 logger = get_logger('brain.zep_graph_memory_updater')
 
 
+class ZepIngestionIncompleteError(RuntimeError):
+    """The drain finished, but some activity batches were rejected by Zep.
+
+    The simulation itself ran to completion; only the graph projection of it is
+    partial. It subclasses RuntimeError so every existing broad handler keeps
+    catching it, while callers that decide the terminal run status can tell this
+    apart from a drain that failed structurally (worker timeout, unexpected
+    error) and must stay retryable.
+    """
+
+    def __init__(self, failed_batches: int):
+        self.failed_batches = failed_batches
+        super().__init__(
+            f"{failed_batches} Zep activity batch(es) failed; "
+            "simulation graph ingestion is incomplete"
+        )
+
+
 @dataclass
 class AgentActivity:
     """Agent活动记录"""
@@ -325,10 +343,7 @@ class ZepGraphMemoryUpdater:
         self._flush_remaining(deadline=deadline)
 
         if self._failed_batches:
-            raise RuntimeError(
-                f"{len(self._failed_batches)} Zep activity batch(es) failed; "
-                "simulation graph ingestion is incomplete"
-            )
+            raise ZepIngestionIncompleteError(len(self._failed_batches))
 
         self._wait_for_pending_episodes(deadline=deadline)
         

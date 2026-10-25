@@ -118,6 +118,7 @@
 <script setup>
 import { onMounted, onUnmounted, watch } from 'vue'
 import billingStore from '../store/billing'
+import authStore from '../store/auth'
 
 const state = billingStore.state
 
@@ -127,6 +128,10 @@ const selectInterval = (interval) => billingStore.setInterval(interval)
 
 const choose = (plan) => {
   if (!state.configured || state.checkoutLoading) return
+  if (!authStore.isAuthenticated.value) {
+    authStore.openAuthModal('login', 'Please sign in to choose a subscription plan.')
+    return
+  }
   // Console listeners resume the interrupted Start Engine flow after purchase.
   billingStore.subscribe(plan.id)
 }

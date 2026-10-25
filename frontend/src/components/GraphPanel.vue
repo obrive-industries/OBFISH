@@ -286,7 +286,7 @@ const entityTypes = computed(() => {
   if (!props.graphData?.nodes) return []
   const typeMap = {}
   // 美观的颜色调色板
-  const colors = ['#074139', '#0e8574', '#004E89', '#7B2D8E', '#1A936F', '#2D728F', '#3498db', '#9b59b6', '#27ae60', '#3b82f6']
+  const colors = ['#000000', '#FF4500', '#2D728F', '#7B2D8E', '#1A936F', '#3498db', '#9b59b6', '#27ae60', '#e67e22', '#3b82f6']
   
   props.graphData.nodes.forEach(node => {
     const type = node.labels?.find(l => l !== 'Entity') || 'Entity'

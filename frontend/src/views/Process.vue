@@ -419,6 +419,8 @@ import { ref, computed, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { generateOntology, getProject, buildGraph, getTaskStatus, getGraphData } from '../api/graph'
 import { getPendingUpload, clearPendingUpload } from '../store/pendingUpload'
+import authStore from '../store/auth'
+import billingStore from '../store/billing'
 import * as d3 from 'd3'
 
 const route = useRoute()
@@ -616,12 +618,33 @@ const handleNewProject = async () => {
       await startBuildGraph()
     } else {
       error.value = response.error || 'Ontology generation failed'
+      ontologyProgress.value = null
+      if (
+        error.value?.includes('402') || 
+        error.value?.includes('Payment Required') ||
+        error.value?.includes('PLAN_')
+      ) {
+        billingStore.openPricing()
+      } else if (error.value?.includes('401')) {
+        authStore.openAuthModal('signin')
+      }
     }
   } catch (err) {
     console.error('Handle new project error:', err)
     error.value = 'Project initialization failed: ' + (err.message || 'Unknown error')
+    ontologyProgress.value = null
+    if (
+      err.message?.includes('402') ||
+      err.message?.includes('Payment Required') ||
+      String(err.code || '').startsWith('PLAN_')
+    ) {
+      billingStore.openPricing()
+    } else if (err.message?.includes('401') || err.code === 'MISSING_TOKEN') {
+      authStore.openAuthModal('signin')
+    }
   } finally {
     loading.value = false
+    ontologyProgress.value = null
   }
 }
 

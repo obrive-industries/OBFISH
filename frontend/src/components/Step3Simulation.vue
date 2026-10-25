@@ -974,23 +974,23 @@ onUnmounted(() => {
 }
 
 .action-btn.primary {
-  background: #074139;
+  background: #000000;
   color: #FFF;
 }
 
 .action-btn.primary:hover:not(:disabled) {
-  background: #0a574c;
+  background: #FF4500;
 }
 
 .action-btn.secondary {
-  background: #F0F7F6;
-  color: #074139;
-  border: 1px solid rgba(7, 65, 57, 0.2);
+  background: #F5F5F5;
+  color: #000000;
+  border: 1px solid #E0E0E0;
 }
 
 .action-btn.secondary:hover:not(:disabled) {
-  background: #E2ECE9;
-  border-color: #074139;
+  background: #EAEAEA;
+  border-color: #000000;
 }
 
 .action-btn.stop-btn {

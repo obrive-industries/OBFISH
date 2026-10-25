@@ -9,7 +9,8 @@ import warnings
 # 需要在所有其他导入之前设置
 warnings.filterwarnings("ignore", message=".*resource_tracker.*")
 
-from flask import Flask, request
+from flask import Flask, request, jsonify
+from werkzeug.exceptions import HTTPException
 from flask_cors import CORS
 
 from .config import Config
@@ -101,8 +102,9 @@ def create_app(config_class=Config):
         logger.info('Brain Backend starting...')
         logger.info("=" * 50)
     
-    # 启用CORS
-    CORS(app, resources={r"/api/*": {"origins": "*"}})
+    # 启用CORS（使用配置的白名单域名，支持携带凭据）
+    cors_origins = Config.get_cors_origins()
+    CORS(app, resources={r"/api/*": {"origins": cors_origins}}, supports_credentials=True)
     
     # 注册模拟进程清理函数（确保服务器关闭时终止所有模拟进程）
     from .services.simulation_runner import SimulationRunner
@@ -119,10 +121,81 @@ def create_app(config_class=Config):
             logger.debug(f"请求体: {request.get_json(silent=True)}")
     
     @app.after_request
-    def log_response(response):
+    def set_security_headers_and_log(response):
+        # 生产环境标准安全响应头
+        response.headers.setdefault('X-Content-Type-Options', 'nosniff')
+        response.headers.setdefault('X-Frame-Options', 'SAMEORIGIN')
+        response.headers.setdefault('X-XSS-Protection', '1; mode=block')
+        response.headers.setdefault('Referrer-Policy', 'strict-origin-when-cross-origin')
+
         logger = get_logger('brain.request')
         logger.debug(f"响应: {response.status_code}")
         return response
+
+    # 全局 JSON 错误处理（确保 /api/* 始终返回结构化 JSON 而非 HTML 错误页）
+    @app.errorhandler(400)
+    def bad_request(e):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                "success": False,
+                "error": getattr(e, "description", "Bad Request"),
+                "code": "BAD_REQUEST"
+            }), 400
+        return e
+
+    @app.errorhandler(404)
+    def not_found(e):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                "success": False,
+                "error": "Endpoint or resource not found",
+                "code": "NOT_FOUND"
+            }), 404
+        return e
+
+    @app.errorhandler(405)
+    def method_not_allowed(e):
+        if request.path.startswith('/api/'):
+            return jsonify({
+                "success": False,
+                "error": "Method Not Allowed",
+                "code": "METHOD_NOT_ALLOWED"
+            }), 405
+        return e
+
+    @app.errorhandler(500)
+    def internal_error(e):
+        logger = get_logger('brain.app')
+        logger.error(f"Internal error on {request.path}: {e}", exc_info=True)
+        if request.path.startswith('/api/'):
+            return jsonify({
+                "success": False,
+                "error": "Internal Server Error",
+                "code": "INTERNAL_SERVER_ERROR"
+            }), 500
+        return e
+
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        if isinstance(e, HTTPException):
+            if request.path.startswith('/api/'):
+                return jsonify({
+                    "success": False,
+                    "error": e.description,
+                    "code": f"HTTP_{e.code}"
+                }), e.code
+            return e
+
+        logger = get_logger('brain.app')
+        logger.error(f"Unhandled exception on {request.path}: {e}", exc_info=True)
+        if request.path.startswith('/api/'):
+            desc = str(e) if app.config.get('DEBUG') else "An unexpected error occurred."
+            return jsonify({
+                "success": False,
+                "error": desc,
+                "code": "UNEXPECTED_ERROR"
+            }), 500
+        raise e
     
     # 注册蓝图
     from .api import graph_bp, simulation_bp, report_bp

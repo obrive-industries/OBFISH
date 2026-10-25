@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import i18n from './i18n'
+import './assets/mirofish/index-D-NCNXWW.clean.css'
 
 const app = createApp(App)
 

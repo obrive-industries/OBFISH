@@ -10,12 +10,12 @@ const FREE_ENTITLEMENT = {
   interval: null,
   is_admin: false,
   runs_used: 0,
-  runs_limit: 0,
-  max_rounds: null,
+  runs_limit: 1,
+  max_rounds: 5,
   period_end: null,
   renews_at: null,
   cancel_at_period_end: false,
-  can_start: false,
+  can_start: true,
   unlimited: false,
   configured: false
 }

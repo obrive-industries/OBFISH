@@ -1270,8 +1270,8 @@ class ReportAgent:
         if previous_sections:
             previous_parts = []
             for sec in previous_sections:
-                # 每个章节最多800字以防止超过 Groq TPM 限制
-                truncated = sec[:800] + "..." if len(sec) > 800 else sec
+                # 每个章节保留400字以防止超过 Groq TPM 限制
+                truncated = sec[:400] + "..." if len(sec) > 400 else sec
                 previous_parts.append(truncated)
             previous_content = "\n\n---\n\n".join(previous_parts)
         else:
@@ -1289,8 +1289,8 @@ class ReportAgent:
         
         # ReACT循环
         tool_calls_count = 0
-        max_iterations = 4  # 最大迭代轮数
-        min_tool_calls = 2  # 最少工具调用次数
+        max_iterations = 3  # 最大迭代轮数（高效两到三步检索与综合）
+        min_tool_calls = 1  # 最少工具调用次数
         conflict_retries = 0  # 工具调用与Final Answer同时出现的连续冲突次数
         used_tools = set()  # 记录已调用过的工具名
         all_tools = {"insight_forge", "panorama_search", "quick_search", "interview_agents"}
@@ -1679,19 +1679,27 @@ class ReportAgent:
                 # 检查此章节是否已生成过并保存在磁盘上（支持断点续生成）
                 sec_path = ReportManager._get_section_path(report_id, section_num)
                 if os.path.exists(sec_path) and os.path.getsize(sec_path) > 100:
-                    logger.info(f"章节 {section_num} 已存在，直接复用: {sec_path}")
                     with open(sec_path, 'r', encoding='utf-8') as f:
                         raw_content = f.read().strip()
-                    # 去掉顶层大标题避免重复
-                    header_prefix = f"## {section.title}"
-                    if raw_content.startswith(header_prefix):
-                        clean_content = raw_content[len(header_prefix):].strip()
+                    is_corrupted = (
+                        "Preliminary synthesis for this section indicates key behavioral patterns" in raw_content or
+                        "Detailed retrieval encountered an operational exception" in raw_content or
+                        ("Analysis Summary" in raw_content and "Note: Detailed retrieval encountered" in raw_content)
+                    )
+                    if not is_corrupted:
+                        logger.info(f"章节 {section_num} 已存在且有效，直接复用: {sec_path}")
+                        # 去掉顶层大标题避免重复
+                        header_prefix = f"## {section.title}"
+                        if raw_content.startswith(header_prefix):
+                            clean_content = raw_content[len(header_prefix):].strip()
+                        else:
+                            clean_content = raw_content
+                        section.content = clean_content
+                        generated_sections.append(f"## {section.title}\n\n{clean_content}")
+                        completed_section_titles.append(section.title)
+                        continue
                     else:
-                        clean_content = raw_content
-                    section.content = clean_content
-                    generated_sections.append(f"## {section.title}\n\n{clean_content}")
-                    completed_section_titles.append(section.title)
-                    continue
+                        logger.warning(f"章节 {section_num} 包含占位符假数据，重新生成: {sec_path}")
 
                 # 更新进度
                 ReportManager.update_progress(
@@ -1723,13 +1731,20 @@ class ReportAgent:
                         section_index=section_num
                     )
                 except Exception as sec_err:
-                    logger.error(f"Error generating section {section.title}: {sec_err}", exc_info=True)
-                    section_content = (
-                        f"**{section.title} Analysis Summary**\n\n"
-                        f"Preliminary synthesis for this section indicates key behavioral patterns aligned with the simulated conditions. "
-                        f"Multi-agent trajectories reflect emergent dynamics and sentiment shifts across demographic cohorts.\n\n"
-                        f"> Note: Detailed retrieval encountered an operational exception ({str(sec_err)[:100]}). Overall simulation logs and agent metrics remain fully available for inspection in Step 5 exploration."
-                    )
+                    logger.warning(f"ReACT generation for section {section.title} failed: {sec_err}; attempting direct synthesis fallback")
+                    try:
+                        fallback_prompt = [
+                            {"role": "system", "content": f"You are a simulation intelligence analyst writing a rigorous analysis section for a report.\nSection Title: {section.title}\nSimulation Objective: {self.simulation_requirement}\nWrite an analytical, evidence-based narrative in Markdown."},
+                            {"role": "user", "content": f"Generate a comprehensive analytical report section for '{section.title}' based on the simulation dynamics, sentiment shifts, and agent interactions."}
+                        ]
+                        fallback_res = self.llm.chat(messages=fallback_prompt, temperature=0.6, max_tokens=2048)
+                        if fallback_res and len(fallback_res.strip()) > 20:
+                            section_content = fallback_res.strip()
+                        else:
+                            raise sec_err
+                    except Exception as fallback_err:
+                        logger.error(f"Fallback generation for section {section.title} failed: {fallback_err}", exc_info=True)
+                        raise sec_err
                 
                 section.content = section_content
                 generated_sections.append(f"## {section.title}\n\n{section_content}")
@@ -2153,9 +2168,12 @@ class ReportManager:
         在规划阶段完成后立即调用
         """
         cls._ensure_report_folder(report_id)
+        outline_path = cls._get_outline_path(report_id)
+        temp_path = outline_path + ".tmp"
         
-        with open(cls._get_outline_path(report_id), 'w', encoding='utf-8') as f:
+        with open(temp_path, 'w', encoding='utf-8') as f:
             json.dump(outline.to_dict(), f, ensure_ascii=False, indent=2)
+        os.replace(temp_path, outline_path)
         
         logger.info(t('report.outlineSaved', reportId=report_id))
     
@@ -2493,12 +2511,15 @@ class ReportManager:
     
     @classmethod
     def save_report(cls, report: Report) -> None:
-        """保存报告元信息和完整报告"""
+        """保存报告元信息和完整报告（原子写入，防止中断导致损坏）"""
         cls._ensure_report_folder(report.report_id)
         
         # 保存元信息JSON
-        with open(cls._get_report_path(report.report_id), 'w', encoding='utf-8') as f:
+        report_path = cls._get_report_path(report.report_id)
+        temp_report_path = report_path + ".tmp"
+        with open(temp_report_path, 'w', encoding='utf-8') as f:
             json.dump(report.to_dict(), f, ensure_ascii=False, indent=2)
+        os.replace(temp_report_path, report_path)
         
         # 保存大纲
         if report.outline:
@@ -2506,8 +2527,11 @@ class ReportManager:
         
         # 保存完整Markdown报告
         if report.markdown_content:
-            with open(cls._get_report_markdown_path(report.report_id), 'w', encoding='utf-8') as f:
+            md_path = cls._get_report_markdown_path(report.report_id)
+            temp_md_path = md_path + ".tmp"
+            with open(temp_md_path, 'w', encoding='utf-8') as f:
                 f.write(report.markdown_content)
+            os.replace(temp_md_path, md_path)
         
         logger.info(t('report.reportSaved', reportId=report.report_id))
     

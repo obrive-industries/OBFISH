@@ -132,34 +132,30 @@ const goToHome = () => {
 <style scoped>
 .reset-page {
   min-height: 100vh;
-  background: linear-gradient(
-    135deg,
-    #caede5 0%,
-    #beeee3 35%,
-    #b2f0e1 70%,
-    #98f2dd 100%
-  );
+  background: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1.2px, transparent 1.2px);
+  background-size: 24px 24px;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 24px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  color: #074139;
+  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
+  color: #000000;
 }
 
 .reset-card {
   background: #FFFFFF;
-  border-radius: 24px;
-  box-shadow: 0 20px 50px rgba(7, 65, 57, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
   width: 100%;
   max-width: 480px;
-  padding: 44px 40px;
-  border: 1.5px solid rgba(7, 65, 57, 0.18);
+  padding: 40px 36px;
+  border: 1px solid #CCCCCC;
 }
 
 .reset-header {
   text-align: center;
-  margin-bottom: 28px;
+  margin-bottom: 24px;
 }
 
 .brand-link {
@@ -168,92 +164,97 @@ const goToHome = () => {
 }
 
 .brand-logo {
-  height: 42px;
-  margin-bottom: 12px;
+  height: 38px;
+  margin-bottom: 10px;
 }
 
 .brand-title {
-  font-size: 1.6rem;
-  letter-spacing: 0.05em;
-  color: #074139;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.55rem;
+  letter-spacing: -0.01em;
+  color: #000000;
   margin: 0;
-  font-weight: 800;
+  font-weight: 700;
 }
 
 .brand-sub {
-  font-size: 0.75rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.74rem;
   font-weight: 600;
-  color: #526361;
-  letter-spacing: 0.08em;
+  color: #666666;
+  letter-spacing: 0.06em;
   margin-top: 4px;
 }
 
 .reset-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .form-label {
+  font-family: var(--font-mono, monospace);
   font-size: 0.78rem;
   font-weight: 700;
-  color: #074139;
+  color: #000000;
   letter-spacing: 0.04em;
 }
 
 .input-field {
-  padding: 12px 14px;
-  background: #FFFFFF;
-  border: 1.5px solid rgba(7, 65, 57, 0.2);
-  border-radius: 10px;
-  color: #074139;
-  font-size: 0.92rem;
+  padding: 10px 14px;
+  background: #FAFAFA;
+  border: 1px solid #DDDDDD;
+  border-radius: 6px;
+  color: #000000;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.88rem;
   outline: none;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: #074139;
-  box-shadow: 0 0 0 3px rgba(162, 241, 223, 0.45);
+  border-color: #000000;
+  background: #FFFFFF;
 }
 
 .error-banner {
   background: #FEF2F2;
   color: #991B1B;
-  padding: 12px 16px;
-  border-radius: 10px;
-  font-size: 0.85rem;
+  padding: 12px 14px;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
   border: 1px solid #FCA5A5;
 }
 
 .primary-btn {
-  background: #074139;
-  color: #CAEDE5;
-  border: none;
-  border-radius: 12px;
-  padding: 14px 28px;
-  font-size: 0.95rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
+  background: #000000;
+  color: #FFFFFF;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 12px 28px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1);
-  box-shadow: 0 8px 24px rgba(7, 65, 57, 0.25);
+  transition: all 0.2s ease;
 }
 
 .primary-btn:hover:not(:disabled) {
-  background: #052e28;
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px rgba(7, 65, 57, 0.35);
+  background: #FF4500;
+  border-color: #FF4500;
+  transform: translateY(-1px);
 }
 
 .primary-btn:disabled {
@@ -276,19 +277,20 @@ const goToHome = () => {
 .text-link {
   background: transparent;
   border: none;
-  color: #074139;
+  color: #000000;
+  font-family: var(--font-mono, monospace);
   font-size: 0.82rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
   text-align: center;
   margin-top: 6px;
-  transition: opacity 0.2s ease;
+  transition: color 0.2s ease;
   text-decoration: underline;
 }
 
 .text-link:hover {
-  opacity: 0.75;
+  color: #FF4500;
 }
 
 .state-container {
@@ -299,35 +301,35 @@ const goToHome = () => {
 }
 
 .status-icon {
-  width: 58px;
-  height: 58px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
   margin-bottom: 16px;
 }
 
 .success-icon {
-  background: #CAEDE5;
-  color: #074139;
-  border: 2px solid #074139;
-  box-shadow: 0 0 20px rgba(7, 65, 57, 0.15);
+  background: #000000;
+  color: #FFFFFF;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 .state-title {
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
   font-size: 1.35rem;
-  font-weight: 800;
-  color: #074139;
-  margin-bottom: 10px;
-  letter-spacing: 0.02em;
+  font-weight: 700;
+  color: #000000;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
 }
 
 .state-desc {
-  font-size: 0.95rem;
-  color: #526361;
+  font-size: 0.92rem;
+  color: #666666;
   margin-bottom: 24px;
   line-height: 1.5;
 }

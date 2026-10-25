@@ -4,7 +4,7 @@
     <header class="console-navbar">
       <div class="nav-left">
         <router-link to="/" class="brand-link" title="Return to Brain Home">
-          <img src="../assets/icons/obrive-logo.svg" alt="Brain Logo" class="brand-logo-img" />
+          <img src="../assets/icons/obrive-white-logo.svg" alt="Brain Logo" class="brand-logo-img" />
           <span class="brand-name font-microgramma">BRAIN</span>
           <span class="console-tag font-microgramma">CONSOLE</span>
         </router-link>
@@ -22,33 +22,15 @@
           <span v-if="authStore.isVerified.value" class="status-dot verified" title="Email Verified"></span>
           <span v-else class="status-dot unverified" title="Verification Pending"></span>
         </div>
+        <button v-else class="console-signin-btn font-microgramma" @click="authStore.openAuthModal('login')">
+          Sign In
+        </button>
 
         <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="link-obrive font-microgramma">
           Explore Obrive <span class="arrow">↗</span>
         </a>
       </div>
     </header>
-
-    <!-- Obrive Signature Mint Accent Gradient Hero Section (Clean & uncluttered, matching Landing Page Hero) -->
-    <section class="console-hero">
-      <div class="hero-container">
-        <!-- Category Badge Pill with Official RoundedBallIcon -->
-        <div class="brand-pill">
-          <RoundedBallIcon :width="14" :height="20" />
-          <span class="pill-text font-michroma">Predictive Console</span>
-        </div>
-
-        <!-- Main Title matching Landing Page Hero -->
-        <h1 class="hero-title font-microgramma">
-          Predictive Console
-        </h1>
-
-        <!-- Subtitle matching Landing Page Hero typography -->
-        <p class="hero-subtitle font-michroma">
-          Deploy multi-agent simulation swarms, upload reality seed documents, and stress-test strategic hypotheses before real-world execution.
-        </p>
-      </div>
-    </section>
 
     <!-- Main Workspace -->
     <main class="console-main">
@@ -72,12 +54,15 @@
         <div class="left-panel obrive-card">
           <div class="panel-badge">
             <span class="live-dot"></span>
-            <span class="font-microgramma">SYSTEM READY</span>
+            <span class="font-microgramma">■ SYSTEM READY // PREDICTIVE CONSOLE</span>
           </div>
 
-          <h2 class="panel-heading font-microgramma">System Ready</h2>
+          <h1 class="panel-heading font-microgramma">System Ready</h1>
           <p class="panel-sub">
             BRAIN is primed to explore possibilities, stress-test variables, and simulate potential strategic outcomes.
+          </p>
+          <p class="panel-sub-desc">
+            Deploy multi-agent simulation swarms, upload reality seed documents, and stress-test strategic hypotheses before real-world execution.
           </p>
 
           <!-- System Readiness Metrics Row -->
@@ -201,7 +186,7 @@
                 </div>
               </div>
               <button type="button" class="plan-card-btn font-microgramma">
-                {{ billingStore.canStart.value ? 'MANAGE' : 'VIEW PLANS →' }}
+                {{ plan.unlimited ? 'ADMIN' : (billingStore.canStart.value ? 'MANAGE' : 'VIEW PLANS →') }}
               </button>
             </div>
 
@@ -371,14 +356,28 @@ const planIcon = computed(() => {
 
 const planTitle = computed(() => {
   if (plan.value.unlimited) return 'ADMIN ACCESS — UNLIMITED RUNS'
-  if (plan.value.plan === 'free') return 'FREE DEMO — SAMPLE REPORT ONLY'
+  if (plan.value.plan === 'free') {
+    const used = plan.value.runs_used || 0
+    const limit = plan.value.runs_limit || 1
+    if (used < limit) {
+      return 'FREE DEMO — 1 LIVE RUN AVAILABLE'
+    }
+    return 'FREE DEMO COMPLETED — PLAN REQUIRED'
+  }
   const remaining = Math.max(0, (plan.value.runs_limit || 0) - (plan.value.runs_used || 0))
   return `${plan.value.plan_name.toUpperCase()} PLAN — ${remaining} RUN${remaining === 1 ? '' : 'S'} LEFT`
 })
 
 const planSubtitle = computed(() => {
   if (plan.value.unlimited) return 'All simulation limits bypassed'
-  if (plan.value.plan === 'free') return 'Choose a plan to run your own scenarios'
+  if (plan.value.plan === 'free') {
+    const used = plan.value.runs_used || 0
+    const limit = plan.value.runs_limit || 1
+    if (used < limit) {
+      return 'Run your first live scenario (up to 5 rounds) for free'
+    }
+    return 'Choose a plan to continue running simulations'
+  }
   const rounds = plan.value.max_rounds ? `${plan.value.max_rounds} rounds per run` : 'Unlimited rounds'
   const renews = plan.value.renews_at ? new Date(plan.value.renews_at).toLocaleDateString() : ''
   return renews ? `${rounds} · renews ${renews}` : rounds
@@ -500,26 +499,26 @@ const handleStartEngine = async () => {
 <style scoped>
 .console-container {
   min-height: 100vh;
-  background-color: #F8FCFA;
-  color: #074139;
+  background-color: #FFFFFF;
+  color: #000000;
   display: flex;
   flex-direction: column;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
 }
 
-/* Minimal Application Header (Full-width sticky) */
+/* Minimal Application Header (MiroFish 60px black bar) */
 .console-navbar {
+  height: 60px;
+  background: #000000;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 14px 32px;
-  background: rgba(255, 255, 255, 0.94);
-  border-bottom: 1px solid rgba(7, 65, 57, 0.12);
-  backdrop-filter: blur(14px);
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   position: sticky;
   top: 0;
-  z-index: 50;
-  box-shadow: 0 2px 12px rgba(7, 65, 57, 0.04);
+  z-index: 100;
 }
 
 .nav-left {
@@ -533,29 +532,31 @@ const handleStartEngine = async () => {
   align-items: center;
   gap: 10px;
   text-decoration: none;
-  color: #074139;
+  color: #FFFFFF;
 }
 
 .brand-logo-img {
-  height: 28px;
+  height: 24px;
   width: auto;
 }
 
 .brand-name {
-  font-weight: 800;
-  font-size: 1.15rem;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-weight: 700;
+  font-size: 1.1rem;
   letter-spacing: 0.05em;
-  color: #074139;
+  color: #FFFFFF;
 }
 
 .console-tag {
+  font-family: var(--font-mono, monospace);
   font-size: 0.65rem;
   font-weight: 700;
-  padding: 3px 8px;
-  background: rgba(162, 241, 223, 0.4);
-  border: 1px solid rgba(7, 65, 57, 0.22);
-  color: #074139;
-  border-radius: 6px;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  border-radius: 4px;
   letter-spacing: 0.08em;
 }
 
@@ -566,8 +567,9 @@ const handleStartEngine = async () => {
 }
 
 .console-nav-link {
-  color: #526361;
-  font-size: 0.78rem;
+  font-family: var(--font-mono, monospace);
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;
   transition: color 0.2s ease;
@@ -575,7 +577,7 @@ const handleStartEngine = async () => {
 }
 
 .console-nav-link:hover {
-  color: #074139;
+  color: #FFFFFF;
 }
 
 .nav-right {
@@ -601,6 +603,24 @@ const handleStartEngine = async () => {
   border-color: rgba(255, 255, 255, 0.35);
 }
 
+.console-signin-btn {
+  padding: 6px 16px;
+  background: #FFFFFF;
+  color: #000000;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.console-signin-btn:hover {
+  background: #A2F1DF;
+  box-shadow: 0 0 16px rgba(162, 241, 223, 0.4);
+}
+
 .avatar {
   width: 24px;
   height: 24px;
@@ -615,9 +635,10 @@ const handleStartEngine = async () => {
 }
 
 .user-name {
-  font-size: 0.85rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
   font-weight: 600;
-  color: #074139;
+  color: #FFFFFF;
 }
 
 .status-dot {
@@ -627,167 +648,52 @@ const handleStartEngine = async () => {
 }
 
 .status-dot.verified {
-  background: #074139;
-  box-shadow: 0 0 6px rgba(7, 65, 57, 0.4);
+  background: #00E5A3;
+  box-shadow: 0 0 6px rgba(0, 229, 163, 0.6);
 }
 
 .status-dot.unverified {
-  background: #f59e0b;
-}
-
-.btn-signin {
-  background: transparent;
-  border: 1px solid #074139;
-  color: #074139;
-  padding: 7px 16px;
-  border-radius: 9999px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.btn-signin:hover {
-  background: #074139;
-  color: #CAEDE5;
+  background: #FF4500;
 }
 
 .link-obrive {
-  color: #074139;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  border-radius: 9999px;
-  background: rgba(162, 241, 223, 0.35);
+  gap: 6px;
+  padding: 6px 14px;
+  background: #FFFFFF;
+  color: #000000;
+  text-decoration: none;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  font-weight: 600;
+  border-radius: 8px;
   transition: all 0.2s ease;
 }
 
 .link-obrive:hover {
-  background: #074139;
-  color: #CAEDE5;
+  background: #E5E5E5;
 }
 
-/* Obrive Mint Accent Gradient Hero Section (Clean & spacious, matching Landing Page Hero) */
-.console-hero {
-  position: relative;
-  background: linear-gradient(
-    90deg,
-    #caede5 0%,
-    #beeee3 25%,
-    #b2f0e1 50%,
-    #a5f1df 75%,
-    #98f2dd 100%
-  );
-  padding: 76px 24px 68px;
-  border-bottom: 1px solid rgba(7, 65, 57, 0.12);
-  overflow: hidden;
-}
-
-.hero-container {
-  max-width: 920px;
-  margin: 0 auto;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.brand-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 6px 16px;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(7, 65, 57, 0.2);
-  border-radius: 9999px;
-  margin-bottom: 22px;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.05);
-}
-
-.pill-text {
-  font-family: 'Michroma', sans-serif !important;
-  font-size: 0.72rem;
-  font-weight: 700;
-  color: #074139;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-}
-
-.hero-title {
-  font-family: 'Microgramma', 'Microgramma Bold', 'Michroma', sans-serif !important;
-  font-size: clamp(2.25rem, 4.2vw, 3.5rem);
-  font-weight: 800;
-  line-height: 1.16;
-  color: #074139;
-  margin: 0 0 20px 0;
-  letter-spacing: -0.01em;
-  text-transform: none;
-}
-
-.hero-subtitle {
-  font-family: 'Michroma', sans-serif !important;
-  font-size: clamp(0.875rem, 1.1vw, 1rem);
-  line-height: 1.75;
-  color: #074139;
-  opacity: 0.88;
-  max-width: 820px;
-  margin: 0 auto;
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  text-align: center;
-  text-wrap: balance;
-}
-
-/* System Readiness Metrics inside Left Panel */
-.metrics-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 28px;
-}
-
-.metric-card {
-  background: rgba(7, 65, 57, 0.035);
-  border: 1px solid rgba(7, 65, 57, 0.12);
-  border-radius: 12px;
-  padding: 12px 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  transition: all 0.2s ease;
-}
-
-.metric-card:hover {
-  background: rgba(7, 65, 57, 0.06);
-  border-color: rgba(7, 65, 57, 0.24);
-}
-
-.metric-value {
+.link-obrive .arrow {
+  font-family: sans-serif;
   font-size: 0.75rem;
-  font-weight: 800;
-  color: #074139;
-  letter-spacing: 0.04em;
+  opacity: 0.6;
 }
 
-.metric-label {
-  font-size: 0.7rem;
-  color: #526361;
-  line-height: 1.4;
-  font-weight: 500;
+.panel-sub-desc {
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: #888888;
+  margin-bottom: 24px;
 }
 
 /* Main Workspace */
 .console-main {
-  max-width: 1320px;
+  max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 44px 24px 80px;
+  padding: 36px 32px 80px;
   flex: 1;
 }
 
@@ -796,13 +702,14 @@ const handleStartEngine = async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #FFFBEB;
-  border: 1px solid #FCD34D;
+  background: #FFFDF0;
+  border: 1px solid #F0E4B0;
   padding: 14px 20px;
-  border-radius: 12px;
+  border-radius: 8px;
   margin-bottom: 28px;
-  color: #92400E;
-  font-size: 0.9rem;
+  color: #A08940;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
 }
 
 .banner-actions {
@@ -813,11 +720,12 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn-secondary {
-  background: #FEF3C7;
-  border: 1px solid #F59E0B;
-  color: #B45309;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  color: #666666;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
   font-weight: 600;
   font-size: 0.8rem;
   cursor: pointer;
@@ -825,15 +733,17 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn-secondary:hover:not(:disabled) {
-  background: #FDE68A;
+  background: #F5F5F5;
+  color: #000000;
 }
 
 .banner-btn {
-  background: #074139;
-  border: none;
-  color: #CAEDE5;
+  background: #000000;
+  border: 1px solid #000000;
+  color: #FFFFFF;
   padding: 6px 14px;
-  border-radius: 8px;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
   font-weight: 600;
   font-size: 0.8rem;
   cursor: pointer;
@@ -841,38 +751,32 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn:hover {
-  background: #0d5c52;
+  background: #FF4500;
+  border-color: #FF4500;
 }
 
 /* Console Grid */
 .console-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 28px;
-  align-items: stretch;
+  grid-template-columns: 0.88fr 1.12fr;
+  gap: 36px;
+  align-items: start;
   margin-bottom: 60px;
 }
 
 /* Obrive Cards */
 .obrive-card {
   background: #FFFFFF;
-  border: 1.5px solid rgba(7, 65, 57, 0.16);
-  border-radius: 20px;
-  box-shadow: 0 4px 20px rgba(7, 65, 57, 0.05);
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.obrive-card:hover {
-  border-color: rgba(7, 65, 57, 0.35);
-  box-shadow: 0 8px 30px rgba(7, 65, 57, 0.08);
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
 }
 
 /* Left Panel */
 .left-panel {
-  padding: 32px 28px;
+  padding: 28px 26px;
   display: flex;
   flex-direction: column;
-  height: 100%;
   box-sizing: border-box;
 }
 
@@ -880,43 +784,82 @@ const handleStartEngine = async () => {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 4px 12px;
-  background: rgba(162, 241, 223, 0.4);
-  border: 1px solid rgba(7, 65, 57, 0.2);
-  border-radius: 9999px;
-  font-size: 0.68rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
   font-weight: 700;
-  color: #074139;
-  margin-bottom: 20px;
+  color: #999999;
+  margin-bottom: 16px;
   width: fit-content;
 }
 
 .live-dot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #074139;
-  box-shadow: 0 0 6px rgba(7, 65, 57, 0.4);
+  background: #FF4500;
+  box-shadow: 0 0 6px rgba(255, 69, 0, 0.5);
 }
 
 .panel-heading {
-  font-size: 1.8rem;
-  font-weight: 800;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 1.85rem;
+  font-weight: 700;
   margin: 0 0 10px 0;
-  color: #074139;
-  letter-spacing: 0.02em;
+  color: #000000;
+  letter-spacing: -0.01em;
 }
 
 .panel-sub {
   font-size: 0.92rem;
   line-height: 1.6;
-  color: #526361;
-  margin: 0 0 28px 0;
+  color: #666666;
+  margin: 0 0 24px 0;
+}
+
+/* System Readiness Metrics inside Left Panel */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 24px;
+}
+
+.metric-card {
+  background: #FAFAFA;
+  border: 1px solid #E5E5E5;
+  border-radius: 8px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  transition: all 0.2s ease;
+}
+
+.metric-card:hover {
+  border-color: #000000;
+  background: #FFFFFF;
+}
+
+.metric-value {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: #000000;
+  letter-spacing: 0.04em;
+}
+
+.metric-label {
+  font-size: 0.7rem;
+  color: #666666;
+  line-height: 1.4;
+  font-weight: 450;
 }
 
 .workflow-box {
-  border-top: 1.5px solid rgba(7, 65, 57, 0.12);
-  padding-top: 24px;
+  border: 1px solid #E5E5E5;
+  border-radius: 10px;
+  padding: 24px;
+  background: #FAFAFA;
 }
 
 .workflow-header {
@@ -924,53 +867,45 @@ const handleStartEngine = async () => {
   align-items: center;
   gap: 8px;
   margin-bottom: 20px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: #999999;
 }
 
 .diamond-icon {
-  color: #074139;
-  font-size: 0.85rem;
-  font-weight: 800;
+  color: #000000;
+  font-size: 0.95rem;
+  line-height: 1;
 }
 
 .workflow-title {
-  font-size: 0.78rem;
-  font-weight: 800;
   letter-spacing: 0.08em;
-  color: #074139;
   text-transform: uppercase;
 }
 
 .workflow-steps-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 16px;
 }
 
 .console-step-item {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   align-items: flex-start;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: #F9FCFB;
-  border: 1px solid rgba(7, 65, 57, 0.1);
-  transition: all 0.25s ease;
-}
-
-.console-step-item:hover {
-  background: #F0FAF7;
-  border-color: rgba(7, 65, 57, 0.28);
-  transform: translateX(3px);
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .step-idx {
-  font-size: 0.85rem;
-  font-weight: 800;
-  color: #074139;
-  background: #CAEDE5;
-  padding: 4px 8px;
-  border-radius: 6px;
-  line-height: 1;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #000000;
+  opacity: 0.35;
+  padding: 0;
+  line-height: 1.2;
 }
 
 .step-meta {
@@ -978,17 +913,18 @@ const handleStartEngine = async () => {
 }
 
 .step-name {
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #074139;
-  margin: 0 0 4px 0;
-  letter-spacing: 0.02em;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #000000;
+  margin: 0 0 2px 0;
+  letter-spacing: -0.01em;
 }
 
 .step-detail {
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: #526361;
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: #666666;
   margin: 0;
 }
 
@@ -996,19 +932,20 @@ const handleStartEngine = async () => {
 .right-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
 }
 
 .console-box {
-  padding: 32px 28px;
+  border: 1px solid #CCCCCC;
+  padding: 12px;
+  background: #FFFFFF;
+  border-radius: 8px;
   display: flex;
   flex-direction: column;
-  gap: 24px;
-  height: 100%;
-  box-sizing: border-box;
+  gap: 16px;
 }
 
 .console-section {
+  padding: 12px 12px 0;
   display: flex;
   flex-direction: column;
 }
@@ -1017,61 +954,63 @@ const handleStartEngine = async () => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 
 .label-title {
-  font-size: 0.78rem;
-  font-weight: 800;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
-  color: #074139;
+  color: #666666;
 }
 
 .label-hint {
   font-size: 0.72rem;
-  color: #64748b;
-  font-family: 'JetBrains Mono', monospace;
+  color: #999999;
+  font-family: var(--font-mono, monospace);
 }
 
 .upload-dropzone {
-  min-height: 170px;
-  border: 2px dashed rgba(7, 65, 57, 0.25);
-  border-radius: 14px;
+  min-height: 80px;
+  border: 1px dashed #CCCCCC;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
+  padding: 14px 20px;
   cursor: pointer;
-  background: #F9FCFB;
-  transition: all 0.25s ease;
+  background: #FAFAFA;
+  transition: all 0.2s ease;
 }
 
 .upload-dropzone:hover,
 .upload-dropzone.drag-over {
-  border-color: #074139;
-  background: rgba(162, 241, 223, 0.25);
+  border-color: #000000;
+  background: #F5F5F5;
 }
 
 .upload-empty {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  text-align: center;
+  gap: 12px;
+  text-align: left;
 }
 
 .upload-icon-circle {
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
-  background: #CAEDE5;
-  border: 1.5px solid #074139;
-  color: #074139;
+  background: #000000;
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.2rem;
-  font-weight: 800;
-  margin-bottom: 12px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 0;
+  flex-shrink: 0;
   transition: transform 0.2s ease;
 }
 
@@ -1080,21 +1019,22 @@ const handleStartEngine = async () => {
 }
 
 .upload-text-bold {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #074139;
-  margin-bottom: 4px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #000000;
+  margin-bottom: 2px;
 }
 
 .upload-text-sub {
-  font-size: 0.8rem;
-  color: #526361;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.74rem;
+  color: #666666;
 }
 
 .file-chips-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
 }
 
@@ -1102,13 +1042,14 @@ const handleStartEngine = async () => {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  background: #EBF7F4;
-  border: 1.5px solid rgba(7, 65, 57, 0.25);
-  border-radius: 8px;
-  font-size: 0.85rem;
+  padding: 6px 12px;
+  background: #F0F0F0;
+  border: 1px solid #DDDDDD;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
   font-weight: 600;
-  color: #074139;
+  color: #000000;
 }
 
 .chip-name {
@@ -1121,7 +1062,7 @@ const handleStartEngine = async () => {
 .chip-remove {
   background: none;
   border: none;
-  color: #526361;
+  color: #666666;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0 2px;
@@ -1129,7 +1070,7 @@ const handleStartEngine = async () => {
 }
 
 .chip-remove:hover {
-  color: #ef4444;
+  color: #FF4500;
 }
 
 .console-section.input-section {

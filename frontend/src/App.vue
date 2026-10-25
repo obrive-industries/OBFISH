@@ -68,97 +68,87 @@ onUnmounted(() => {
   font-display: swap;
 }
 
-/* Obrive Design Tokens */
+/* MiroFish & Obrive Design Tokens */
 :root {
-  --obrive-primary: #074139;
-  --obrive-primary-dark: #052e28;
-  --obrive-primary-light: #0d5c52;
-  --obrive-accent: #a2f1df;
-  --obrive-accent-light: #caede5;
-  --obrive-accent-gradient: linear-gradient(
-    to right,
-    #caede5,
-    #beeee3,
-    #b2f0e1,
-    #a5f1df,
-    #98f2dd
-  );
-  --obrive-obsidian: #070b0e;
-  --obrive-surface: #0c1216;
-  --obrive-card: rgba(12, 18, 22, 0.75);
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-orange: #ff4500;
+  --color-orange-hover: #ff5722;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
+
+  /* Obrive compatibility tokens */
+  --obrive-primary: #000000;
+  --obrive-primary-dark: #000000;
+  --obrive-primary-light: #18181b;
+  --obrive-accent: #ffffff;
+  --obrive-accent-light: #f4f4f5;
   --obrive-emerald: #00E5A3;
-  --obrive-border: rgba(7, 65, 57, 0.18);
-  --obrive-border-focus: rgba(7, 65, 57, 0.5);
-  --obrive-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+  --obrive-border: rgba(255, 255, 255, 0.12);
+  --obrive-border-focus: rgba(255, 255, 255, 0.4);
+  --obrive-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
 }
 
 /* Global Reset */
 * {
-  margin: 0;
-  padding: 0;
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: rgba(7, 65, 57, 0.25) transparent;
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   background-color: #ffffff;
-  color: #074139;
+  color: #000000;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 #app {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
 }
 
-/* Obrive Typography Classes */
+/* Typography Classes */
 .font-microgramma {
-  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-weight: 800;
-  letter-spacing: 0;
+  font-family: 'Space Grotesk', 'Inter', sans-serif !important;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 .font-michroma {
-  font-family: 'Michroma', sans-serif !important;
+  font-family: 'Inter', sans-serif !important;
 }
 
-/* Obrive Gradients */
-.bg-gradient-accent {
-  background: var(--obrive-accent-gradient);
+.font-mono {
+  font-family: var(--font-mono) !important;
 }
 
-/* Obrive Signature Hover Cell Effect */
+/* Obrive Cell Effect (Adapted to MiroFish aesthetic) */
 .obrive-cell {
   position: relative;
   overflow: hidden;
-  border: 1px solid rgba(7, 65, 57, 0.22);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 0.75rem;
-  transition: color 0.4s ease, border-color 0.4s ease;
+  transition: all 0.25s ease;
   z-index: 1;
 }
 
-.obrive-cell::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background-color: #074139;
-  transform: scaleY(0);
-  transform-origin: center;
-  transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-  z-index: -1;
-}
-
-.obrive-cell:hover::before {
-  transform: scaleY(1);
-}
-
 .obrive-cell:hover {
-  color: #ffffff !important;
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 /* Obrive Button with Sliding Icons */

@@ -57,14 +57,35 @@ def _subscription(user, plan="starter", interval="monthly", status="active", day
     return subscription
 
 
-def test_free_user_has_no_runs(app_ctx):
+def test_free_user_gets_one_demo_run(app_ctx):
     user = _user("free@example.com")
     entitlement = get_entitlement(user)
 
     assert entitlement["plan"] == "free"
-    assert entitlement["runs_limit"] == 0
-    assert entitlement["can_start"] is False
-    assert deny_reason(user, entitlement)[0] == "PLAN_REQUIRED"
+    assert entitlement["runs_limit"] == 1
+    assert entitlement["runs_used"] == 0
+    assert entitlement["max_rounds"] == 5
+    assert entitlement["can_start"] is True
+    assert deny_reason(user, entitlement) is None
+    assert active_plan_denial(user) is None
+    assert clamp_rounds(user, 10) == 5
+
+    # Consumes the 1 free demo run:
+    assert record_run(user, "proj_free_1") is True
+    # Idempotent call on same project succeeds:
+    assert record_run(user, "proj_free_1") is True
+    # Authorized to continue working on that project:
+    assert active_plan_denial(user, "proj_free_1") is None
+
+    # After using the 1 free run:
+    entitlement_after = get_entitlement(user)
+    assert entitlement_after["runs_used"] == 1
+    assert entitlement_after["can_start"] is False
+    assert deny_reason(user, entitlement_after)[0] == "PLAN_REQUIRED"
+
+    # Second project cannot be started:
+    assert record_run(user, "proj_free_2") is False
+    assert active_plan_denial(user, "proj_free_2")[0] == "PLAN_REQUIRED"
 
 
 def test_admin_is_unlimited(app_ctx):
@@ -78,17 +99,29 @@ def test_admin_is_unlimited(app_ctx):
     assert record_run(user, "proj_admin") is True
 
 
+def test_admin_via_env_email(app_ctx, monkeypatch):
+    monkeypatch.setattr(Config, "ADMIN_EMAILS_ENV", "env_admin@example.com, other@example.com")
+    user = _user("env_admin@example.com", role="user")
+    entitlement = get_entitlement(user)
+
+    assert entitlement["is_admin"] is True
+    assert entitlement["unlimited"] is True
+    assert entitlement["max_rounds"] is None
+    assert active_plan_denial(user) is None
+    assert record_run(user, "proj_env_admin") is True
+
+
 def test_starter_limits_and_idempotent_consumption(app_ctx):
     user = _user("starter@example.com")
     _subscription(user, plan="starter", interval="monthly")
 
     entitlement = get_entitlement(user)
     assert entitlement["runs_limit"] == 3
-    assert entitlement["max_rounds"] == 10
+    assert entitlement["max_rounds"] == 15
     assert entitlement["can_start"] is True
-    assert clamp_rounds(user, 50) == 10
+    assert clamp_rounds(user, 50) == 15
     assert clamp_rounds(user, 4) == 4
-    assert clamp_rounds(user, None) == 10
+    assert clamp_rounds(user, None) == 15
 
     assert record_run(user, "proj_1") is True
     assert record_run(user, "proj_1") is True
@@ -105,8 +138,8 @@ def test_annual_allotment_and_round_cap(app_ctx):
 
     entitlement = get_entitlement(user)
     assert entitlement["runs_limit"] == 120
-    assert entitlement["max_rounds"] == 25
-    assert clamp_rounds(user, 100) == 25
+    assert entitlement["max_rounds"] == 40
+    assert clamp_rounds(user, 100) == 40
 
 
 def test_usage_outside_period_is_ignored(app_ctx):

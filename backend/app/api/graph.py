@@ -131,6 +131,16 @@ def allowed_file(filename: str) -> bool:
     return ext in Config.ALLOWED_EXTENSIONS
 
 
+def _can_access_project(project, user) -> bool:
+    if not project or not project.user_id:
+        return True
+    if not user:
+        return False
+    if getattr(user, 'role', 'user') == 'admin':
+        return True
+    return str(project.user_id) == str(getattr(user, 'id', ''))
+
+
 # ============== 项目管理接口 ==============
 
 @graph_bp.route('/project/<project_id>', methods=['GET'])
@@ -146,9 +156,9 @@ def get_project(project_id: str):
             "error": t('api.projectNotFound', id=project_id)
         }), 404
 
-    from ..utils.auth_middleware import get_current_user_id
-    user_id = get_current_user_id()
-    if project.user_id and project.user_id != user_id:
+    from ..utils.auth_middleware import get_current_user
+    user = get_current_user()
+    if not _can_access_project(project, user):
         return jsonify({
             "success": False,
             "error": "Access denied"
@@ -194,9 +204,9 @@ def _delete_project_impl(project_id: str):
             "error": t('api.projectNotFound', id=project_id)
         }), 404
 
-    from ..utils.auth_middleware import get_current_user_id
-    user_id = get_current_user_id()
-    if project.user_id and project.user_id != user_id:
+    from ..utils.auth_middleware import get_current_user
+    user = get_current_user()
+    if not _can_access_project(project, user):
         return jsonify({
             "success": False,
             "error": "Access denied"
@@ -250,9 +260,9 @@ def _reset_project_impl(project_id: str):
             "error": t('api.projectNotFound', id=project_id)
         }), 404
 
-    from ..utils.auth_middleware import get_current_user_id
-    user_id = get_current_user_id()
-    if project.user_id and project.user_id != user_id:
+    from ..utils.auth_middleware import get_current_user
+    user = get_current_user()
+    if not _can_access_project(project, user):
         return jsonify({
             "success": False,
             "error": "Access denied"

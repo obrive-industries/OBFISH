@@ -160,6 +160,50 @@ class SimulationManager:
         sim_dir = os.path.join(self.SIMULATION_DATA_DIR, simulation_id)
         os.makedirs(sim_dir, exist_ok=True)
         return sim_dir
+
+    def describe_profiles(self, simulation_id: str) -> tuple:
+        """Count the generated agent profiles and derive their entity types.
+
+        The profile files are written by prepare and survive restarts, so they
+        are the evidence used when ``state.json`` has to be reconstructed; the
+        counts and types are never invented.
+
+        Returns:
+            (profile_count, sorted entity types)
+        """
+        sim_dir = os.path.join(self.SIMULATION_DATA_DIR, simulation_id)
+        profiles: List[Dict[str, Any]] = []
+
+        reddit_path = os.path.join(sim_dir, "reddit_profiles.json")
+        if os.path.exists(reddit_path):
+            try:
+                with open(reddit_path, 'r', encoding='utf-8') as f:
+                    loaded = json.load(f)
+                if isinstance(loaded, list):
+                    profiles = [p for p in loaded if isinstance(p, dict)]
+            except (OSError, json.JSONDecodeError) as error:
+                logger.warning(f"读取人设文件失败: {reddit_path}, error={error}")
+
+        if not profiles:
+            twitter_path = os.path.join(sim_dir, "twitter_profiles.csv")
+            if os.path.exists(twitter_path):
+                try:
+                    import csv
+
+                    with open(twitter_path, 'r', encoding='utf-8', newline='') as f:
+                        profiles = [
+                            row for row in csv.DictReader(f)
+                            if isinstance(row, dict)
+                        ]
+                except (OSError, csv.Error) as error:
+                    logger.warning(f"读取人设文件失败: {twitter_path}, error={error}")
+
+        entity_types = sorted({
+            str(profile.get("profession") or "").strip()
+            for profile in profiles
+            if str(profile.get("profession") or "").strip()
+        })
+        return len(profiles), entity_types
     
     def _save_simulation_state(self, state: SimulationState):
         """保存模拟状态到文件"""
@@ -199,22 +243,46 @@ class SimulationManager:
                     with open(run_state_file, 'r', encoding='utf-8') as rf:
                         rdata = json.load(rf)
                     curr = rdata.get("current_round", 0)
-                    tot = rdata.get("total_rounds", 5)
-                    st = "completed" if (tot > 0 and curr >= tot) else "running"
+                    tot = rdata.get("total_rounds", 0)
+                    runner_status = rdata.get("runner_status", "idle")
+                    profiles_count, entity_types = self.describe_profiles(simulation_id)
+
+                    # run_state.json is authoritative for run progress; the
+                    # prepare artifacts are authoritative for counts and types.
+                    # Nothing here is a plausible-looking placeholder.
+                    if runner_status == "completed" or (tot > 0 and curr >= tot):
+                        status = "completed"
+                    elif runner_status in {
+                        "stopped", "failed", "stopping", "paused", "idle",
+                    }:
+                        status = runner_status
+                    else:
+                        status = "running"
+
+                    def _platform_status(completed: bool) -> str:
+                        return "completed" if completed else "not_started"
+
                     data = {
                         "simulation_id": simulation_id,
                         "project_id": rdata.get("project_id", ""),
                         "graph_id": rdata.get("graph_id", ""),
                         "enable_twitter": rdata.get("enable_twitter", True),
                         "enable_reddit": rdata.get("enable_reddit", True),
-                        "status": st,
-                        "entities_count": 24,
-                        "profiles_count": 24,
-                        "profiles_generated": True,
-                        "config_generated": True,
+                        "status": status,
+                        "entities_count": profiles_count,
+                        "profiles_count": profiles_count,
+                        "entity_types": entity_types,
+                        "profiles_generated": profiles_count > 0,
+                        "config_generated": os.path.exists(
+                            os.path.join(sim_dir, "simulation_config.json")
+                        ),
                         "current_round": curr,
-                        "twitter_status": "completed",
-                        "reddit_status": "completed",
+                        "twitter_status": _platform_status(
+                            bool(rdata.get("twitter_completed", False))
+                        ),
+                        "reddit_status": _platform_status(
+                            bool(rdata.get("reddit_completed", False))
+                        ),
                         "created_at": rdata.get("created_at", datetime.now().isoformat()),
                         "updated_at": datetime.now().isoformat()
                     }

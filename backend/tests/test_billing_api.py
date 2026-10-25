@@ -98,7 +98,7 @@ def test_plans_endpoint_is_public_and_has_three_tiers(app_instance):
     starter = data["plans"][0]
     assert starter["monthly_cents"] == 900
     assert starter["annual_cents"] == 9000
-    assert starter["limits"]["max_rounds"] == 10
+    assert starter["limits"]["max_rounds"] == 15
     assert data["configured"] is False
 
 
@@ -110,7 +110,7 @@ def test_me_returns_free_entitlement(app_instance):
     assert response.status_code == 200
     entitlement = response.get_json()["entitlement"]
     assert entitlement["plan"] == "free"
-    assert entitlement["runs_limit"] == 0
+    assert entitlement["runs_limit"] == 1
     assert entitlement["configured"] is False
 
 

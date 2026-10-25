@@ -13,26 +13,26 @@
                 <span class="report-id">ID: {{ reportId || 'REF-2024-X92' }}</span>
               </div>
               <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
-                <button @click="handleBackToSimulation" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: all 0.2s ease;">
+                <button @click="handleBackToSimulation" style="background: #F5F5F5; color: #000000; padding: 6px 14px; border-radius: 6px; border: 1px solid #E0E0E0; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
                   ← Back to Simulation
                 </button>
                 <button 
                   v-if="hasError || (!isComplete && agentLogs.length > 0)"
                   @click="handleRetry" 
                   :disabled="isRetrying" 
-                  style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3); transition: all 0.2s ease;"
+                  style="background: #000000; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: all 0.2s ease;"
                   :title="'Resume report generation from the failed section without losing previous work'"
                 >
                   <span v-if="isRetrying">⏳</span>
                   <span v-else>▶</span>
                   {{ isRetrying ? 'Resuming...' : 'Resume Generation' }}
                 </button>
-                <button @click="downloadMarkdownReport" :disabled="isDownloading" style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <button @click="downloadMarkdownReport" :disabled="isDownloading" style="background: #F5F5F5; color: #000000; padding: 6px 14px; border-radius: 6px; border: 1px solid #E0E0E0; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease;">
                   <span v-if="isDownloading">⏳</span>
                   <span v-else>📥</span>
                   {{ isDownloading ? 'Downloading...' : 'Download Report (.md)' }}
                 </button>
-                <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <button @click="$router.push(`/interaction/${reportId}`)" style="background: #000000; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); transition: all 0.2s ease;">
                   💬 Step 4: Chat with Report →
                 </button>
               </div>
@@ -370,10 +370,10 @@
                         </div>
                       </div>
                       <div style="margin-top: 12px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap;">
-                        <button @click="handleBackToSimulation" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 6px 12px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 12px; font-weight: 600;">
+                        <button @click="handleBackToSimulation" style="background: #F5F5F5; color: #000000; padding: 6px 12px; border-radius: 6px; border: 1px solid #E0E0E0; cursor: pointer; font-size: 12px; font-weight: 600;">
                           ← Back to Simulation
                         </button>
-                        <button @click="handleRetry" :disabled="isRetrying" style="background: #2563eb; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);">
+                        <button @click="handleRetry" :disabled="isRetrying" style="background: #000000; color: #ffffff; padding: 6px 14px; border-radius: 6px; border: none; cursor: pointer; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);">
                           <span v-if="isRetrying">⏳</span>
                           <span v-else>▶</span>
                           {{ isRetrying ? 'Resuming...' : 'Resume Generation' }}
@@ -393,13 +393,13 @@
                         <span>Report Generation Complete</span>
                       </div>
                       <div style="display: flex; gap: 8px; margin-top: 4px; flex-wrap: wrap; justify-content: center;">
-                        <button @click="handleBackToSimulation" style="background: rgba(255, 255, 255, 0.08); color: #e2e8f0; padding: 5px 10px; border-radius: 4px; border: 1px solid rgba(255, 255, 255, 0.15); cursor: pointer; font-size: 11px; font-weight: bold;">
+                        <button @click="handleBackToSimulation" style="background: #F5F5F5; color: #000000; padding: 5px 10px; border-radius: 4px; border: 1px solid #E0E0E0; cursor: pointer; font-size: 11px; font-weight: bold;">
                           ← Back to Simulation
                         </button>
-                        <button @click="downloadMarkdownReport" :disabled="isDownloading" style="background: #2563eb; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold;">
+                        <button @click="downloadMarkdownReport" :disabled="isDownloading" style="background: #F5F5F5; color: #000000; padding: 5px 10px; border-radius: 4px; border: 1px solid #E0E0E0; cursor: pointer; font-size: 11px; font-weight: bold;">
                           {{ isDownloading ? '⏳ Downloading...' : '📥 Download (.md)' }}
                         </button>
-                        <button @click="$router.push(`/interaction/${reportId}`)" style="background: #059669; color: #fff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold;">
+                        <button @click="$router.push(`/interaction/${reportId}`)" style="background: #000000; color: #ffffff; padding: 5px 10px; border-radius: 4px; border: none; cursor: pointer; font-size: 11px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
                           💬 Go to Step 4 →
                         </button>
                       </div>
@@ -3550,15 +3550,15 @@ watch(() => props.reportId, (newId) => {
   font-size: 14px;
   font-weight: 600;
   color: #FFFFFF;
-  background: #1F2937;
+  background: #000000;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .next-step-btn:hover {
-  background: #374151;
+  background: #FF4500;
 }
 
 .next-step-btn svg {

@@ -264,8 +264,9 @@ def create_simulation():
             code, reason = denied
             status = 401 if code == "MISSING_TOKEN" else 403 if code == "EMAIL_NOT_VERIFIED" else 402
             return jsonify({"success": False, "error": reason, "code": code}), status
-        user_id = user.id
-        if project.user_id and project.user_id != user_id:
+        user_id = user.id if user else None
+        is_admin = getattr(user, 'role', 'user') == 'admin'
+        if project.user_id and project.user_id != user_id and not is_admin:
             return jsonify({
                 "success": False,
                 "error": "Access denied"
@@ -872,14 +873,16 @@ def _check_simulation_access(simulation_id: str):
     if not state:
         return False, t('api.simulationNotFound', id=simulation_id), 404, None
 
-    from ..utils.auth_middleware import get_current_user_id
+    from ..utils.auth_middleware import get_current_user
     from ..models.project import ProjectManager
-    user_id = get_current_user_id()
+    user = get_current_user()
+    user_id = user.id if user else None
+    is_admin = user and getattr(user, "role", "user") == "admin"
     proj_id = getattr(state, "project_id", None)
     if proj_id:
         project = ProjectManager.get_project(proj_id)
         p_user_id = getattr(project, "user_id", None) if project else None
-        if p_user_id and p_user_id != user_id:
+        if p_user_id and p_user_id != user_id and not is_admin:
             return False, "Access denied", 403, None
 
     return True, None, 200, state
@@ -1719,7 +1722,8 @@ def start_simulation():
         if proj_id:
             project = ProjectManager.get_project(proj_id)
             p_user_id = getattr(project, "user_id", None) if project else None
-            if p_user_id and (not user or p_user_id != user.id):
+            is_admin = user and getattr(user, "role", "user") == "admin"
+            if p_user_id and not is_admin and (not user or p_user_id != user.id):
                 return jsonify({
                     "success": False,
                     "error": "Access denied"
@@ -1952,14 +1956,16 @@ def stop_simulation():
                 "error": t('api.simulationNotFound', id=simulation_id)
             }), 404
 
-        from ..utils.auth_middleware import get_current_user_id
+        from ..utils.auth_middleware import get_current_user
         from ..models.project import ProjectManager
-        user_id = get_current_user_id()
+        user = get_current_user()
+        user_id = user.id if user else None
+        is_admin = user and getattr(user, "role", "user") == "admin"
         proj_id = getattr(state, "project_id", None)
         if proj_id:
             project = ProjectManager.get_project(proj_id)
             p_user_id = getattr(project, "user_id", None) if project else None
-            if p_user_id and p_user_id != user_id:
+            if p_user_id and p_user_id != user_id and not is_admin:
                 return jsonify({
                     "success": False,
                     "error": "Access denied"

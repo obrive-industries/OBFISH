@@ -22,6 +22,7 @@ from ..config import Config
 from ..utils.logger import get_logger
 from ..utils.locale import get_language_instruction, t
 from ..utils.openai_chat_compat import create_chat_completion, extract_chat_completion_text
+from ..utils.llm_client import LLMClient
 from .zep_entity_reader import EntityNode, ZepEntityReader
 
 logger = get_logger('brain.simulation_config')
@@ -227,19 +228,26 @@ class SimulationConfigGenerator:
         self,
         api_key: Optional[str] = None,
         base_url: Optional[str] = None,
-        model_name: Optional[str] = None
+        model_name: Optional[str] = None,
+        llm_client: Optional[LLMClient] = None,
     ):
         self.api_key = api_key or Config.LLM_API_KEY
         self.base_url = base_url or Config.LLM_BASE_URL
         self.model_name = model_name or Config.LLM_MODEL_NAME
         
-        if not self.api_key:
+        if not self.api_key and not llm_client:
             raise ValueError("LLM_API_KEY 未配置")
         
-        self.client = OpenAI(
+        self.llm_client = llm_client or LLMClient(
             api_key=self.api_key,
-            base_url=self.base_url
+            base_url=self.base_url,
+            model=self.model_name
         )
+        self.client = getattr(self.llm_client, "client", None)
+        if not self.client:
+            keys = [k.strip() for k in (self.api_key or "").split(",") if k.strip()]
+            if keys:
+                self.client = OpenAI(api_key=keys[0], base_url=self.base_url)
     
     def generate_config(
         self,
@@ -441,17 +449,27 @@ class SimulationConfigGenerator:
         
         for attempt in range(max_attempts):
             try:
-                response = create_chat_completion(
-                    self.client,
-                    model=self.model_name,
-                    messages=[
-                        {"role": "system", "content": system_prompt},
-                        {"role": "user", "content": prompt}
-                    ],
-                    response_format={"type": "json_object"},
-                    temperature=0.7 - (attempt * 0.1),  # 每次重试降低温度
-                    # 不设置max_tokens，让LLM自由发挥
-                )
+                messages = [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": prompt}
+                ]
+                temp = max(0.0, 0.7 - (attempt * 0.1))
+                if getattr(self, "llm_client", None) and getattr(self, "client", None) is getattr(self.llm_client, "client", None):
+                    response = self.llm_client._create_completion(
+                        messages=messages,
+                        temperature=temp,
+                        max_tokens=4096,
+                        response_format={"type": "json_object"},
+                    )
+                else:
+                    response = create_chat_completion(
+                        self.client,
+                        model=self.model_name,
+                        messages=messages,
+                        response_format={"type": "json_object"},
+                        temperature=temp,
+                        max_tokens=4096,
+                    )
                 
                 content = extract_chat_completion_text(response)
                 finish_reason = response.choices[0].finish_reason

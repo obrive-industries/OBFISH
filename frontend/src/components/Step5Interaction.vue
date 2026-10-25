@@ -2190,19 +2190,19 @@ watch(() => props.simulationId, (newId) => {
 .send-btn {
   width: 44px;
   height: 44px;
-  background: #1F2937;
+  background: #000000;
   color: #FFFFFF;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .send-btn:hover:not(:disabled) {
-  background: #374151;
+  background: #FF4500;
 }
 
 .send-btn:disabled {
@@ -2420,11 +2420,11 @@ watch(() => props.simulationId, (newId) => {
   font-size: 14px;
   font-weight: 600;
   color: #FFFFFF;
-  background: #1F2937;
+  background: #000000;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2433,7 +2433,7 @@ watch(() => props.simulationId, (newId) => {
 }
 
 .survey-submit-btn:hover:not(:disabled) {
-  background: #374151;
+  background: #FF4500;
 }
 
 .survey-submit-btn:disabled {

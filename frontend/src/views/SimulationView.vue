@@ -33,6 +33,11 @@
           <span class="dot"></span>
           {{ statusText }}
         </span>
+        <div class="step-divider"></div>
+        <div v-if="authStore.isAuthenticated.value" class="user-pill-dark" @click="authStore.openProfileModal">
+          <div class="user-avatar-tiny">{{ userInitials }}</div>
+          <span class="user-pill-name">{{ authStore.user.value?.full_name || 'Account' }}</span>
+        </div>
       </div>
     </header>
 
@@ -74,10 +79,20 @@ import Step2EnvSetup from '../components/Step2EnvSetup.vue'
 import { getProject, getGraphData } from '../api/graph'
 import { getSimulation, stopSimulation, getEnvStatus, closeSimulationEnv } from '../api/simulation'
 import { useI18n } from 'vue-i18n'
+import authStore from '../store/auth'
 
 const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
+
+const userInitials = computed(() => {
+  const name = authStore.user.value?.full_name || 'User'
+  const parts = name.trim().split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  return name.slice(0, 2).toUpperCase()
+})
 
 // Props
 const props = defineProps({
@@ -304,15 +319,15 @@ onMounted(async () => {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #F4FBF9;
+  background: #FFFFFF;
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
 }
 
-/* Header */
+/* Header (MiroFish 60px Header) */
 .app-header {
   height: 60px;
-  border-bottom: 1.5px solid rgba(7, 65, 57, 0.12);
+  border-bottom: 1px solid #EAEAEA;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -320,23 +335,22 @@ onMounted(async () => {
   background: #FFFFFF;
   z-index: 100;
   position: relative;
-  box-shadow: 0 2px 10px rgba(7, 65, 57, 0.04);
 }
 
 .brand {
-  font-family: 'Microgramma', sans-serif !important;
-  font-weight: 800;
-  font-size: 17px;
+  font-family: var(--font-display, "Space Grotesk", sans-serif) !important;
+  font-weight: 700;
+  font-size: 16px;
   letter-spacing: 0.05em;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 10px;
-  color: #074139;
+  color: #000000;
 }
 
 .brand-header-icon {
-  height: 26px;
+  height: 24px;
   width: auto;
 }
 
@@ -348,31 +362,29 @@ onMounted(async () => {
 
 .view-switcher {
   display: flex;
-  background: #EBF7F4;
+  background: #F5F5F5;
   padding: 4px;
-  border-radius: 8px;
+  border-radius: 6px;
   gap: 4px;
-  border: 1px solid rgba(7, 65, 57, 0.15);
 }
 
 .switch-btn {
   border: none;
   background: transparent;
   padding: 6px 16px;
-  font-family: 'Microgramma', sans-serif;
-  font-size: 11px;
-  font-weight: 700;
-  color: #526361;
-  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  font-weight: 600;
+  color: #666666;
+  border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
-  letter-spacing: 0.04em;
 }
 
 .switch-btn.active {
-  background: #074139;
-  color: #CAEDE5;
-  box-shadow: 0 2px 6px rgba(7, 65, 57, 0.18);
+  background: #FFFFFF;
+  color: #000000;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
 }
 
 .header-right {
@@ -389,43 +401,43 @@ onMounted(async () => {
 }
 
 .step-num {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono, monospace);
   font-weight: 700;
-  color: #074139;
-  opacity: 0.65;
+  color: #999999;
 }
 
 .step-name {
-  font-family: 'Microgramma', sans-serif;
+  font-family: var(--font-display, "Space Grotesk", sans-serif);
   font-weight: 700;
   font-size: 13px;
-  color: #074139;
+  color: #000000;
   letter-spacing: 0.02em;
 }
 
 .step-divider {
   width: 1px;
   height: 14px;
-  background-color: rgba(7, 65, 57, 0.18);
+  background-color: #E0E0E0;
 }
 
 .status-indicator {
   display: flex;
   align-items: center;
   gap: 8px;
+  font-family: var(--font-mono, monospace);
   font-size: 12px;
-  color: #526361;
-  font-weight: 600;
+  color: #666666;
+  font-weight: 500;
 }
 
 .dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: #CCC;
+  background: #CCCCCC;
 }
 
-.status-indicator.processing .dot { background: #074139; animation: pulse 1s infinite; }
+.status-indicator.processing .dot { background: #FF4500; animation: pulse 1s infinite; }
 .status-indicator.completed .dot { background: #10B981; }
 .status-indicator.error .dot { background: #EF4444; }
 
@@ -447,7 +459,49 @@ onMounted(async () => {
 }
 
 .panel-wrapper.left {
-  border-right: 1.5px solid rgba(7, 65, 57, 0.12);
+  border-right: 1px solid #EAEAEA;
+}
+
+.user-pill-dark {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #F5F5F5;
+  border: 1px solid #E0E0E0;
+  border-radius: 9999px;
+  padding: 3px 10px 3px 5px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.user-pill-dark:hover {
+  background: #EAEAEA;
+  border-color: #CCCCCC;
+}
+
+.user-avatar-tiny {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #000000;
+  color: #FFFFFF;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-pill-name {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #000000;
+  max-width: 110px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>
 

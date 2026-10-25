@@ -185,12 +185,14 @@ class ProjectManager:
     
     @classmethod
     def save_project(cls, project: Project) -> None:
-        """保存项目元数据"""
+        """保存项目元数据（原子写入，防止中断导致损坏）"""
         project.updated_at = datetime.now().isoformat()
         meta_path = cls._get_project_meta_path(project.project_id)
+        temp_path = meta_path + ".tmp"
         
-        with open(meta_path, 'w', encoding='utf-8') as f:
+        with open(temp_path, 'w', encoding='utf-8') as f:
             json.dump(project.to_dict(), f, ensure_ascii=False, indent=2)
+        os.replace(temp_path, meta_path)
     
     @classmethod
     def get_project(cls, project_id: str) -> Optional[Project]:

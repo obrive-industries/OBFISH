@@ -20,6 +20,7 @@ from ..config import Config
 from ..utils.logger import get_logger
 from ..utils.locale import get_language_instruction, get_locale, set_locale, t
 from ..utils.openai_chat_compat import create_chat_completion, extract_chat_completion_text
+from ..utils.llm_client import LLMClient
 from ..utils.zep import (
     call_zep_read_with_retry,
     get_zep_client,
@@ -247,19 +248,26 @@ class OasisProfileGenerator:
         base_url: Optional[str] = None,
         model_name: Optional[str] = None,
         zep_api_key: Optional[str] = None,
-        graph_id: Optional[str] = None
+        graph_id: Optional[str] = None,
+        llm_client: Optional[LLMClient] = None,
     ):
         self.api_key = api_key or Config.LLM_API_KEY
         self.base_url = base_url or Config.LLM_BASE_URL
         self.model_name = model_name or Config.LLM_MODEL_NAME
         
-        if not self.api_key:
+        if not self.api_key and not llm_client:
             raise ValueError("LLM_API_KEY 未配置")
         
-        self.client = OpenAI(
+        self.llm_client = llm_client or LLMClient(
             api_key=self.api_key,
-            base_url=self.base_url
+            base_url=self.base_url,
+            model=self.model_name
         )
+        self.client = getattr(self.llm_client, "client", None)
+        if not self.client:
+            keys = [k.strip() for k in (self.api_key or "").split(",") if k.strip()]
+            if keys:
+                self.client = OpenAI(api_key=keys[0], base_url=self.base_url)
         
         # Zep客户端用于检索丰富上下文
         self.zep_api_key = zep_api_key or get_zep_key_pool().get_key_for_graph(graph_id)
@@ -571,17 +579,27 @@ class OasisProfileGenerator:
         
         for attempt in range(max_attempts):
             try:
-                response = create_chat_completion(
-                    self.client,
-                    model=self.model_name,
-                    messages=[
-                        {"role": "system", "content": self._get_system_prompt(is_individual)},
-                        {"role": "user", "content": prompt}
-                    ],
-                    response_format={"type": "json_object"},
-                    temperature=0.7 - (attempt * 0.1),  # 每次重试降低温度
-                    # 不设置max_tokens，让LLM自由发挥
-                )
+                messages = [
+                    {"role": "system", "content": self._get_system_prompt(is_individual)},
+                    {"role": "user", "content": prompt}
+                ]
+                temp = max(0.0, 0.7 - (attempt * 0.1))
+                if getattr(self, "llm_client", None) and getattr(self, "client", None) is getattr(self.llm_client, "client", None):
+                    response = self.llm_client._create_completion(
+                        messages=messages,
+                        temperature=temp,
+                        max_tokens=1024,
+                        response_format={"type": "json_object"},
+                    )
+                else:
+                    response = create_chat_completion(
+                        self.client,
+                        model=self.model_name,
+                        messages=messages,
+                        response_format={"type": "json_object"},
+                        temperature=temp,
+                        max_tokens=1024,
+                    )
                 
                 content = extract_chat_completion_text(response)
                 
@@ -748,15 +766,11 @@ class OasisProfileGenerator:
 
 请生成JSON，包含以下字段:
 
-1. bio: 社交媒体简介，200字
-2. persona: 详细人设描述（2000字的纯文本），需包含:
-   - 基本信息（年龄、职业、教育背景、所在地）
-   - 人物背景（重要经历、与事件的关联、社会关系）
-   - 性格特征（MBTI类型、核心性格、情绪表达方式）
-   - 社交媒体行为（发帖频率、内容偏好、互动风格、语言特点）
-   - 立场观点（对话题的态度、可能被激怒/感动的内容）
-   - 独特特征（口头禅、特殊经历、个人爱好）
-   - 个人记忆（人设的重要部分，要介绍这个个体与事件的关联，以及这个个体在事件中的已有动作与反应）
+1. bio: 社交媒体简介，50字左右
+2. persona: 精炼真实的人设画像（150字左右的一段纯文本），需包含:
+   - 基本身份与职业背景
+   - 性格特征与社交媒体发言风格
+   - 对核心话题的态度与立场
 3. age: 年龄数字（必须是整数）
 4. gender: 性别，必须是英文: "male" 或 "female"
 5. mbti: MBTI类型（如INTJ、ENFP等）
@@ -766,13 +780,13 @@ class OasisProfileGenerator:
 
 重要:
 - 所有字段值必须是字符串或数字，不要使用换行符
-- persona必须是一段连贯的文字描述
+- persona必须是一段连贯的文字描述（100-150字）
 - {get_language_instruction()} (gender字段必须用英文male/female)
 - 内容要与实体信息保持一致
 - age必须是有效的整数，gender必须是"male"或"female"
 """
         else:
-            return f"""Generate a detailed social media user persona for the following entity, reflecting reality as accurately as possible.
+            return f"""Generate a concise, authentic social media user persona for the following entity, reflecting reality as accurately as possible.
 
 Entity Name: {entity_name}
 Entity Type: {entity_type}
@@ -784,14 +798,11 @@ Contextual Information:
 
 Please generate a JSON object with the following fields:
 
-1. bio: Social media profile bio, approx 50-100 words
-2. persona: Comprehensive persona narrative (detailed plain text paragraph, ~500 words), including:
-   - Basic profile (age, profession, educational background, location)
-   - Background & relation to the events (key experiences, relationship with other entities)
-   - Psychological profile & personality (MBTI, core values, communication style)
-   - Social media behavior (posting frequency, topical preferences, engagement style)
-   - Stance and perspective regarding the simulation topics
-   - Personal memories (how they experienced past events and their previous actions/reactions)
+1. bio: Social media profile bio, approx 30-50 words
+2. persona: Concise, high-fidelity persona narrative (one single coherent paragraph, approx 100-150 words), including:
+   - Background and professional/social identity
+   - Personality profile, tone of voice, and communication habits
+   - Key perspective, stance, and reactions regarding the scenario topics
 3. age: Age as an integer
 4. gender: Must be "male" or "female"
 5. mbti: MBTI type (e.g. INTJ, ENFP)
@@ -801,7 +812,7 @@ Please generate a JSON object with the following fields:
 
 Important:
 - All values must be strings or numbers, with no unescaped newlines inside strings
-- Persona must be a coherent narrative description
+- Persona must be a coherent narrative description (100-150 words)
 - Please respond in English (gender must be "male" or "female")
 - Keep information aligned with the source entity
 """
@@ -820,7 +831,7 @@ Important:
         context_str = context[:3000] if context else "No additional context"
         
         if get_locale() == 'zh':
-            return f"""为机构/群体实体生成详细的社交媒体账号设定,最大程度还原已有现实情况。
+            return f"""为机构/群体实体生成官方社交媒体账号设定。
 
 实体名称: {entity_name}
 实体类型: {entity_type}
@@ -832,15 +843,11 @@ Important:
 
 请生成JSON，包含以下字段:
 
-1. bio: 官方账号简介，200字，专业得体
-2. persona: 详细账号设定描述（2000字的纯文本），需包含:
-   - 机构基本信息（正式名称、机构性质、成立背景、主要职能）
-   - 账号定位（账号类型、目标受众、核心功能）
-   - 发言风格（语言特点、常用表达、禁忌话题）
-   - 发布内容特点（内容类型、发布频率、活跃时间段）
-   - 立场态度（对核心话题的官方立场、面对争议的处理方式）
-   - 特殊说明（代表的群体画像、运营习惯）
-   - 机构记忆（机构人设的重要部分，要介绍这个机构与事件的关联，以及这个机构在事件中的已有动作与反应）
+1. bio: 官方账号简介，50字左右，专业得体
+2. persona: 官方账号设定描述（150字左右的一段纯文本），需包含:
+   - 机构性质与核心职能
+   - 官方发言风格与调性
+   - 对核心话题的官方立场与关注点
 3. age: 固定填30（机构账号的虚拟年龄）
 4. gender: 固定填"other"（机构账号使用other表示非个人）
 5. mbti: MBTI类型，用于描述账号风格，如ISTJ代表严谨保守
@@ -850,12 +857,12 @@ Important:
 
 重要:
 - 所有字段值必须是字符串或数字，不允许null值
-- persona必须是一段连贯的文字描述，不要使用换行符
+- persona必须是一段连贯的文字描述（100-150字），不要使用换行符
 - {get_language_instruction()} (gender字段必须用英文"other")
 - age必须是整数30，gender必须是字符串"other"
 - 机构账号发言要符合其身份定位"""
         else:
-            return f"""Generate a detailed social media official account persona for the institutional/group entity, reflecting reality as accurately as possible.
+            return f"""Generate an official social media account persona for the institutional/group entity.
 
 Entity Name: {entity_name}
 Entity Type: {entity_type}
@@ -867,14 +874,11 @@ Contextual Information:
 
 Please generate a JSON object with the following fields:
 
-1. bio: Official account bio, approx 50-100 words, professional and poised
-2. persona: Detailed institutional persona narrative (plain text paragraph, ~500 words), including:
-   - Institutional profile (official name, nature of organization, core functions)
-   - Account positioning (target audience, role in discourse)
-   - Communication tone (language style, standard messaging, taboo topics)
-   - Publishing behavior (content types, frequency, active hours)
-   - Official stance and dispute handling procedures
-   - Institutional memory (connection with events and previous official actions/responses)
+1. bio: Official account bio, approx 30-50 words, professional and poised
+2. persona: Concise institutional persona narrative (one single coherent paragraph, approx 100-150 words), including:
+   - Nature of organization and core mandate
+   - Official communication tone and public engagement style
+   - Stance, primary objectives, and institutional perspective
 3. age: Fixed at 30 (virtual age for organizations)
 4. gender: Fixed at "other"
 5. mbti: MBTI type representing organizational demeanor (e.g. ISTJ)
@@ -884,7 +888,7 @@ Please generate a JSON object with the following fields:
 
 Important:
 - All values must be strings or numbers, no null values
-- Persona must be a coherent narrative description without raw newlines
+- Persona must be a coherent narrative description (100-150 words) without raw newlines
 - Please respond in English (gender must be "other")
 - The account voice must align with its official standing"""
     

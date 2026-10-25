@@ -33,9 +33,10 @@ const props = defineProps({
 })
 
 const fillColor = computed(() => {
-  if (props.color === 'primary') return '#074139'
-  if (props.color === 'accent') return '#A2F1DF'
+  if (props.color === 'black') return '#000000'
+  if (props.color === 'primary') return '#000000'
+  if (props.color === 'accent') return '#000000'
   if (props.color === 'white') return '#FFFFFF'
-  return '#CAEDE5'
+  return '#000000'
 })
 </script>
