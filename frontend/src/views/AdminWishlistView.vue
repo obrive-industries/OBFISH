@@ -264,8 +264,9 @@ const fetchSubscribers = async () => {
   loading.value = true
   try {
     const res = await wishlistApi.getSubscribers()
-    if (res.data?.success) {
-      subscribers.value = res.data.subscribers || []
+    const ok = res?.success || res?.data?.success
+    if (ok) {
+      subscribers.value = res?.subscribers || res?.data?.subscribers || []
     }
   } catch (err) {
     console.error('Failed to load wishlist subscribers:', err)

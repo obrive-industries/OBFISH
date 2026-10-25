@@ -113,17 +113,19 @@ const handleWishlistSubmit = async () => {
   feedbackMsg.value = ''
   try {
     const res = await wishlistApi.subscribe(emailInput.value, 'landing_hero')
-    if (res.data?.success) {
+    const ok = res?.success || res?.data?.success
+    const msg = res?.message || res?.data?.message
+    if (ok) {
       isSuccess.value = true
-      feedbackMsg.value = res.data.message || 'Thank you for joining our wishlist!'
+      feedbackMsg.value = msg || "Thank you for joining our wishlist! We'll notify you about exclusive offers."
       emailInput.value = ''
     } else {
       isSuccess.value = false
-      feedbackMsg.value = res.data?.error || 'Something went wrong. Please try again.'
+      feedbackMsg.value = res?.error || res?.data?.error || 'Something went wrong. Please try again.'
     }
   } catch (err) {
     isSuccess.value = false
-    feedbackMsg.value = err.response?.data?.error || 'Failed to submit. Please try again.'
+    feedbackMsg.value = err.message || err.response?.data?.error || 'Failed to submit. Please try again.'
   } finally {
     submitting.value = false
   }
