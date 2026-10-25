@@ -131,8 +131,8 @@ const generateCrowd = () => {
     count: bgCount,
     layer: 'bg',
     baseDuration: 48,
-    scaleMin: 0.45,
-    scaleMax: 0.6,
+    scaleMin: 0.58,
+    scaleMax: 0.74,
     blur: 1.2,
     opacity: 0.65,
     zBase: 10,
@@ -149,8 +149,8 @@ const generateCrowd = () => {
     count: midCount,
     layer: 'mid',
     baseDuration: 34,
-    scaleMin: 0.62,
-    scaleMax: 0.82,
+    scaleMin: 0.78,
+    scaleMax: 1.0,
     blur: 0,
     opacity: 0.88,
     zBase: 30,
@@ -167,8 +167,8 @@ const generateCrowd = () => {
     count: fgCount,
     layer: 'fg',
     baseDuration: 24,
-    scaleMin: 0.65,
-    scaleMax: 0.84,
+    scaleMin: 0.85,
+    scaleMax: 1.12,
     blur: 0,
     opacity: 1.0,
     zBase: 60,
@@ -206,8 +206,8 @@ const stageStyle = computed(() => {
 
 // Styles per person wrapper - continuous infinite keyframe motion
 const getPersonWrapperStyle = (p) => {
-  const baseWidth = 240
-  const baseHeight = 324
+  const baseWidth = 260
+  const baseHeight = 350
   const w = Math.round(baseWidth * p.scale)
   const h = Math.round(baseHeight * p.scale)
 
@@ -352,16 +352,16 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 38vh;
-  min-height: 290px;
-  max-height: 340px;
+  height: 42vh;
+  min-height: 330px;
+  max-height: 410px;
   overflow: hidden;
   pointer-events: none;
   z-index: 1000;
   transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.65s ease, filter 0.65s ease;
   will-change: transform, opacity, filter;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 14%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 100%);
 }
 
 /* Exit state */
@@ -443,19 +443,19 @@ onUnmounted(() => {
 
 @keyframes crowd-walk-ltr {
   0% {
-    transform: translate3d(-200px, 0, 0);
+    transform: translate3d(-260px, 0, 0);
   }
   100% {
-    transform: translate3d(calc(100vw + 200px), 0, 0);
+    transform: translate3d(calc(100vw + 260px), 0, 0);
   }
 }
 
 @keyframes crowd-walk-rtl {
   0% {
-    transform: translate3d(calc(100vw + 200px), 0, 0);
+    transform: translate3d(calc(100vw + 260px), 0, 0);
   }
   100% {
-    transform: translate3d(-200px, 0, 0);
+    transform: translate3d(-260px, 0, 0);
   }
 }
 
