@@ -6,12 +6,12 @@
     <div class="container-main relative z-[2]">
       <div class="hero-content">
         <!-- Main Headline -->
-        <h1 class="hero-heading font-microgramma">
+        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tight hero-heading font-microgramma">
           <span>Predictive</span>
           <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
             Intelligence
-            <svg class="absolute -bottom-2 sm:-bottom-3 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="#064139" stroke-width="4" stroke-linecap="round" />
+            <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="#064139" stroke-width="3" stroke-linecap="round" />
             </svg>
           </span>
         </h1>
@@ -187,7 +187,7 @@ const scrollDown = () => {
 }
 
 .hero-content {
-  max-width: 72rem;
+  max-width: 56rem;
   width: 100%;
   margin-left: auto !important;
   margin-right: auto !important;
@@ -199,9 +199,6 @@ const scrollDown = () => {
 
 .hero-heading {
   font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-size: clamp(3.2rem, 8vw, 6.4rem) !important;
-  line-height: 1.05 !important;
-  font-weight: 900 !important;
   color: #064139 !important;
   text-align: center;
   width: 100%;
@@ -210,14 +207,11 @@ const scrollDown = () => {
   justify-content: center;
   gap: 0.35em;
   flex-wrap: nowrap;
-  letter-spacing: -0.02em;
-  margin-bottom: 2rem;
 }
 
 .hero-heading span {
   color: #064139 !important;
   font-family: inherit !important;
-  font-weight: inherit !important;
 }
 
 @media (max-width: 640px) {
