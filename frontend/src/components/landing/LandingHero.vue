@@ -76,9 +76,14 @@
             </button>
           </form>
 
-          <!-- Feedback alerts -->
-          <div v-if="feedbackMsg" class="mt-3 text-sm font-medium transition-all" :class="isSuccess ? 'text-emerald-400' : 'text-rose-400'">
-            {{ feedbackMsg }}
+          <!-- Feedback alerts (Prominent Confirmation Card) -->
+          <div
+            v-if="feedbackMsg"
+            class="mt-4 p-4 rounded-xl text-sm font-medium transition-all max-w-md mx-auto flex items-center justify-center gap-2.5 shadow-xl"
+            :class="isSuccess ? 'bg-emerald-500/15 border border-emerald-500/40 text-emerald-300' : 'bg-rose-500/15 border border-rose-500/40 text-rose-300'"
+          >
+            <span class="text-base font-bold">{{ isSuccess ? '✓' : '⚠️' }}</span>
+            <span>{{ feedbackMsg }}</span>
           </div>
         </div>
       </div>
