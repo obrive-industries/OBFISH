@@ -205,8 +205,9 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import authStore from '../store/auth'
+import authApi from '../api/auth'
 import wishlistApi from '../api/wishlist'
 
 const subscribers = ref([])
@@ -222,7 +223,7 @@ const loginForm = reactive({
 })
 
 const isAdmin = computed(() => {
-  return authStore.state.isAuthenticated && authStore.user.value?.role === 'admin'
+  return authStore.isAdmin.value
 })
 
 const uniqueDomainsCount = computed(() => {
@@ -279,18 +280,18 @@ const handleAdminLogin = async () => {
   loggingIn.value = true
   loginError.value = ''
   try {
-    const res = await authStore.login(loginForm.email, loginForm.password)
-    if (res.success) {
-      if (authStore.user.value?.role !== 'admin') {
-        loginError.value = 'Access denied: This account does not have administrator privileges.'
-        return
-      }
+    const res = await authApi.login({
+      email: loginForm.email.trim(),
+      password: loginForm.password
+    })
+    authStore.setSession(res.access_token, res.refresh_token, res.user)
+    if (authStore.isAdmin.value) {
       await fetchSubscribers()
     } else {
-      loginError.value = res.error || 'Authentication failed.'
+      loginError.value = 'Access denied: This account does not have administrator privileges.'
     }
   } catch (err) {
-    loginError.value = err.response?.data?.error || 'Failed to sign in.'
+    loginError.value = err.message || err.response?.data?.error || 'Failed to sign in.'
   } finally {
     loggingIn.value = false
   }
@@ -327,6 +328,12 @@ const exportCsv = async () => {
 
 onMounted(() => {
   if (isAdmin.value) {
+    fetchSubscribers()
+  }
+})
+
+watch(isAdmin, (val) => {
+  if (val) {
     fetchSubscribers()
   }
 })

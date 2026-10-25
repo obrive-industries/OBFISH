@@ -215,32 +215,14 @@
         </p>
       </form>
 
-      <!-- Modal Footer Admin Access -->
-      <div class="modal-admin-footer">
-        <button
-          type="button"
-          class="admin-wishlist-link"
-          @click="openWishlistSubmissions"
-        >
-          📋 View Wishlist Submissions (Admin)
-        </button>
-      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
-
-const router = useRouter()
-
-const openWishlistSubmissions = () => {
-  authStore.closeAuthModal()
-  router.push('/admin/wishlist')
-}
 
 const loading = ref(false)
 const resending = ref(false)
