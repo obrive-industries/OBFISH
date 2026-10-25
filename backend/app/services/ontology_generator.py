@@ -93,10 +93,11 @@ Output JSON with the following structure:
 ```
 
 ## Design Guidelines:
-1. Exactly 10 entity types: 8 specific domain entity types relevant to the text + 2 fallback types: `Person` and `Organization` at the end of the list.
-2. 6-10 relationship types that reflect real connections in the text (e.g., WORKS_FOR, AFFILIATED_WITH, CRITICIZES, SUPPORTS, INVESTIGATES, COLLABORATES_WITH).
-3. 1-3 attributes per entity type (do not use reserved words: name, uuid, group_id, graph_id, created_at, summary).
-4. All entity names, relationship names, attribute names, descriptions, examples, and analysis_summary MUST be written in English.
+1. 5 to 7 specific domain entity types relevant to the text. (Do NOT output generic Person or Organization; the system automatically adds them as fallbacks).
+2. 4 to 8 relationship types that reflect real connections in the text (e.g., WORKS_FOR, AFFILIATED_WITH, CRITICIZES, SUPPORTS, INVESTIGATES, COLLABORATES_WITH).
+3. 1-2 attributes per entity type (do not use reserved words: name, uuid, group_id, graph_id, created_at, summary).
+4. Keep descriptions under 15 words and examples to 1-2 items per entity.
+5. All entity names, relationship names, attribute names, descriptions, examples, and analysis_summary MUST be written in English.
 """
 
 
@@ -149,18 +150,131 @@ class OntologyGenerator:
         ]
         
         # Structured ontology responses can exceed 4096 completion tokens.
-        # Allow natural model limit via max_tokens=None and 2 attempts.
-        result = self.llm_client.chat_json(
-            messages=messages,
-            temperature=0.3,
-            max_tokens=None,
-            max_attempts=2,
-        )
-        
+        # Allow natural model limit via max_tokens=None and 2 attempts with auto-repair.
+        result = None
+        try:
+            result = self.llm_client.chat_json(
+                messages=messages,
+                temperature=0.3,
+                max_tokens=None,
+                max_attempts=2,
+                allow_repair=True,
+            )
+        except Exception as err:
+            logger.warning(
+                "Ontology chat_json failed: %s. Attempting extraction / fallback recovery...",
+                err,
+            )
+            raw_text = getattr(err, "raw_content", None)
+            if raw_text:
+                result = self._extract_partial_ontology(raw_text)
+
+            if not result or len(result.get("entity_types", [])) < 2:
+                # Emergency compact extraction prompt
+                try:
+                    compact_messages = [
+                        {
+                            "role": "system",
+                            "content": (
+                                "You are a knowledge graph ontology generator. Output ONLY a valid JSON object with "
+                                "'entity_types' (5 domain types, PascalCase name, short description) and "
+                                "'edge_types' (4 relations). Keep descriptions under 8 words. No markdown."
+                            ),
+                        },
+                        {
+                            "role": "user",
+                            "content": f"Extract 5 domain entity types and 4 relations for social simulation from:\n{simulation_requirement[:1200]}",
+                        },
+                    ]
+                    result = self.llm_client.chat_json(
+                        messages=compact_messages,
+                        temperature=0.2,
+                        max_tokens=2048,
+                        max_attempts=2,
+                        allow_repair=True,
+                    )
+                except Exception as fallback_err:
+                    logger.warning(
+                        "Emergency compact ontology prompt failed: %s. Generating heuristic ontology.",
+                        fallback_err,
+                    )
+                    result = self._generate_heuristic_ontology(simulation_requirement, document_texts)
+
         # 验证和后处理
-        result = self._validate_and_process(result)
+        result = self._validate_and_process(result or {})
         
         return result
+
+    def _extract_partial_ontology(self, raw_text: str) -> Optional[Dict[str, Any]]:
+        """Extract valid entity_types and edge_types from truncated or malformed LLM output."""
+        from ..utils.llm_client import repair_json_string
+        repaired = repair_json_string(raw_text)
+        if isinstance(repaired, dict) and (repaired.get("entity_types") or repaired.get("edge_types")):
+            return repaired
+
+        # Fallback: scan for individual entity objects in the raw text
+        entities = []
+        entity_matches = re.finditer(
+            r'\{\s*"name"\s*:\s*"([A-Za-z0-9_]+)"[^}]*\}',
+            raw_text,
+        )
+        for m in entity_matches:
+            try:
+                obj = json.loads(m.group(0))
+                if isinstance(obj, dict) and obj.get("name"):
+                    entities.append(obj)
+            except Exception:
+                continue
+
+        summary_match = re.search(r'"analysis_summary"\s*:\s*"([^"]*)', raw_text)
+        summary = summary_match.group(1) if summary_match else "Extracted scenario ontology."
+
+        if entities:
+            return {
+                "entity_types": entities,
+                "edge_types": [],
+                "analysis_summary": summary,
+            }
+        return None
+
+    def _generate_heuristic_ontology(
+        self,
+        simulation_requirement: str,
+        document_texts: List[str],
+    ) -> Dict[str, Any]:
+        """Generate high-quality domain entities when LLM API is unavailable or exhausted."""
+        text_preview = (simulation_requirement + " " + " ".join(document_texts[:2]))[:2000].lower()
+
+        entities = []
+        if any(w in text_preview for w in ("military", "defense", "war", "combat", "weapon", "army", "security")):
+            entities.extend([
+                {"name": "DefenseContractor", "description": "Corporations developing defense and strategic technologies.", "attributes": [{"name": "company_name", "type": "text", "description": "Name"}]},
+                {"name": "MilitaryOfficial", "description": "Commanders and strategic defense personnel.", "attributes": [{"name": "rank_role", "type": "text", "description": "Rank and role"}]},
+                {"name": "GovernmentAgency", "description": "National security and regulatory bodies.", "attributes": [{"name": "agency_name", "type": "text", "description": "Agency name"}]},
+            ])
+        elif any(w in text_preview for w in ("finance", "stock", "bank", "crypto", "market", "economy", "investment")):
+            entities.extend([
+                {"name": "FinancialInstitution", "description": "Banks, investment firms, and market makers.", "attributes": [{"name": "institution_name", "type": "text", "description": "Name"}]},
+                {"name": "RegulatoryAuthority", "description": "Financial and market compliance regulators.", "attributes": [{"name": "jurisdiction", "type": "text", "description": "Jurisdiction"}]},
+                {"name": "MarketAnalyst", "description": "Economic forecasters and industry analysts.", "attributes": [{"name": "firm_affiliation", "type": "text", "description": "Affiliation"}]},
+            ])
+        else:
+            entities.extend([
+                {"name": "OfficialSpokesperson", "description": "Institutional and governmental representatives.", "attributes": [{"name": "institution", "type": "text", "description": "Institution"}]},
+                {"name": "IndustryExpert", "description": "Domain specialists and analysts.", "attributes": [{"name": "specialization", "type": "text", "description": "Field of expertise"}]},
+                {"name": "MediaOutlet", "description": "Journalistic and news broadcast entities.", "attributes": [{"name": "reach", "type": "text", "description": "Audience reach"}]},
+            ])
+
+        entities.extend([
+            {"name": "PublicAudience", "description": "Engaged citizens and digital commentators.", "attributes": [{"name": "demographic", "type": "text", "description": "Demographic group"}]},
+            {"name": "CivilSocietyGroup", "description": "NGOs and advocacy groups.", "attributes": [{"name": "cause", "type": "text", "description": "Mission"}]},
+        ])
+
+        return {
+            "entity_types": entities,
+            "edge_types": [],
+            "analysis_summary": "Heuristic domain ontology configured for scenario simulation.",
+        }
     
     # 传给 LLM 的文本最大长度（5万字）
     MAX_TEXT_LENGTH_FOR_LLM = Config.ONTOLOGY_MAX_TEXT_LENGTH
@@ -199,11 +313,10 @@ class OntologyGenerator:
 请根据以上内容，设计适合社会舆论模拟的实体类型和关系类型。
 
 **必须遵守的规则**：
-1. 必须正好输出10个实体类型
-2. 最后2个必须是兜底类型：Person（个人兜底）和 Organization（组织兜底）
-3. 前8个是根据文本内容设计的具体类型
-4. 所有实体类型必须是现实中可以发声的主体，不能是抽象概念
-5. 属性名不能使用 name、uuid、group_id、graph_id 等保留字，用 full_name、org_name 等替代
+1. 输出 5 到 7 个具体领域实体类型（无需输出通用的 Person 和 Organization，系统会自动补充）
+2. 每个实体类型包含 1-2 个核心属性和 1-2 个代表性示例，描述精炼控制在 15 个词以内
+3. 输出 4 到 8 个核心关系类型
+4. 属性名不能使用 name、uuid、group_id、graph_id 等保留字，用 full_name、org_name 等替代
 """
         
         return message
@@ -534,6 +647,25 @@ class OntologyGenerator:
             processed_edges.append(edge)
             if len(processed_edges) == MAX_ONTOLOGY_TYPES:
                 break
+
+        if not processed_edges:
+            standard_relations = [
+                ("WORKS_FOR", "Employment or official affiliation", "Person", "Organization"),
+                ("AFFILIATED_WITH", "Associated with an institution or group", "Person", "Organization"),
+                ("CRITICIZES", "Public criticism, opposition, or dissent", "Person", "Organization"),
+                ("SUPPORTS", "Public endorsement or alignment", "Person", "Organization"),
+                ("COMMUNICATES_WITH", "Direct communication, dialogue, or response", "Person", "Person"),
+                ("INFLUENCES", "Informational influence or opinion shaping", "Organization", "Person"),
+            ]
+            for rel_name, rel_desc, src_default, tgt_default in standard_relations:
+                src = src_default if src_default in valid_entity_names else (list(valid_entity_names)[0] if valid_entity_names else "Entity")
+                tgt = tgt_default if tgt_default in valid_entity_names else (list(valid_entity_names)[-1] if valid_entity_names else "Entity")
+                processed_edges.append({
+                    "name": rel_name,
+                    "description": rel_desc,
+                    "source_targets": [{"source": src, "target": tgt}],
+                    "attributes": []
+                })
 
         result["edge_types"] = processed_edges
         

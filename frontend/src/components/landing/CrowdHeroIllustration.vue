@@ -30,7 +30,7 @@
               loading="eager"
               decoding="async"
               draggable="false"
-              @error="handleSvgError(person)"
+              @error="handleSvgError(person, $event)"
             />
           </div>
         </div>
@@ -100,13 +100,15 @@ const generateCrowd = () => {
       const scale = scaleMin + (i % 3) * ((scaleMax - scaleMin) / 2)
       const bottomPercent = bottomMin + (i % 4) * ((bottomMax - bottomMin) / 3)
 
+      const chosenSvgIndex = nextSvgIndex()
+
       list.push({
         id: `crowd-${layer}-${++idCounter}`,
         layer,
         type,
         motionClass,
-        svgIndex: nextSvgIndex(),
-        svgUrl: getSvgUrl(nextSvgIndex()),
+        svgIndex: chosenSvgIndex,
+        svgUrl: getSvgUrl(chosenSvgIndex),
         scale,
         blur,
         opacity,
@@ -181,8 +183,14 @@ const generateCrowd = () => {
 }
 
 // Fallback if SVG fails to load
-const handleSvgError = (person) => {
-  const nextIndex = ((person.svgIndex + 5) % TOTAL_SVGS) + 1
+const handleSvgError = (person, event) => {
+  if (person._hasRetried) {
+    if (event?.target) event.target.style.opacity = '0'
+    return
+  }
+  person._hasRetried = true
+  const nextIndex = ((person.svgIndex + 3) % TOTAL_SVGS) + 1
+  person.svgIndex = nextIndex
   person.svgUrl = getSvgUrl(nextIndex)
 }
 

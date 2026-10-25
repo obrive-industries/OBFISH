@@ -277,3 +277,19 @@ def test_llm_client_multi_key_rotation_and_failover():
     assert len(seq1.calls) == 1
     assert len(seq2.calls) == 1
 
+
+def test_chat_json_repairs_truncated_response_when_allow_repair_is_true():
+    truncated = '{"entity_types": [{"name": "GovernmentAgency", "description": "National security'
+    sequence = CompletionSequence(_response(truncated, finish_reason="length"))
+    client = _client_for(sequence)
+
+    res = client.chat_json(
+        messages=[{"role": "user", "content": "Return JSON"}],
+        max_attempts=1,
+        allow_repair=True,
+    )
+    assert isinstance(res, dict)
+    assert "entity_types" in res
+    assert res["entity_types"][0]["name"] == "GovernmentAgency"
+
+

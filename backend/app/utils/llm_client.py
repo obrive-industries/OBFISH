@@ -19,9 +19,16 @@ logger = logging.getLogger(__name__)
 class LLMResponseError(ValueError):
     """A safe, structured error for unusable model responses."""
 
-    def __init__(self, message: str, *, finish_reason: Optional[str] = None):
+    def __init__(
+        self,
+        message: str,
+        *,
+        finish_reason: Optional[str] = None,
+        raw_content: Optional[str] = None,
+    ):
         super().__init__(message)
         self.finish_reason = finish_reason
+        self.raw_content = raw_content
 
 
 def _extract_error_details(error: Exception) -> Optional[Dict[str, Any]]:
@@ -104,6 +111,90 @@ def _contains_additional_json_container(content: str) -> bool:
         if isinstance(value, (dict, list)):
             return True
     return False
+
+
+def repair_json_string(text: str) -> Optional[Dict[str, Any]]:
+    """
+    Repair a truncated or slightly malformed JSON string into a valid dictionary.
+    Safe against open strings, trailing commas/colons, and unclosed arrays/objects.
+    """
+    if not text or not isinstance(text, str):
+        return None
+    cleaned = _clean_chat_text(text)
+    if not cleaned:
+        return None
+
+    # Step 0: Try strict parsing first
+    try:
+        val = json.loads(cleaned)
+        if isinstance(val, dict):
+            return val
+    except Exception:
+        pass
+
+    try:
+        val, _ = json.JSONDecoder().raw_decode(cleaned)
+        if isinstance(val, dict):
+            return val
+    except Exception:
+        pass
+
+    # Step 1: Check if inside an unclosed string literal and close it
+    in_str = False
+    escape = False
+    for c in cleaned:
+        if escape:
+            escape = False
+            continue
+        if c == "\\":
+            escape = True
+            continue
+        if c == '"':
+            in_str = not in_str
+
+    repaired = cleaned + ('"' if in_str else '')
+
+    # Step 2: Iteratively strip back incomplete trailing keys/values and close delimiters
+    for _ in range(25):
+        cand = repaired.rstrip()
+        cand = re.sub(r'[,:\s]+$', '', cand)
+
+        stack = []
+        ins = False
+        esc = False
+        for ch in cand:
+            if esc:
+                esc = False
+                continue
+            if ch == "\\":
+                esc = True
+                continue
+            if ch == '"':
+                ins = not ins
+                continue
+            if not ins:
+                if ch in '{[':
+                    stack.append(ch)
+                elif ch in '}]' and stack:
+                    top = stack[-1]
+                    if (ch == '}' and top == '{') or (ch == ']' and top == '['):
+                        stack.pop()
+
+        closing = ''.join('}' if d == '{' else ']' for d in reversed(stack))
+        try:
+            val = json.loads(cand + closing)
+            if isinstance(val, dict):
+                return val
+        except Exception:
+            pass
+
+        # Strip back one property, token, or character
+        new_cand = re.sub(r',?\s*"[^"]*"?\s*:?\s*[^,}\]]*$', '', cand)
+        if new_cand == cand:
+            new_cand = cand[:-1]
+        repaired = new_cand
+
+    return None
 
 
 def is_retryable_llm_error(err: Exception) -> bool:
@@ -387,6 +478,7 @@ class LLMClient:
         temperature: float = 0.3,
         max_tokens: Optional[int] = 4096,
         max_attempts: int = 1,
+        allow_repair: bool = False,
     ) -> Dict[str, Any]:
         """
         发送聊天请求并返回JSON
@@ -396,6 +488,7 @@ class LLMClient:
             temperature: 温度参数
             max_tokens: 最大token数
             max_attempts: 内容生成尝试次数（不含一次明确的JSON模式能力降级）
+            allow_repair: 是否允许在模型截断或轻微格式错误时自动修复提取有效JSON
             
         Returns:
             解析后的JSON对象
@@ -446,10 +539,15 @@ class LLMClient:
                 break
 
             try:
-                return self._parse_json_response(response)
+                return self._parse_json_response(response, allow_repair=allow_repair)
             except LLMResponseError as error:
                 last_error = error
                 if attempt >= max_attempts:
+                    if allow_repair and getattr(error, "raw_content", None):
+                        repaired = repair_json_string(error.raw_content)
+                        if isinstance(repaired, dict) and repaired:
+                            logger.info("Successfully repaired truncated JSON on final attempt")
+                            return repaired
                     raise
 
                 if error.finish_reason == "length":
@@ -466,7 +564,7 @@ class LLMClient:
         raise LLMResponseError("LLM did not produce a JSON response")
 
     @staticmethod
-    def _parse_json_response(response: Any) -> Dict[str, Any]:
+    def _parse_json_response(response: Any, allow_repair: bool = False) -> Dict[str, Any]:
         choices = getattr(response, "choices", None) or []
         if not choices:
             raise LLMResponseError("LLM returned no choices")
@@ -482,9 +580,15 @@ class LLMClient:
                         return value
                 except Exception:
                     pass
+                if allow_repair:
+                    repaired = repair_json_string(content)
+                    if isinstance(repaired, dict) and repaired:
+                        logger.info("Successfully repaired truncated JSON from token limit completion")
+                        return repaired
             raise LLMResponseError(
                 "LLM JSON output was truncated at the token limit",
                 finish_reason=finish_reason,
+                raw_content=content if content else None,
             )
         if finish_reason not in {None, "stop"}:
             raise LLMResponseError(
@@ -502,6 +606,12 @@ class LLMClient:
         try:
             value = json.loads(content)
         except json.JSONDecodeError as strict_error:
+            if allow_repair and content:
+                repaired = repair_json_string(content)
+                if isinstance(repaired, dict) and repaired:
+                    logger.info("Successfully repaired malformed JSON")
+                    return repaired
+
             # Some compatible providers append a short explanation after an
             # otherwise complete JSON object. Accept only an object decoded
             # from the beginning; never repair or invent truncated JSON.
@@ -512,6 +622,7 @@ class LLMClient:
                     "LLM returned invalid JSON "
                     f"(line {strict_error.lineno}, column {strict_error.colno})",
                     finish_reason=finish_reason,
+                    raw_content=content,
                 ) from strict_error
 
             trailing = content[end:].strip()
@@ -520,6 +631,7 @@ class LLMClient:
                     raise LLMResponseError(
                         "LLM returned multiple JSON values",
                         finish_reason=finish_reason,
+                        raw_content=content,
                     )
                 logger.warning("Ignoring text after a complete LLM JSON object")
 
@@ -527,6 +639,7 @@ class LLMClient:
             raise LLMResponseError(
                 "LLM JSON response must be a top-level JSON object",
                 finish_reason=finish_reason,
+                raw_content=content,
             )
 
         return value

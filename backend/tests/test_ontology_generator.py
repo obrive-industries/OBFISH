@@ -77,3 +77,54 @@ def test_ontology_generation_does_not_cap_structured_output_tokens():
     assert result["analysis_summary"] == "ok"
     assert llm.calls[0]["max_tokens"] is None
     assert llm.calls[0]["max_attempts"] == 2
+
+
+def test_ontology_generation_recovers_from_truncated_llm_response():
+    from app.utils.llm_client import LLMResponseError
+
+    class TruncatedLLMClient:
+        def chat_json(self, **kwargs):
+            partial_raw = (
+                '{"entity_types": ['
+                '{"name": "DefenseContractor", "description": "Top defense firm", "attributes": [{"name": "org_name", "type": "text"}]}, '
+                '{"name": "IntelligenceAgency", "description": "National security'
+            )
+            raise LLMResponseError(
+                "LLM JSON output was truncated at the token limit",
+                finish_reason="length",
+                raw_content=partial_raw,
+            )
+
+    generator = OntologyGenerator(llm_client=TruncatedLLMClient())
+    result = generator.generate(
+        document_texts=["Project Horizon defense dossier."],
+        simulation_requirement="Simulate defense sector crisis.",
+    )
+
+    assert isinstance(result, dict)
+    entity_names = [e["name"] for e in result["entity_types"]]
+    assert "DefenseContractor" in entity_names
+    assert "Person" in entity_names
+    assert "Organization" in entity_names
+    assert len(result["edge_types"]) > 0
+
+
+def test_ontology_generation_heuristic_fallback_when_llm_fails():
+    class CrashingLLMClient:
+        def chat_json(self, **kwargs):
+            raise RuntimeError("Provider connection failed completely")
+
+    generator = OntologyGenerator(llm_client=CrashingLLMClient())
+    result = generator.generate(
+        document_texts=["Military and defense strategic simulation."],
+        simulation_requirement="Simulate military conflict public discourse.",
+    )
+
+    assert isinstance(result, dict)
+    assert len(result["entity_types"]) >= 3
+    entity_names = [e["name"] for e in result["entity_types"]]
+    assert "Person" in entity_names
+    assert "Organization" in entity_names
+    assert len(result["edge_types"]) > 0
+    assert result["analysis_summary"]
+

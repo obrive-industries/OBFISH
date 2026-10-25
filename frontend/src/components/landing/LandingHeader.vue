@@ -12,9 +12,32 @@
           <span class="logo-text">BRAIN</span>
         </router-link>
 
-        <!-- Right Actions: Sign In -->
-        <div class="flex items-center gap-4">
+        <!-- Right Actions: Profile Pill when Logged In, Sign In when Logged Out -->
+        <div class="flex items-center gap-3">
+          <template v-if="authStore.isAuthenticated.value">
+            <div
+              class="user-pill"
+              @click="authStore.openProfileModal"
+              title="Account & Settings"
+              role="button"
+              tabindex="0"
+            >
+              <div class="avatar">{{ userInitials }}</div>
+              <span class="user-name">{{ authStore.user.value?.full_name || 'My Account' }}</span>
+              <span v-if="authStore.isVerified.value" class="status-dot verified" title="Email Verified"></span>
+              <span v-else class="status-dot unverified" title="Verification Pending"></span>
+            </div>
+
+            <router-link
+              to="/console"
+              class="nav-console-btn"
+            >
+              Console →
+            </router-link>
+          </template>
+
           <button
+            v-else
             type="button"
             @click="handleSignIn"
             class="nav-signin-btn"
@@ -28,13 +51,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import authStore from '../../store/auth'
 
 const emit = defineEmits(['open-auth'])
 const router = useRouter()
 const isScrolled = ref(false)
+
+const userInitials = computed(() => {
+  const name = authStore.user.value?.full_name || 'User'
+  const parts = name.trim().split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[1][0]).toUpperCase()
+  }
+  return name.slice(0, 2).toUpperCase()
+})
 
 const handleSignIn = () => {
   if (authStore.isAuthenticated.value) {
@@ -137,6 +169,90 @@ onUnmounted(() => {
 }
 
 .nav-signin-btn:active {
+  transform: translateY(0);
+}
+
+.user-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.user-pill:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: translateY(-1px);
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  color: #000000;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user-name {
+  font-family: 'Space Grotesk', 'Inter', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #ffffff;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.status-dot.verified {
+  background: #00e5a3;
+  box-shadow: 0 0 6px rgba(0, 229, 163, 0.6);
+}
+
+.status-dot.unverified {
+  background: #ff4500;
+}
+
+.nav-console-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1.15rem;
+  background-color: #ffffff;
+  color: #000000;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.nav-console-btn:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-1px);
+}
+
+.nav-console-btn:active {
   transform: translateY(0);
 }
 </style>
