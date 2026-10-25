@@ -743,23 +743,23 @@ const handleForgot = async () => {
 }
 
 .admin-wishlist-link {
-  background: transparent;
-  border: 1px dashed rgba(0, 0, 0, 0.25);
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 9999px;
-  color: #555555;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.35rem 0.85rem;
+  color: #111111;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
   transition: all 0.2s ease;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  gap: 0.45rem;
 }
 
 .admin-wishlist-link:hover {
-  color: #000000;
+  color: #ffffff;
   border-color: #000000;
-  background: rgba(0, 0, 0, 0.04);
+  background: #000000;
 }
 </style>

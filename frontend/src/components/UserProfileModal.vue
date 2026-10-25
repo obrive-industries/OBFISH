@@ -142,8 +142,16 @@
         </form>
       </div>
 
-      <!-- Footer: Log out -->
+      <!-- Footer: Log out & Admin Submissions -->
       <div class="modal-footer">
+        <button
+          v-if="authStore.isAdmin.value"
+          type="button"
+          class="admin-wishlist-pill"
+          @click="openWishlistAdmin"
+        >
+          📋 Wishlist Submissions
+        </button>
         <button class="logout-btn" @click="handleLogout">
           Log Out
         </button>
@@ -154,12 +162,19 @@
 
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
+import { useRouter } from 'vue-router'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
 import billingStore from '../store/billing'
 
+const router = useRouter()
 const user = computed(() => authStore.user.value)
 const activeTab = ref('plan')
+
+const openWishlistAdmin = () => {
+  authStore.closeProfileModal()
+  router.push('/admin/wishlist')
+}
 const saving = ref(false)
 const resending = ref(false)
 const errorMsg = ref('')
@@ -737,7 +752,29 @@ const handleLogout = () => {
   padding-top: 16px;
   border-top: 1px solid #E5E5E5;
   display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-wishlist-pill {
+  background: #000000;
+  color: #ffffff;
+  border: 1px solid #000000;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-wishlist-pill:hover {
+  background: #333333;
 }
 
 .logout-btn {

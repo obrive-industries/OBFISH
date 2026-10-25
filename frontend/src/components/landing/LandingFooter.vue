@@ -45,8 +45,16 @@
           </a>
         </div>
 
-        <!-- Right: FAQs, Legal, Terms Links (NO GitHub) -->
-        <div class="flex items-center gap-6 text-sm text-gray-500">
+        <!-- Right: FAQs, Legal, Terms Links & Admin Wishlist -->
+        <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-gray-500">
+          <router-link
+            to="/admin/wishlist"
+            class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 hover:border-white/30 text-xs text-gray-400 hover:text-white transition-all bg-white/[0.03] hover:bg-white/[0.08]"
+            title="View Wishlist Submissions (Admin)"
+          >
+            <span>📋</span>
+            <span>Wishlist Leads</span>
+          </router-link>
           <a href="https://obrive.com/legal" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">Legal</a>
           <a href="https://obrive.com/terms-accessibility" target="_blank" rel="noopener noreferrer" class="hover:text-gray-300 transition-colors">Terms</a>
           <a

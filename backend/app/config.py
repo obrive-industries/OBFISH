@@ -31,6 +31,11 @@ class Config:
     if _raw_db_url and _raw_db_url.startswith('postgres://'):
         _raw_db_url = _raw_db_url.replace('postgres://', 'postgresql://', 1)
 
+    # In Docker container, ensure SQLite always points to the mounted /app/instance volume
+    if os.path.exists('/app/instance') and (_raw_db_url is None or 'sqlite' in _raw_db_url):
+        if not _raw_db_url or '/app/instance' not in _raw_db_url:
+            _raw_db_url = 'sqlite:////app/instance/brain_users.db'
+
     if _raw_db_url and 'sqlite' in _raw_db_url:
         _sqlite_file = _raw_db_url.replace('sqlite:///', '')
         try:

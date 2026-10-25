@@ -72,19 +72,34 @@ def create_app(config_class=Config):
         except Exception:
             pass
 
-        # Promote configured operator accounts to unlimited admin access.
+        # Promote configured operator accounts to unlimited admin access, or auto-seed if missing.
         try:
             from .models.user import User
             admin_emails = Config.admin_emails()
-            if admin_emails:
-                users = User.query.filter(User.email.in_(admin_emails)).all()
-                changed = False
-                for user in users:
-                    if user.role != "admin":
-                        user.role = "admin"
-                        changed = True
-                if changed:
-                    db.session.commit()
+            if admin_emails and not app.config.get("TESTING"):
+                default_admin_pass = os.environ.get("ADMIN_PASSWORD", "Yashveer@2910")
+                for admin_email in admin_emails:
+                    user = User.query.filter_by(email=admin_email).first()
+                    if user:
+                        changed = False
+                        if user.role != "admin":
+                            user.role = "admin"
+                            changed = True
+                        if not user.is_verified:
+                            user.is_verified = True
+                            changed = True
+                        if changed:
+                            db.session.commit()
+                    else:
+                        new_admin = User(
+                            email=admin_email,
+                            full_name="Obrive Admin",
+                            is_verified=True,
+                            role="admin"
+                        )
+                        new_admin.set_password(default_admin_pass)
+                        db.session.add(new_admin)
+                        db.session.commit()
         except Exception:
             db.session.rollback()
 

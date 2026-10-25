@@ -33,6 +33,7 @@ export const authStore = {
   state,
   isAuthenticated: computed(() => Boolean(state.accessToken && state.user)),
   isVerified: computed(() => Boolean(state.user && state.user.is_verified)),
+  isAdmin: computed(() => Boolean(state.user && (state.user.role === 'admin' || state.user.email === 'ai@obrive.com'))),
   user: computed(() => state.user),
   accessToken: computed(() => state.accessToken),
   refreshToken: computed(() => state.refreshToken),

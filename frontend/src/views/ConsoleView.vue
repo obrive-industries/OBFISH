@@ -11,6 +11,14 @@
 
         <nav class="console-nav-links">
           <a href="#history" class="console-nav-link font-microgramma" @click.prevent="scrollToHistory">Simulation History</a>
+          <router-link
+            v-if="authStore.isAdmin.value"
+            to="/admin/wishlist"
+            class="console-nav-link font-microgramma text-amber-400 hover:text-amber-300"
+            style="color: #F59E0B;"
+          >
+            📋 Wishlist Leads
+          </router-link>
         </nav>
       </div>
 
