@@ -19,7 +19,7 @@
         <div class="decision-col-left md:w-[38%] flex flex-col justify-between gap-5">
           <!-- Box 1: The Future Is Uncertain -->
           <div
-            class="video-btn text-left p-6 rounded-2xl transition-all duration-300 cursor-pointer"
+            class="video-btn text-left rounded-2xl transition-all duration-300 cursor-pointer"
             :class="activeIdx === 0 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 0"
           >
@@ -34,7 +34,7 @@
                 <h3 class="font-semibold text-white text-base sm:text-lg leading-snug">
                   The Future Is Uncertain
                 </h3>
-                <p class="text-sm text-gray-400 mt-2.5 leading-relaxed">
+                <p class="text-sm text-gray-400 mt-3 leading-relaxed">
                   Traditional planning often relies on historical data, assumptions, and individual opinions.
                 </p>
               </div>
@@ -43,7 +43,7 @@
 
           <!-- Box 2: Your Decisions Don't Have to Be Blind -->
           <div
-            class="video-btn text-left p-6 rounded-2xl transition-all duration-300 cursor-pointer"
+            class="video-btn text-left rounded-2xl transition-all duration-300 cursor-pointer"
             :class="activeIdx === 1 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 1"
           >
@@ -58,7 +58,7 @@
                 <h3 class="font-semibold text-white text-base sm:text-lg leading-snug">
                   Your Decisions Don’t Have to Be Blind.
                 </h3>
-                <p class="text-sm text-gray-400 mt-2.5 leading-relaxed">
+                <p class="text-sm text-gray-400 mt-3 leading-relaxed">
                   But real-world outcomes are shaped by multiple people, competing interests, changing conditions, and unexpected reactions.
                 </p>
               </div>
@@ -121,10 +121,19 @@ const activeIdx = ref(0)
 }
 
 .video-btn {
+  padding: 1.75rem 1.5rem;
+  border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
   user-select: none;
+  box-sizing: border-box;
+}
+
+@media (min-width: 640px) {
+  .video-btn {
+    padding: 1.875rem 1.75rem;
+  }
 }
 
 .video-btn.is-active {
