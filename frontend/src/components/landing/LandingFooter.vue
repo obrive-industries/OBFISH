@@ -52,14 +52,14 @@
           <router-link
             v-if="authStore.isAdmin.value"
             to="/admin/wishlist"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-[#064139] text-white hover:bg-[#032a24] rounded-lg font-semibold text-sm transition-all shadow-md"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white hover:bg-neutral-800 rounded-lg font-semibold text-sm transition-all shadow-md"
             title="View Wishlist Submissions (Admin)"
           >
             📋 Wishlist Leads
           </router-link>
           <a
             href="/faqs"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-[#064139] text-white hover:bg-[#032a24] rounded-lg font-semibold text-sm transition-all shadow-md"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white hover:bg-neutral-800 rounded-lg font-semibold text-sm transition-all shadow-md"
           >
             FAQs
           </a>
