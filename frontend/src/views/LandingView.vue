@@ -3,6 +3,7 @@
     <main class="relative z-10">
       <LandingHeader @open-auth="openAuth" />
       <LandingHero />
+      <LandingDecisionDynamics />
       <LandingFeatures />
       <LandingUseCases />
       <LandingPhilosophy />
@@ -20,6 +21,7 @@ import { useRoute } from 'vue-router'
 import authStore from '../store/auth'
 import LandingHeader from '../components/landing/LandingHeader.vue'
 import LandingHero from '../components/landing/LandingHero.vue'
+import LandingDecisionDynamics from '../components/landing/LandingDecisionDynamics.vue'
 import LandingFeatures from '../components/landing/LandingFeatures.vue'
 import LandingUseCases from '../components/landing/LandingUseCases.vue'
 import LandingPhilosophy from '../components/landing/LandingPhilosophy.vue'

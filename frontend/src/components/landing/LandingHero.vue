@@ -7,9 +7,9 @@
       <div class="hero-content">
         <!-- Main Headline -->
         <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-8 tracking-tight hero-heading">
-          <span>Predict</span>
-          <span class="relative inline-block whitespace-nowrap">
-            Everything
+          <span>Predictive</span>
+          <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
+            Intelligence
             <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 12" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path class="underline-path" d="M2 10C50 4 150 4 198 10" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
             </svg>
