@@ -199,7 +199,7 @@ const scrollDown = () => {
 
 .hero-heading {
   font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-size: clamp(1.85rem, 3.2vw, 2.25rem) !important;
+  font-size: 2em !important;
   line-height: 1.15;
   color: #073933 !important;
   text-align: center;
