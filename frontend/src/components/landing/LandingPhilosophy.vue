@@ -1,12 +1,14 @@
 <template>
   <section id="philosophy" class="philosophy-section">
     <div class="container-main relative z-[2] max-w-3xl mx-auto px-6">
-      <p :class="['text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3 anim font-michroma', { show: isVisible }]" style="transition-delay: 50ms;">
-        About BRAIN
-      </p>
-      <h2 :class="['text-3xl md:text-4xl font-bold text-[#073933] mb-10 anim font-microgramma leading-snug', { show: isVisible }]" style="transition-delay: 100ms;">
-        Simulate Possibilities. Make Smarter Decisions.
-      </h2>
+      <div class="text-center mb-12">
+        <p :class="['text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3 anim font-michroma', { show: isVisible }]" style="transition-delay: 50ms;">
+          About BRAIN
+        </p>
+        <h2 :class="['text-3xl md:text-4xl font-bold text-[#073933] anim font-microgramma leading-snug', { show: isVisible }]" style="transition-delay: 100ms;">
+          Simulate Possibilities. Make Smarter Decisions.
+        </h2>
+      </div>
 
       <p :class="['text-base text-black leading-relaxed mb-6 anim font-normal', { show: isVisible }]" style="transition-delay: 200ms;">
         BRAIN is an AI-powered simulation and predictive intelligence platform designed to explore possibilities, understand complex behaviours, and evaluate potential outcomes.
