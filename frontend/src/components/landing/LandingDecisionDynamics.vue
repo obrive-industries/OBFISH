@@ -31,17 +31,17 @@
             </p>
           </div>
 
-          <!-- Box 2: Your Decisions Don't Have to Be Blind -->
+          <!-- Box 2: Check Your Decisions -->
           <div
             class="video-btn text-left rounded-2xl transition-all duration-300 cursor-pointer"
             :class="activeIdx === 1 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 1"
           >
             <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
-              Your Decisions Don’t Have to Be Blind
+              Check Your Decisions
             </h3>
             <p class="text-sm text-black mt-3 leading-relaxed font-normal">
-              Brain simulates complex stakeholder dynamics and market reactions in a controlled multi-agent environment before you commit.
+              Shaped by multiple people, competing interests, changing conditions, and unexpected reactions
             </p>
           </div>
         </div>
