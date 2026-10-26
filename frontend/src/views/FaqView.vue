@@ -214,9 +214,11 @@ const faqs = [
 .faq-intro {
   margin: 0 auto;
   max-width: 34rem;
-  font-size: 1.05rem;
-  line-height: 1.6;
-  color: #000000;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
 }
 
 .faq-list {

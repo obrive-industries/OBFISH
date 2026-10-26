@@ -11,7 +11,14 @@ from app.services.entitlements import get_entitlement
 
 
 @pytest.fixture
-def app_instance(tmp_path):
+def app_instance(tmp_path, monkeypatch):
+    monkeypatch.setattr(Config, "RAZORPAY_KEY_ID", None)
+    monkeypatch.setattr(Config, "RAZORPAY_KEY_SECRET", None)
+    monkeypatch.setattr(Config, "RAZORPAY_WEBHOOK_SECRET", None)
+    for plan in ("STARTER", "PRO", "PREMIUM"):
+        for interval in ("MONTHLY", "ANNUAL"):
+            monkeypatch.setattr(Config, f"RAZORPAY_PLAN_ID_{plan}_{interval}", None)
+
     class TestConfig(Config):
         TESTING = True
         SQLALCHEMY_DATABASE_URI = f"sqlite:///{tmp_path}/billing_api.db"

@@ -37,15 +37,15 @@ def main() -> int:
             if get_razorpay_plan_id(plan["id"], interval):
                 print(f"{env_name}: already configured, skipping")
                 continue
-            amount = plan[f"{interval}_cents"]
+            amount = plan.get(f"inr_{interval}_paise") or int(plan[f"{interval}_cents"] * 85)
             entity = client.plan.create(
                 {
                     "period": "yearly" if interval == "annual" else "monthly",
                     "interval": 1,
                     "item": {
-                        "name": f"Brain {plan['name']} ({interval})",
+                        "name": f"Brain {plan['name']} ({interval.capitalize()})",
                         "amount": amount,
-                        "currency": "USD",
+                        "currency": "INR",
                         "description": plan["description"][interval][:250],
                     },
                 }

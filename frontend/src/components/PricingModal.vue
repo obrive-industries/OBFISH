@@ -108,7 +108,7 @@
         </p>
 
         <p class="pricing-legal">
-          Prices in USD. Subscriptions renew automatically until cancelled. Cancel any time from your profile.
+          Prices in USD (processed in equivalent INR via Razorpay). Subscriptions renew automatically until cancelled. Cancel any time from your profile.
         </p>
       </div>
     </div>

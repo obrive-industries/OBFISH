@@ -28,6 +28,8 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "annual_cents": 6000,
         "monthly_equivalent_cents": 500,
         "annual_strike_cents": 1000,
+        "inr_monthly_paise": 85000,
+        "inr_annual_paise": 510000,
         "description": {
             "monthly": (
                 "For first paid runs when you want to take one real case "
@@ -78,6 +80,8 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "annual_cents": 18000,
         "monthly_equivalent_cents": 1500,
         "annual_strike_cents": 2500,
+        "inr_monthly_paise": 170000,
+        "inr_annual_paise": 1530000,
         "description": {
             "monthly": (
                 "For recurring simulation work across public-opinion, "
@@ -128,6 +132,8 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "annual_cents": 30000,
         "monthly_equivalent_cents": 2500,
         "annual_strike_cents": 3500,
+        "inr_monthly_paise": 255000,
+        "inr_annual_paise": 2550000,
         "description": {
             "monthly": (
                 "For heavy, continuous simulation usage when you are "
