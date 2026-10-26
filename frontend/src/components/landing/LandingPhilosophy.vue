@@ -1,10 +1,10 @@
 <template>
   <section id="philosophy" class="philosophy-section">
     <div class="container-main relative z-[2] max-w-3xl mx-auto px-6">
-      <h2 :class="['text-3xl md:text-4xl font-bold text-[#073933] mb-10 anim font-microgramma', { show: isVisible }]" style="transition-delay: 100ms;">
-        <span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#073933] to-[#163830]">
-          About BRAIN:
-        </span>
+      <p :class="['text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3 anim font-michroma', { show: isVisible }]" style="transition-delay: 50ms;">
+        About BRAIN
+      </p>
+      <h2 :class="['text-3xl md:text-4xl font-bold text-[#073933] mb-10 anim font-microgramma leading-snug', { show: isVisible }]" style="transition-delay: 100ms;">
         Simulate Possibilities. Make Smarter Decisions.
       </h2>
 
