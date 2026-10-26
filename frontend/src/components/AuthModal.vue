@@ -6,7 +6,7 @@
 
       <!-- Header -->
       <div class="modal-header">
-        <img src="../assets/logo/obrive-logo.svg" alt="Brain" class="modal-logo" />
+        <img src="/obrive-logo.svg" alt="Brain" class="modal-logo" />
         <h2 class="modal-brand font-microgramma">BRAIN</h2>
         <p class="modal-subtitle">Swarm Intelligence Platform</p>
       </div>
@@ -531,17 +531,18 @@ const handleForgot = async () => {
   font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
   font-weight: 800;
   font-size: 1.55rem;
-  color: #000000;
-  letter-spacing: -0.01em;
+  color: #073933;
+  letter-spacing: 0.06em;
   margin: 0;
   text-transform: uppercase;
 }
 
 .modal-subtitle {
   font-size: 0.82rem;
-  color: #000000;
+  color: #073933;
   margin-top: 4px;
   font-weight: 500;
+  opacity: 0.85;
 }
 
 .tabs {
