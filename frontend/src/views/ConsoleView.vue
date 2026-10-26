@@ -1,6 +1,7 @@
 <template>
   <div class="console-container">
-
+    <!-- Shared Brand Header -->
+    <LandingHeader @open-auth="openAuth" />
 
     <!-- Main Workspace -->
     <main class="console-main">
@@ -190,8 +191,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import LandingHeader from '../components/landing/LandingHeader.vue'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
@@ -199,6 +201,10 @@ import billingStore from '../store/billing'
 import { savePendingUpload, getPendingUpload } from '../utils/pendingUpload.js'
 
 const router = useRouter()
+
+const openAuth = () => {
+  authStore.openAuthModal('login')
+}
 
 // Form Data & Files
 const formData = ref({
@@ -241,6 +247,8 @@ const consoleSteps = [
 ]
 
 onMounted(async () => {
+  document.body.style.backgroundColor = '#A2F1DF'
+
   // Check if there was pending upload saved before auth
   const pending = await getPendingUpload()
   if (pending && pending.isPending) {
@@ -254,6 +262,10 @@ onMounted(async () => {
   if (authStore.isAuthenticated.value) {
     billingStore.refresh()
   }
+})
+
+onUnmounted(() => {
+  document.body.style.backgroundColor = ''
 })
 
 // Resume the interrupted Start Engine flow immediately after a plan is bound.
@@ -453,18 +465,17 @@ const handleStartEngine = async () => {
 <style scoped>
 .console-container {
   min-height: 100vh;
-  background-color: #FFFFFF;
-  color: #000000;
+  background-color: #A2F1DF;
+  color: #0a1c17;
   display: flex;
   flex-direction: column;
   font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
 }
 
-
 .panel-sub-desc {
   font-size: 0.88rem;
   line-height: 1.55;
-  color: #888888;
+  color: #2d554c;
   margin-bottom: 24px;
 }
 
@@ -473,7 +484,7 @@ const handleStartEngine = async () => {
   max-width: 1400px;
   width: 100%;
   margin: 0 auto;
-  padding: 36px 32px 80px;
+  padding: 100px 32px 80px;
   flex: 1;
 }
 
@@ -482,14 +493,22 @@ const handleStartEngine = async () => {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: #FFFDF0;
-  border: 1px solid #F0E4B0;
+  background: #FFFFFF;
+  border: 1.5px solid rgba(7, 57, 51, 0.2);
   padding: 14px 20px;
-  border-radius: 8px;
+  border-radius: 12px;
   margin-bottom: 28px;
-  color: #A08940;
-  font-family: var(--font-mono, monospace);
+  color: #073933;
   font-size: 0.85rem;
+  box-shadow: 0 4px 16px rgba(7, 57, 51, 0.05);
+}
+
+.banner-text {
+  color: #073933;
+}
+
+.banner-text strong {
+  color: #000000;
 }
 
 .banner-actions {
@@ -500,11 +519,11 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn-secondary {
-  background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  color: #666666;
-  padding: 6px 14px;
-  border-radius: 6px;
+  background: #F4FCF9;
+  border: 1px solid rgba(7, 57, 51, 0.2);
+  color: #073933;
+  padding: 7px 16px;
+  border-radius: 0.75rem;
   font-family: var(--font-mono, monospace);
   font-weight: 600;
   font-size: 0.8rem;
@@ -513,26 +532,27 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn-secondary:hover:not(:disabled) {
-  background: #F5F5F5;
+  background: #EBF9F5;
   color: #000000;
 }
 
 .banner-btn {
-  background: #073933;
-  border: 1px solid #073933;
-  color: #FFFFFF;
-  padding: 6px 14px;
+  background: #000000;
+  border: 1px solid #000000;
+  color: #A2F1DF;
+  padding: 7px 16px;
   border-radius: 0.75rem;
   font-family: var(--font-mono, monospace);
-  font-weight: 600;
+  font-weight: 700;
   font-size: 0.8rem;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .banner-btn:hover {
-  background: #042823;
-  border-color: #042823;
+  background: #073933;
+  border-color: #073933;
+  color: #FFFFFF;
 }
 
 /* Console Grid */
@@ -547,9 +567,9 @@ const handleStartEngine = async () => {
 /* Obrive Cards */
 .obrive-card {
   background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  border: 1px solid rgba(7, 57, 51, 0.14);
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(7, 57, 51, 0.06);
 }
 
 /* Left Panel */
@@ -567,7 +587,7 @@ const handleStartEngine = async () => {
   font-family: var(--font-mono, monospace);
   font-size: 0.76rem;
   font-weight: 700;
-  color: #999999;
+  color: #073933;
   margin-bottom: 16px;
   width: fit-content;
 }
@@ -581,19 +601,20 @@ const handleStartEngine = async () => {
 }
 
 .panel-heading {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-display, "Space Grotesk", sans-serif);
   font-size: 1.85rem;
-  font-weight: 700;
+  font-weight: 800;
   margin: 0 0 10px 0;
   color: #000000;
   letter-spacing: -0.01em;
 }
 
 .panel-sub {
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   line-height: 1.6;
-  color: #666666;
-  margin: 0 0 24px 0;
+  color: #073933;
+  font-weight: 600;
+  margin: 0 0 10px 0;
 }
 
 /* System Readiness Metrics inside Left Panel */
@@ -605,9 +626,9 @@ const handleStartEngine = async () => {
 }
 
 .metric-card {
-  background: #FAFAFA;
-  border: 1px solid #E5E5E5;
-  border-radius: 8px;
+  background: #F4FCF9;
+  border: 1px solid rgba(7, 57, 51, 0.14);
+  border-radius: 10px;
   padding: 12px;
   display: flex;
   flex-direction: column;
@@ -616,30 +637,30 @@ const handleStartEngine = async () => {
 }
 
 .metric-card:hover {
-  border-color: #000000;
-  background: #FFFFFF;
+  border-color: #073933;
+  background: #EBF9F5;
 }
 
 .metric-value {
-  font-family: var(--font-mono, monospace);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-mono, monospace);
   font-size: 0.74rem;
-  font-weight: 700;
-  color: #000000;
+  font-weight: 800;
+  color: #073933;
   letter-spacing: 0.04em;
 }
 
 .metric-label {
-  font-size: 0.7rem;
-  color: #666666;
+  font-size: 0.72rem;
+  color: #2d554c;
   line-height: 1.4;
-  font-weight: 450;
+  font-weight: 500;
 }
 
 .workflow-box {
-  border: 1px solid #E5E5E5;
-  border-radius: 10px;
+  border: 1px solid rgba(7, 57, 51, 0.14);
+  border-radius: 12px;
   padding: 24px;
-  background: #FAFAFA;
+  background: #F7FDFB;
 }
 
 .workflow-header {
@@ -649,11 +670,12 @@ const handleStartEngine = async () => {
   margin-bottom: 20px;
   font-family: var(--font-mono, monospace);
   font-size: 0.8rem;
-  color: #999999;
+  font-weight: 700;
+  color: #073933;
 }
 
 .diamond-icon {
-  color: #000000;
+  color: #073933;
   font-size: 0.95rem;
   line-height: 1;
 }
@@ -679,11 +701,11 @@ const handleStartEngine = async () => {
 }
 
 .step-idx {
-  font-family: var(--font-mono, monospace);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-mono, monospace);
   font-size: 0.82rem;
-  font-weight: 700;
-  color: #000000;
-  opacity: 0.35;
+  font-weight: 800;
+  color: #073933;
+  opacity: 0.75;
   padding: 0;
   line-height: 1.2;
 }
@@ -693,9 +715,9 @@ const handleStartEngine = async () => {
 }
 
 .step-name {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-display, "Space Grotesk", sans-serif);
   font-size: 0.92rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #000000;
   margin: 0 0 2px 0;
   letter-spacing: -0.01em;
@@ -704,8 +726,9 @@ const handleStartEngine = async () => {
 .step-detail {
   font-size: 0.78rem;
   line-height: 1.45;
-  color: #666666;
+  color: #2d554c;
   margin: 0;
+  font-weight: 450;
 }
 
 /* Right Panel */
@@ -715,13 +738,14 @@ const handleStartEngine = async () => {
 }
 
 .console-box {
-  border: 1px solid #CCCCCC;
-  padding: 12px;
+  border: 1px solid rgba(7, 57, 51, 0.14);
+  padding: 16px;
   background: #FFFFFF;
-  border-radius: 8px;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(7, 57, 51, 0.06);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 18px;
 }
 
 .console-section {
@@ -738,36 +762,37 @@ const handleStartEngine = async () => {
 }
 
 .label-title {
-  font-family: var(--font-mono, monospace);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-mono, monospace);
   font-size: 0.76rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.06em;
-  color: #666666;
+  color: #073933;
 }
 
 .label-hint {
   font-size: 0.72rem;
-  color: #999999;
+  color: #2d554c;
+  font-weight: 500;
   font-family: var(--font-mono, monospace);
 }
 
 .upload-dropzone {
   min-height: 80px;
-  border: 1px dashed #CCCCCC;
-  border-radius: 8px;
+  border: 1.5px dashed rgba(7, 57, 51, 0.25);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 14px 20px;
+  padding: 16px 20px;
   cursor: pointer;
-  background: #FAFAFA;
+  background: #F7FDFB;
   transition: all 0.2s ease;
 }
 
 .upload-dropzone:hover,
 .upload-dropzone.drag-over {
-  border-color: #000000;
-  background: #F5F5F5;
+  border-color: #073933;
+  background: #EBF9F5;
 }
 
 .upload-empty {
@@ -782,8 +807,8 @@ const handleStartEngine = async () => {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  background: #000000;
-  color: #FFFFFF;
+  background: #073933;
+  color: #A2F1DF;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -800,7 +825,7 @@ const handleStartEngine = async () => {
 
 .upload-text-bold {
   font-size: 0.85rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #000000;
   margin-bottom: 2px;
 }
@@ -808,7 +833,8 @@ const handleStartEngine = async () => {
 .upload-text-sub {
   font-family: var(--font-mono, monospace);
   font-size: 0.74rem;
-  color: #666666;
+  color: #2d554c;
+  font-weight: 500;
 }
 
 .file-chips-grid {
@@ -823,13 +849,13 @@ const handleStartEngine = async () => {
   align-items: center;
   gap: 8px;
   padding: 6px 12px;
-  background: #F0F0F0;
-  border: 1px solid #DDDDDD;
-  border-radius: 6px;
+  background: #EBF9F5;
+  border: 1px solid rgba(7, 57, 51, 0.2);
+  border-radius: 8px;
   font-family: var(--font-mono, monospace);
   font-size: 0.82rem;
   font-weight: 600;
-  color: #000000;
+  color: #073933;
 }
 
 .chip-name {
@@ -842,7 +868,7 @@ const handleStartEngine = async () => {
 .chip-remove {
   background: none;
   border: none;
-  color: #666666;
+  color: #2d554c;
   font-size: 1.2rem;
   cursor: pointer;
   padding: 0 2px;
@@ -850,7 +876,7 @@ const handleStartEngine = async () => {
 }
 
 .chip-remove:hover {
-  color: #073933;
+  color: #000000;
 }
 
 .console-section.input-section {
@@ -864,10 +890,16 @@ const handleStartEngine = async () => {
   display: flex;
   flex-direction: column;
   position: relative;
-  border: 1px solid #DDDDDD;
-  background: #FAFAFA;
-  border-radius: 8px;
+  border: 1.5px solid rgba(7, 57, 51, 0.2);
+  background: #F7FDFB;
+  border-radius: 12px;
   overflow: hidden;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.console-section.input-section .textarea-wrapper:focus-within {
+  border-color: #073933;
+  background: #FFFFFF;
 }
 
 .scenario-input {
@@ -886,8 +918,8 @@ const handleStartEngine = async () => {
   resize: none;
 }
 
-.scenario-input:focus {
-  background: #FFFFFF;
+.scenario-input::placeholder {
+  color: #55756d;
 }
 
 .engine-badge-pill {
@@ -897,21 +929,22 @@ const handleStartEngine = async () => {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 3px 8px;
+  padding: 4px 10px;
   background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  border-radius: 4px;
+  border: 1px solid rgba(7, 57, 51, 0.18);
+  border-radius: 6px;
   font-family: var(--font-mono, monospace);
   font-size: 0.68rem;
-  font-weight: 600;
-  color: #999999;
+  font-weight: 700;
+  color: #073933;
 }
 
 .badge-dot {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
-  background: #073933;
+  background: #00E5A3;
+  box-shadow: 0 0 4px #00E5A3;
 }
 
 /* Plan / usage status card */
@@ -921,25 +954,26 @@ const handleStartEngine = async () => {
   justify-content: space-between;
   gap: 14px;
   padding: 12px 16px;
-  background: #FFFDF0;
-  border: 1px solid #F0E4B0;
-  border-radius: 8px;
-  margin: 12px 12px 0;
+  background: #F4FCF9;
+  border: 1px solid rgba(7, 57, 51, 0.16);
+  border-radius: 12px;
+  margin: 4px 12px 0;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .plan-status-card:hover {
-  border-color: #E0CE80;
+  border-color: #073933;
+  background: #EBF9F5;
 }
 
 .plan-status-card.has-plan {
-  background: #F0FFF4;
-  border-color: #B8E8C4;
+  background: #F0FAF7;
+  border-color: rgba(7, 57, 51, 0.25);
 }
 
 .plan-status-card.has-plan:hover {
-  border-color: #8FD8A0;
+  border-color: #073933;
 }
 
 .plan-card-left {
@@ -960,24 +994,25 @@ const handleStartEngine = async () => {
 }
 
 .plan-card-title {
-  font-family: var(--font-mono, monospace);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-mono, monospace);
   font-size: 0.76rem;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 0.05em;
-  color: #A08940;
+  color: #073933;
 }
 
 .plan-status-card.has-plan .plan-card-title {
-  color: #2E7D32;
+  color: #073933;
 }
 
 .plan-card-sub {
   font-size: 0.78rem;
-  color: #A08940;
+  color: #2d554c;
+  font-weight: 500;
 }
 
 .plan-status-card.has-plan .plan-card-sub {
-  color: #388E3C;
+  color: #2d554c;
 }
 
 .plan-card-btn {
@@ -997,10 +1032,9 @@ const handleStartEngine = async () => {
 }
 
 .plan-card-btn:hover {
-  background: #042823;
-  border-color: #042823;
+  background: #000000;
+  border-color: #000000;
 }
-
 
 .launch-section {
   padding: 12px;
@@ -1009,12 +1043,12 @@ const handleStartEngine = async () => {
 /* MiroFish Pulsing Start Engine Button */
 .start-engine-btn {
   width: 100%;
-  background: #073933;
-  color: #FFFFFF;
-  border: 1px solid #073933;
+  background: #000000;
+  color: #A2F1DF;
+  border: 1px solid #000000;
   padding: 16px 24px;
-  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-weight: 700;
+  font-family: 'microgrammaBold', 'Microgramma Bold', 'Microgramma', sans-serif !important;
+  font-weight: 800;
   font-size: 0.95rem;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1031,10 +1065,11 @@ const handleStartEngine = async () => {
 }
 
 .start-engine-btn:hover:not(:disabled) {
-  background: #074139;
-  border-color: #074139;
+  background: #073933;
+  color: #FFFFFF;
+  border-color: #073933;
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.4);
+  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.35);
 }
 
 .start-engine-btn:disabled {
@@ -1045,13 +1080,13 @@ const handleStartEngine = async () => {
 
 @keyframes pulse-border {
   0% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 0 0 0 rgba(7, 57, 51, 0.3);
   }
   70% {
-    box-shadow: 0 0 0 8px rgba(0, 0, 0, 0);
+    box-shadow: 0 0 0 8px rgba(7, 57, 51, 0);
   }
   100% {
-    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+    box-shadow: 0 0 0 0 rgba(7, 57, 51, 0);
   }
 }
 
@@ -1096,7 +1131,7 @@ const handleStartEngine = async () => {
   }
 
   .console-main {
-    padding: 32px 16px 60px;
+    padding: 88px 16px 60px;
   }
 }
 

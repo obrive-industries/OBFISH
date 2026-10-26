@@ -458,10 +458,10 @@ onActivated(() => {
   position: relative;
   width: 100%;
   background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  border-radius: 14px;
+  border: 1px solid rgba(7, 57, 51, 0.14);
+  border-radius: 16px;
   padding: 38px 32px 42px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 8px 30px rgba(7, 57, 51, 0.06);
   overflow: hidden;
   margin-top: 10px;
 }
@@ -477,7 +477,7 @@ onActivated(() => {
   left: 0;
   right: 0;
   height: 2px;
-  background: #000000;
+  background: #073933;
 }
 
 /* Subtle Technical Grid Background */
@@ -515,8 +515,8 @@ onActivated(() => {
   align-items: center;
   gap: 8px;
   padding: 5px 14px;
-  background: #FFFFFF;
-  border: 1px solid #000000;
+  background: #F4FCF9;
+  border: 1px solid rgba(7, 57, 51, 0.25);
   border-radius: 9999px;
   margin-bottom: 12px;
 }
@@ -525,14 +525,14 @@ onActivated(() => {
   font-family: var(--font-mono, monospace);
   font-size: 0.68rem;
   font-weight: 700;
-  color: #000000;
+  color: #073933;
   letter-spacing: 0.08em;
 }
 
 .history-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-display, "Space Grotesk", sans-serif);
   font-size: 1.65rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #000000;
   letter-spacing: -0.01em;
   margin: 0 0 8px 0;
@@ -540,11 +540,11 @@ onActivated(() => {
 
 .history-subtitle {
   font-size: 0.88rem;
-  color: #666666;
+  color: #2d554c;
   max-width: 620px;
   line-height: 1.5;
   margin: 0;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 /* Responsive Cards Grid */
@@ -567,11 +567,11 @@ onActivated(() => {
 .project-card {
   position: relative;
   background: #FFFFFF;
-  border: 1px solid #E5E5E5;
-  border-radius: 10px;
+  border: 1px solid rgba(7, 57, 51, 0.14);
+  border-radius: 12px;
   padding: 20px;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 2px 8px rgba(7, 57, 51, 0.04);
   transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1);
   display: flex;
   flex-direction: column;
@@ -579,8 +579,8 @@ onActivated(() => {
 }
 
 .project-card:hover {
-  border-color: #000000;
-  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  border-color: #073933;
+  box-shadow: 0 10px 28px rgba(7, 57, 51, 0.1);
   transform: translateY(-3px);
 }
 
@@ -591,16 +591,16 @@ onActivated(() => {
   align-items: center;
   margin-bottom: 14px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #F0F0F0;
+  border-bottom: 1px solid rgba(7, 57, 51, 0.1);
 }
 
 .card-id-badge {
   display: inline-flex;
   align-items: center;
-  background: #000000;
+  background: #073933;
   padding: 3px 8px;
   border-radius: 4px;
-  border: 1px solid #000000;
+  border: 1px solid #073933;
 }
 
 .card-id {
@@ -624,16 +624,16 @@ onActivated(() => {
   gap: 4px;
   padding: 3px 7px;
   border-radius: 4px;
-  background: #FAFAFA;
-  border: 1px solid #E5E5E5;
-  opacity: 0.45;
+  background: #F4FCF9;
+  border: 1px solid rgba(7, 57, 51, 0.16);
+  opacity: 0.55;
   transition: all 0.2s ease;
 }
 
 .step-chip.active {
   opacity: 1;
-  background: #000000;
-  border-color: #000000;
+  background: #073933;
+  border-color: #073933;
 }
 
 .step-dot {
@@ -652,7 +652,7 @@ onActivated(() => {
   font-family: var(--font-mono, monospace);
   font-size: 0.62rem;
   font-weight: 700;
-  color: #888888;
+  color: #2d554c;
   letter-spacing: 0.04em;
 }
 
@@ -662,9 +662,9 @@ onActivated(() => {
 
 /* Reality Seed Files Box */
 .card-files-wrapper {
-  background: #FAFAFA;
-  border: 1px solid #EEEEEE;
-  border-radius: 6px;
+  background: #F7FDFB;
+  border: 1px solid rgba(7, 57, 51, 0.12);
+  border-radius: 8px;
   padding: 8px 10px;
   margin-bottom: 14px;
   min-height: 42px;
@@ -709,8 +709,8 @@ onActivated(() => {
 .file-name {
   font-family: var(--font-mono, monospace);
   font-size: 0.74rem;
-  color: #000000;
-  font-weight: 500;
+  color: #073933;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -720,7 +720,7 @@ onActivated(() => {
   font-family: var(--font-mono, monospace);
   font-size: 0.6rem;
   font-weight: 700;
-  color: #666666;
+  color: #2d554c;
   padding-left: 2px;
 }
 
@@ -728,16 +728,16 @@ onActivated(() => {
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #999999;
+  color: #2d554c;
   font-family: var(--font-mono, monospace);
   font-size: 0.72rem;
 }
 
 /* Card Title */
 .card-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-display, "Space Grotesk", sans-serif);
   font-size: 0.98rem;
-  font-weight: 600;
+  font-weight: 700;
   color: #000000;
   margin: 0 0 6px 0;
   line-height: 1.4;
@@ -749,13 +749,13 @@ onActivated(() => {
 }
 
 .project-card:hover .card-title {
-  color: #FF4500;
+  color: #073933;
 }
 
 /* Card Description */
 .card-desc {
   font-size: 0.82rem;
-  color: #666666;
+  color: #2d554c;
   margin: 0 0 16px 0;
   line-height: 1.5;
   height: 36px;
@@ -763,6 +763,7 @@ onActivated(() => {
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
+  font-weight: 450;
 }
 
 /* Card Footer */
@@ -771,7 +772,7 @@ onActivated(() => {
   justify-content: space-between;
   align-items: center;
   padding-top: 12px;
-  border-top: 1px solid #F0F0F0;
+  border-top: 1px solid rgba(7, 57, 51, 0.1);
   margin-top: auto;
 }
 
@@ -781,7 +782,7 @@ onActivated(() => {
   gap: 5px;
   font-family: var(--font-mono, monospace);
   font-size: 0.68rem;
-  color: #888888;
+  color: #2d554c;
   font-weight: 500;
 }
 
@@ -831,7 +832,7 @@ onActivated(() => {
   color: #A08940;
 }
 .card-progress-pill.in-progress .status-dot {
-  background: #FF4500;
+  background: #073933;
 }
 
 .card-progress-pill.not-started {
@@ -853,7 +854,7 @@ onActivated(() => {
 
 .project-card:hover .card-action-arrow {
   opacity: 1;
-  color: #FF4500;
+  color: #073933;
   transform: translate(2px, -2px);
 }
 
@@ -864,7 +865,7 @@ onActivated(() => {
   left: 0;
   height: 2px;
   width: 0;
-  background: #FF4500;
+  background: #073933;
   transition: width 0.3s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
@@ -879,14 +880,14 @@ onActivated(() => {
   align-items: center;
   gap: 12px;
   padding: 40px;
-  color: #666666;
+  color: #2d554c;
 }
 
 .loading-spinner {
   width: 26px;
   height: 26px;
-  border: 2px solid #E5E5E5;
-  border-top-color: #000000;
+  border: 2px solid rgba(7, 57, 51, 0.16);
+  border-top-color: #073933;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -896,7 +897,7 @@ onActivated(() => {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
-  color: #000000;
+  color: #073933;
 }
 
 /* Empty State */
@@ -914,9 +915,9 @@ onActivated(() => {
 }
 
 .empty-title {
-  font-family: var(--font-mono, monospace);
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-mono, monospace);
   font-size: 0.88rem;
-  font-weight: 700;
+  font-weight: 800;
   color: #000000;
   letter-spacing: 0.06em;
   margin: 0 0 6px 0;
@@ -924,10 +925,11 @@ onActivated(() => {
 
 .empty-text {
   font-size: 0.84rem;
-  color: #666666;
+  color: #2d554c;
   max-width: 440px;
   line-height: 1.5;
   margin: 0;
+  font-weight: 500;
 }
 
 /* Modal Styles */
@@ -1219,11 +1221,11 @@ onActivated(() => {
 .sign-in-history-btn {
   margin-top: 14px;
   background: #000000;
-  color: #FFFFFF;
+  color: #A2F1DF;
   border: 1px solid #000000;
   padding: 8px 22px;
-  border-radius: 6px;
-  font-family: var(--font-mono, monospace);
+  border-radius: 9999px;
+  font-family: microgrammaBold, "microgrammaBold Fallback", var(--font-mono, monospace);
   font-size: 12px;
   font-weight: 700;
   cursor: pointer;
@@ -1232,8 +1234,9 @@ onActivated(() => {
 }
 
 .sign-in-history-btn:hover {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #073933;
+  color: #FFFFFF;
+  border-color: #073933;
   transform: translateY(-1px);
 }
 </style>

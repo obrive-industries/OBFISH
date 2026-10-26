@@ -28,6 +28,7 @@
             </div>
 
             <router-link
+              v-if="route.path !== '/console'"
               to="/console"
               class="nav-console-btn"
             >
@@ -51,11 +52,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import authStore from '../../store/auth'
 
 const emit = defineEmits(['open-auth'])
 const router = useRouter()
+const route = useRoute()
 const isScrolled = ref(false)
 
 const userInitials = computed(() => {
