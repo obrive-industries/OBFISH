@@ -4,7 +4,7 @@
     <div class="orb orb-2" aria-hidden="true"></div>
     <div class="container-main relative z-[2]">
       <div class="sec-header">
-        <h2 class="sec-title text-[#0a1c17]">
+        <h2 class="sec-title text-[#073933]">
           BRAIN is Built to Explore
         </h2>
         <p class="sec-subtitle text-[#163830]">
@@ -25,10 +25,10 @@
           <div class="spot" aria-hidden="true"></div>
           <div class="border-glow" aria-hidden="true"></div>
           <div class="accent" aria-hidden="true"></div>
-          <span class="relative block text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3">
+          <span class="relative block text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3 font-michroma">
             {{ card.tag }}
           </span>
-          <h3 class="relative text-lg font-semibold text-[#0a1c17] mb-2 leading-snug">
+          <h3 class="relative text-lg font-semibold text-[#073933] mb-2 leading-snug">
             {{ card.title }}
           </h3>
           <p class="relative text-sm text-[#163830] leading-relaxed">
@@ -117,13 +117,13 @@ const getSpotlightStyle = (index) => {
 }
 
 .sec-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 3rem;
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
+  font-size: 2.75rem;
   line-height: 1.15;
   font-weight: 700;
-  color: #0a1c17;
+  color: #073933;
   margin-bottom: 1.25rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 @media (max-width: 768px) {

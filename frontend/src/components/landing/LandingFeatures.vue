@@ -52,12 +52,12 @@
           </div>
 
           <!-- Step Number -->
-          <div class="relative text-[#2d554c] font-mono text-sm mb-4 group-hover:text-[#0a1c17] transition-colors">
+          <div class="relative text-[#2d554c] font-michroma text-xs tracking-wider mb-4 group-hover:text-[#073933] transition-colors">
             {{ card.step }}
           </div>
 
           <!-- Title -->
-          <h3 class="relative text-xl font-semibold text-[#0a1c17] mb-2">
+          <h3 class="relative text-xl font-semibold text-[#073933] mb-2 font-microgramma">
             {{ card.title }}
           </h3>
 
@@ -148,13 +148,13 @@ const getSpotlightStyle = (index) => {
 }
 
 .sec-title {
-  font-family: 'Inter', sans-serif;
-  font-size: 3rem;
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
+  font-size: 2.75rem;
   line-height: 1.15;
   font-weight: 700;
-  color: #0a1c17;
+  color: #073933;
   margin-bottom: 1.25rem;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.02em;
 }
 
 @media (max-width: 768px) {

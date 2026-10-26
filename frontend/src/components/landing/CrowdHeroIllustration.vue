@@ -131,15 +131,15 @@ const generateCrowd = () => {
     count: bgCount,
     layer: 'bg',
     baseDuration: 48,
-    scaleMin: 0.58,
-    scaleMax: 0.74,
-    blur: 1.2,
-    opacity: 0.65,
+    scaleMin: 0.65,
+    scaleMax: 0.78,
+    blur: 0.8,
+    opacity: 0.75,
     zBase: 10,
-    bottomMin: 4,
-    bottomMax: 12,
+    bottomMin: 3,
+    bottomMax: 7,
     bobDurationBase: 3.5,
-    bobAmount: 3,
+    bobAmount: 2.5,
     swayDeg: 0.6,
   })
 
@@ -149,16 +149,16 @@ const generateCrowd = () => {
     count: midCount,
     layer: 'mid',
     baseDuration: 34,
-    scaleMin: 0.78,
-    scaleMax: 1.0,
+    scaleMin: 0.80,
+    scaleMax: 0.95,
     blur: 0,
-    opacity: 0.88,
+    opacity: 0.92,
     zBase: 30,
-    bottomMin: -4,
-    bottomMax: 4,
+    bottomMin: 0,
+    bottomMax: 3,
     bobDurationBase: 3.0,
-    bobAmount: 4,
-    swayDeg: 0.9,
+    bobAmount: 3,
+    swayDeg: 0.8,
   })
 
   // Tier 3: Foreground Crowd (All moving, detailed, crisp, dynamic speed)
@@ -167,13 +167,13 @@ const generateCrowd = () => {
     count: fgCount,
     layer: 'fg',
     baseDuration: 24,
-    scaleMin: 0.85,
-    scaleMax: 1.12,
+    scaleMin: 0.95,
+    scaleMax: 1.10,
     blur: 0,
     opacity: 1.0,
     zBase: 60,
-    bottomMin: -10,
-    bottomMax: -3,
+    bottomMin: -2,
+    bottomMax: 1,
     bobDurationBase: 2.5,
     bobAmount: 3,
     swayDeg: 0.8,
@@ -206,8 +206,9 @@ const stageStyle = computed(() => {
 
 // Styles per person wrapper - continuous infinite keyframe motion
 const getPersonWrapperStyle = (p) => {
-  const baseWidth = 325
-  const baseHeight = 440
+  // OpenPeeps native SVG viewBox is 240x324
+  const baseWidth = 240
+  const baseHeight = 324
   const w = Math.round(baseWidth * p.scale)
   const h = Math.round(baseHeight * p.scale)
 
@@ -352,16 +353,17 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 48vh;
-  min-height: 380px;
-  max-height: 470px;
-  overflow: hidden;
+  width: 100vw;
+  max-width: 100vw;
+  height: 58vh;
+  min-height: 480px;
+  max-height: 640px;
+  overflow-x: clip;
+  overflow-y: visible;
   pointer-events: none;
   z-index: 1000;
   transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.65s ease, filter 0.65s ease;
   will-change: transform, opacity, filter;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 12%, black 100%);
 }
 
 /* Exit state */
@@ -426,7 +428,7 @@ onUnmounted(() => {
   -webkit-user-select: none;
 }
 
-/* ALL characters continuously move via GPU compositor thread */
+/* ALL characters continuously move via GPU compositor thread across full width */
 .motion-walk-ltr {
   animation-name: crowd-walk-ltr;
   animation-timing-function: linear;
@@ -443,19 +445,19 @@ onUnmounted(() => {
 
 @keyframes crowd-walk-ltr {
   0% {
-    transform: translate3d(-325px, 0, 0);
+    transform: translate3d(-350px, 0, 0);
   }
   100% {
-    transform: translate3d(calc(100vw + 325px), 0, 0);
+    transform: translate3d(calc(100vw + 350px), 0, 0);
   }
 }
 
 @keyframes crowd-walk-rtl {
   0% {
-    transform: translate3d(calc(100vw + 325px), 0, 0);
+    transform: translate3d(calc(100vw + 350px), 0, 0);
   }
   100% {
-    transform: translate3d(-325px, 0, 0);
+    transform: translate3d(-350px, 0, 0);
   }
 }
 
@@ -492,17 +494,17 @@ onUnmounted(() => {
 /* Responsive tuning */
 @media (max-width: 768px) {
   .crowd-illustration-root {
-    height: 36vh;
-    min-height: 280px;
-    max-height: 360px;
+    height: 46vh;
+    min-height: 360px;
+    max-height: 460px;
   }
 }
 
 @media (max-width: 480px) {
   .crowd-illustration-root {
-    height: 32vh;
-    min-height: 240px;
-    max-height: 300px;
+    height: 42vh;
+    min-height: 320px;
+    max-height: 400px;
   }
 }
 </style>

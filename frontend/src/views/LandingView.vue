@@ -11,7 +11,7 @@
     </main>
 
     <!-- Fixed Dynamic Crowd Layer across the bottom of viewport -->
-    <CrowdHeroIllustration class="fixed bottom-0 left-0 right-0 h-[42vh] z-[1000] pointer-events-none" />
+    <CrowdHeroIllustration class="fixed bottom-0 left-0 right-0 w-full z-[1000] pointer-events-none" />
   </div>
 </template>
 

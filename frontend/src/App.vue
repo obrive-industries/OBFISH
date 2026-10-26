@@ -85,32 +85,56 @@ onUnmounted(() => {
   --color-gray-900: #111827;
 
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-display: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', 'Inter', sans-serif;
+  --font-display: 'Microgramma', 'Microgramma Bold', sans-serif;
+  --font-michroma: 'Michroma', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Mono', monospace;
 
-  /* Obrive compatibility tokens */
-  --obrive-primary: #000000;
-  --obrive-primary-dark: #000000;
-  --obrive-primary-light: #18181b;
-  --obrive-accent: #ffffff;
-  --obrive-accent-light: #f4f4f5;
-  --obrive-emerald: #00E5A3;
-  --obrive-border: rgba(255, 255, 255, 0.12);
-  --obrive-border-focus: rgba(255, 255, 255, 0.4);
-  --obrive-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+  /* Obrive official brand design tokens (matched with /home/yash/Obrive/Obrive) */
+  --obrive-primary: #073933;
+  --obrive-primary-teal: #074139;
+  --obrive-primary-dark: #042823;
+  --obrive-accent: #a2f1df;
+  --obrive-accent-light: #caede5;
+  --obrive-accent-gradient: linear-gradient(to right, #caede5, #beeee3, #b2f0e1, #a5f1df, #98f2dd);
+  --obrive-text-dark: #073933;
+  --obrive-text-body: #0a1c17;
+  --obrive-text-muted: #163830;
+  --obrive-text-subtle: #2d554c;
+  --obrive-border: rgba(7, 57, 51, 0.15);
+  --obrive-border-focus: rgba(7, 57, 51, 0.4);
+  --obrive-shadow: 0 10px 30px -5px rgba(7, 57, 51, 0.12);
 }
 
 /* Global Reset */
 * {
   box-sizing: border-box;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+  scrollbar-color: rgba(7, 57, 51, 0.22) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(7, 57, 51, 0.22);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(7, 57, 51, 0.45);
 }
 
 body {
   font-family: var(--font-sans);
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #A2F1DF;
+  color: var(--obrive-text-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -124,13 +148,13 @@ body {
 
 /* Typography Classes */
 .font-microgramma {
-  font-family: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', sans-serif !important;
-  font-weight: 700;
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
   letter-spacing: -0.01em;
 }
 
 .font-michroma {
-  font-family: 'Inter', sans-serif !important;
+  font-family: 'Michroma', sans-serif !important;
+  letter-spacing: 0.04em;
 }
 
 .font-mono {

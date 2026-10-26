@@ -119,7 +119,7 @@ import authStore from '../../store/auth'
 }
 
 .logo-divider {
-  color: #064139;
+  color: #073933;
   font-size: 1.35rem;
   font-weight: 500;
   line-height: 1;
@@ -127,11 +127,11 @@ import authStore from '../../store/auth'
 }
 
 .logo-text {
-  font-family: 'Microgramma', 'Microgramma Bold', 'Space Grotesk', system-ui, sans-serif;
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif;
   font-weight: 800;
   font-size: 1.35rem;
   letter-spacing: 0.08em;
-  color: #064139;
+  color: #073933;
   line-height: 1;
 }
 </style>

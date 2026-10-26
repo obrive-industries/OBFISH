@@ -6,8 +6,8 @@
     <div class="container-main relative z-[2]">
       <!-- Section Header -->
       <div class="text-center mb-16">
-        <p class="text-sm font-semibold text-[#2d554c] uppercase tracking-wider mb-4">Decision Dynamics</p>
-        <h2 class="text-4xl md:text-5xl font-bold text-[#0a1c17] mb-4">Simulate Before You Commit</h2>
+        <p class="text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-4 font-michroma">Decision Dynamics</p>
+        <h2 class="text-4xl md:text-5xl font-bold text-[#073933] mb-4 font-microgramma">Simulate Before You Commit</h2>
         <p class="text-[#163830] max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
           Navigate emergent complexity by testing every strategic assumption against an autonomous multi-agent swarm.
         </p>
@@ -25,13 +25,13 @@
           >
             <div class="flex items-start gap-4">
               <span
-                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-mono shrink-0 mt-0.5"
-                :class="activeIdx === 0 ? 'bg-[#0a1c17] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-michroma shrink-0 mt-0.5"
+                :class="activeIdx === 0 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
               >
                 1
               </span>
               <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-[#0a1c17] text-base sm:text-lg leading-snug">
+                <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
                   The Future Is Uncertain
                 </h3>
                 <p class="text-sm text-[#163830] mt-3 leading-relaxed">
@@ -49,13 +49,13 @@
           >
             <div class="flex items-start gap-4">
               <span
-                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-mono shrink-0 mt-0.5"
-                :class="activeIdx === 1 ? 'bg-[#0a1c17] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
+                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-michroma shrink-0 mt-0.5"
+                :class="activeIdx === 1 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
               >
                 2
               </span>
               <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-[#0a1c17] text-base sm:text-lg leading-snug">
+                <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
                   Your Decisions Don’t Have to Be Blind.
                 </h3>
                 <p class="text-sm text-[#163830] mt-3 leading-relaxed">

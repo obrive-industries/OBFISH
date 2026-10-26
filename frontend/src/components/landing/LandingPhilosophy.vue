@@ -1,8 +1,8 @@
 <template>
   <section id="philosophy" class="philosophy-section">
     <div class="container-main relative z-[2] max-w-3xl mx-auto px-6">
-      <h2 :class="['text-3xl md:text-4xl font-bold text-[#0a1c17] mb-10 anim', { show: isVisible }]" style="transition-delay: 100ms;">
-        <span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#0a1c17] to-[#163830]">
+      <h2 :class="['text-3xl md:text-4xl font-bold text-[#073933] mb-10 anim font-microgramma', { show: isVisible }]" style="transition-delay: 100ms;">
+        <span class="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-[#073933] to-[#163830]">
           About BRAIN:
         </span>
         Simulate Possibilities. Make Smarter Decisions.
@@ -16,7 +16,7 @@
         By transforming real-world information, business challenges, research materials, and creative ideas into interactive scenarios, BRAIN helps users examine how different factors, decisions, and interactions could shape future outcomes. It creates a virtual environment where possibilities can be explored before decisions are made in the real world.
       </p>
 
-      <h3 :class="['text-xl font-semibold text-[#0a1c17] mb-4 anim', { show: isVisible }]" style="transition-delay: 300ms;">
+      <h3 :class="['text-lg font-semibold text-[#073933] mb-4 anim font-michroma', { show: isVisible }]" style="transition-delay: 300ms;">
         How It Works
       </h3>
       <ul :class="['text-base text-[#163830] leading-relaxed mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 350ms;">
@@ -30,7 +30,7 @@
         </li>
       </ul>
 
-      <h3 :class="['text-xl font-semibold text-[#0a1c17] mb-4 anim', { show: isVisible }]" style="transition-delay: 400ms;">
+      <h3 :class="['text-lg font-semibold text-[#073933] mb-4 anim font-michroma', { show: isVisible }]" style="transition-delay: 400ms;">
         Our Vision
       </h3>
       <p :class="['text-base text-[#163830] leading-relaxed mb-4 anim', { show: isVisible }]" style="transition-delay: 450ms;">
@@ -40,15 +40,15 @@
       <ul :class="['text-base text-[#163830] leading-relaxed mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 500ms;">
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
-          <span><strong class="text-[#0a1c17]">01 // Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
+          <span><strong class="text-[#073933] font-michroma text-sm">01 // Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
         </li>
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
-          <span><strong class="text-[#0a1c17]">02 // Creative Level:</strong> A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.</span>
+          <span><strong class="text-[#073933] font-michroma text-sm">02 // Creative Level:</strong> A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.</span>
         </li>
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
-          <span><strong class="text-[#0a1c17]">03 // Research Level:</strong> Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.</span>
+          <span><strong class="text-[#073933] font-michroma text-sm">03 // Research Level:</strong> Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.</span>
         </li>
       </ul>
 
@@ -56,10 +56,10 @@
         <p class="text-4xl md:text-5xl text-[#163830] leading-snug">
           “Every possibility begins with a question.
         </p>
-        <p class="text-4xl md:text-5xl text-[#0a1c17] leading-snug mt-1">
+        <p class="text-4xl md:text-5xl text-[#073933] leading-snug mt-1">
           BRAIN helps you explore what comes next.”
         </p>
-        <p class="text-xs font-mono tracking-widest text-[#2d554c] uppercase mt-4" style="font-family: 'Space Grotesk', sans-serif;">
+        <p class="text-xs font-michroma tracking-widest text-[#2d554c] uppercase mt-4">
           — BRAIN by Obrive Industries
         </p>
       </div>
