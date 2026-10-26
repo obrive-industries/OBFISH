@@ -5,7 +5,7 @@
         <!-- Left: Logo & Social Links -->
         <div class="flex items-center gap-4">
           <router-link to="/" class="logo" aria-label="Brain Home">
-            <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" />
+            <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" width="70" height="50" />
             <span class="logo-text">BRAIN</span>
           </router-link>
           <span class="text-[#0a1c17]/30">|</span>
@@ -112,8 +112,8 @@ import authStore from '../../store/auth'
 }
 
 .logo-img {
-  height: 28px;
-  width: auto;
+  width: 70px;
+  height: 50px;
   object-fit: contain;
 }
 

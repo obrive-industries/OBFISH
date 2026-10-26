@@ -7,7 +7,7 @@
       <div class="flex items-center justify-between h-20">
         <!-- Logo -->
         <router-link to="/" class="logo" aria-label="Brain Home">
-          <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" />
+          <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" width="70" height="50" />
           <span class="logo-text">BRAIN</span>
         </router-link>
 
@@ -124,8 +124,8 @@ onUnmounted(() => {
 }
 
 .logo-img {
-  height: 32px;
-  width: auto;
+  width: 70px;
+  height: 50px;
   object-fit: contain;
 }
 

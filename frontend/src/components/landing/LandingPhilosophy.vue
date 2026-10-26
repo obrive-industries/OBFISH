@@ -5,7 +5,7 @@
         <p :class="['text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3 anim font-michroma', { show: isVisible }]" style="transition-delay: 50ms;">
           About BRAIN
         </p>
-        <h2 :class="['text-3xl md:text-4xl font-bold text-[#073933] anim font-microgramma leading-snug', { show: isVisible }]" style="transition-delay: 100ms;">
+        <h2 :class="['section-title anim font-microgramma mb-4', { show: isVisible }]" style="transition-delay: 100ms;">
           Simulate Possibilities. Make Smarter Decisions.
         </h2>
       </div>
@@ -139,6 +139,21 @@ onUnmounted(() => {
     transition: none;
     opacity: 1;
     transform: none;
+  }
+}
+
+.section-title {
+  font-family: microgrammaBold, "microgrammaBold Fallback", 'Microgramma', sans-serif !important;
+  font-size: 40px !important;
+  font-weight: 800 !important;
+  line-height: 44.4444px !important;
+  color: rgb(0, 0, 0) !important;
+}
+
+@media (max-width: 640px) {
+  .section-title {
+    font-size: clamp(28px, 6vw, 40px) !important;
+    line-height: 1.15 !important;
   }
 }
 </style>

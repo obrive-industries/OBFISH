@@ -7,7 +7,7 @@
       <!-- Section Header -->
       <div class="text-center mb-16">
         <p class="text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-4 font-michroma">Decision Dynamics</p>
-        <h2 class="text-4xl md:text-5xl font-bold text-[#073933] mb-4 font-microgramma">Simulate Before You Commit</h2>
+        <h2 class="section-title mb-4 font-microgramma">Simulate Before You Commit</h2>
         <p class="text-black max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-normal">
           Navigate emergent complexity by testing every strategic assumption against an autonomous multi-agent swarm.
         </p>
@@ -168,6 +168,21 @@ const activeIdx = ref(0)
     height: 100%;
     min-height: 100%;
     aspect-ratio: 16 / 9;
+  }
+}
+
+.section-title {
+  font-family: microgrammaBold, "microgrammaBold Fallback", 'Microgramma', sans-serif !important;
+  font-size: 40px !important;
+  font-weight: 800 !important;
+  line-height: 44.4444px !important;
+  color: rgb(0, 0, 0) !important;
+}
+
+@media (max-width: 640px) {
+  .section-title {
+    font-size: clamp(28px, 6vw, 40px) !important;
+    line-height: 1.15 !important;
   }
 }
 </style>

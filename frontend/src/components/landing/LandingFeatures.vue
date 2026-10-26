@@ -148,18 +148,19 @@ const getSpotlightStyle = (index) => {
 }
 
 .sec-title {
-  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-size: 2.75rem;
-  line-height: 1.15;
-  font-weight: 700;
-  color: #073933;
+  font-family: microgrammaBold, "microgrammaBold Fallback", 'Microgramma', sans-serif !important;
+  font-size: 40px !important;
+  font-weight: 800 !important;
+  line-height: 44.4444px !important;
+  color: rgb(0, 0, 0) !important;
   margin-bottom: 1.25rem;
   letter-spacing: -0.02em;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 640px) {
   .sec-title {
-    font-size: 2.25rem;
+    font-size: clamp(28px, 6vw, 40px) !important;
+    line-height: 1.15 !important;
   }
 }
 
