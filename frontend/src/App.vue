@@ -56,7 +56,25 @@ onUnmounted(() => {
   font-family: 'microgrammaBold';
   src: url('/fonts/microgramma-bold.otf') format('opentype'),
        url('./assets/fonts/microgramma-bold.otf') format('opentype');
-  font-weight: 400 900;
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'microgrammaBold';
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('./assets/fonts/microgramma-bold.otf') format('opentype');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Microgramma';
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('./assets/fonts/microgramma-bold.otf') format('opentype');
+  font-weight: 100 900;
   font-style: normal;
   font-display: block;
 }
@@ -65,8 +83,8 @@ onUnmounted(() => {
   font-family: 'Microgramma';
   src: url('/fonts/microgramma-bold.otf') format('opentype'),
        url('./assets/fonts/microgramma-bold.otf') format('opentype');
-  font-weight: 400 900;
-  font-style: normal;
+  font-weight: 100 900;
+  font-style: italic;
   font-display: block;
 }
 
@@ -74,7 +92,7 @@ onUnmounted(() => {
   font-family: 'Microgramma Bold';
   src: url('/fonts/microgramma-bold.otf') format('opentype'),
        url('./assets/fonts/microgramma-bold.otf') format('opentype');
-  font-weight: 400 900;
+  font-weight: 100 900;
   font-style: normal;
   font-display: block;
 }
@@ -82,8 +100,16 @@ onUnmounted(() => {
 @font-face {
   font-family: 'Caveat';
   src: url('/fonts/caveat.woff2') format('woff2');
-  font-weight: 400 700;
+  font-weight: 100 900;
   font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('/fonts/caveat.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
   font-display: block;
 }
 
