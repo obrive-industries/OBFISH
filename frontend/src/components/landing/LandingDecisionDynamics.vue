@@ -23,22 +23,12 @@
             :class="activeIdx === 0 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 0"
           >
-            <div class="flex items-start gap-4">
-              <span
-                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-michroma shrink-0 mt-0.5"
-                :class="activeIdx === 0 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-black font-semibold'"
-              >
-                1
-              </span>
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
-                  The Future Is Uncertain
-                </h3>
-                <p class="text-sm text-black mt-3 leading-relaxed font-normal">
-                  Traditional planning often relies on historical data, assumptions, and individual opinions.
-                </p>
-              </div>
-            </div>
+            <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
+              The Future Is Uncertain
+            </h3>
+            <p class="text-sm text-black mt-3 leading-relaxed font-normal">
+              Traditional planning often relies on historical data, assumptions, and individual opinions.
+            </p>
           </div>
 
           <!-- Box 2: Your Decisions Don't Have to Be Blind -->
@@ -47,22 +37,12 @@
             :class="activeIdx === 1 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 1"
           >
-            <div class="flex items-start gap-4">
-              <span
-                class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-michroma shrink-0 mt-0.5"
-                :class="activeIdx === 1 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-black font-semibold'"
-              >
-                2
-              </span>
-              <div class="flex-1 min-w-0">
-                <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
-                  Your Decisions Don’t Have to Be Blind.
-                </h3>
-                <p class="text-sm text-black mt-3 leading-relaxed font-normal">
-                  But real-world outcomes are shaped by multiple people, competing interests, changing conditions, and unexpected reactions.
-                </p>
-              </div>
-            </div>
+            <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
+              Your Decisions Don’t Have to Be Blind.
+            </h3>
+            <p class="text-sm text-black mt-3 leading-relaxed font-normal">
+              But real-world outcomes are shaped by multiple people, competing interests, changing conditions, and unexpected reactions.
+            </p>
           </div>
         </div>
 
@@ -128,6 +108,11 @@ const activeIdx = ref(0)
   backdrop-filter: blur(12px);
   user-select: none;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1 1 0%;
+  min-height: 180px;
 }
 
 @media (min-width: 640px) {
