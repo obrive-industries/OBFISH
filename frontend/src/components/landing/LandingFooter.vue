@@ -46,22 +46,22 @@
 
         <!-- Right: FAQs, Legal, Terms Links & Admin Wishlist -->
         <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-black">
-          <a href="https://obrive.com/legal" target="_blank" rel="noopener noreferrer" class="hover:text-[#0a1c17] transition-colors">Legal</a>
-          <a href="https://obrive.com/terms-accessibility" target="_blank" rel="noopener noreferrer" class="hover:text-[#0a1c17] transition-colors">Terms</a>
+          <router-link
+            to="/faqs"
+            class="hover:text-[#073933] transition-colors"
+          >
+            FAQs
+          </router-link>
+          <a href="https://obrive.com/legal" target="_blank" rel="noopener noreferrer" class="hover:text-[#073933] transition-colors">Legal</a>
+          <a href="https://obrive.com/terms-accessibility" target="_blank" rel="noopener noreferrer" class="hover:text-[#073933] transition-colors">Terms</a>
           <router-link
             v-if="authStore.isAdmin.value"
             to="/admin/wishlist"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white hover:bg-neutral-800 rounded-lg font-semibold text-sm transition-all shadow-md"
+            class="hover:text-[#073933] transition-colors inline-flex items-center gap-1.5"
             title="View Wishlist Submissions (Admin)"
           >
-            📋 Wishlist Leads
+            <span>📋 Wishlist Leads</span>
           </router-link>
-          <a
-            href="/faqs"
-            class="inline-flex items-center gap-2 px-4 py-2 bg-black text-white hover:bg-neutral-800 rounded-lg font-semibold text-sm transition-all shadow-md"
-          >
-            FAQs
-          </a>
         </div>
       </div>
 
