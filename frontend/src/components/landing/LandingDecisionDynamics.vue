@@ -27,7 +27,7 @@
               The Future Is Uncertain
             </h3>
             <p class="text-sm text-black mt-3 leading-relaxed font-normal">
-              Traditional planning often relies on historical data, assumptions, and individual opinions.
+              Traditional planning relies on static assumptions and historical data that fail when unexpected real-world reactions emerge.
             </p>
           </div>
 
@@ -38,10 +38,10 @@
             @click="activeIdx = 1"
           >
             <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
-              Your Decisions Don’t Have to Be Blind.
+              Your Decisions Don’t Have to Be Blind
             </h3>
             <p class="text-sm text-black mt-3 leading-relaxed font-normal">
-              But real-world outcomes are shaped by multiple people, competing interests, changing conditions, and unexpected reactions.
+              Brain simulates complex stakeholder dynamics and market reactions in a controlled multi-agent environment before you commit.
             </p>
           </div>
         </div>
