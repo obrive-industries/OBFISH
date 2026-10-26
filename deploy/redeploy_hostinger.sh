@@ -51,10 +51,20 @@ cd "$APP_DIR"
 
 # 5. Ensure file ownership & permissions
 echo "[4/5] Setting ownership and permissions..."
-chown -R www-data:www-data "$APP_DIR"
+if id "www-data" >/dev/null 2>&1; then
+  WEB_USER="www-data:www-data"
+elif id "nginx" >/dev/null 2>&1; then
+  WEB_USER="nginx:nginx"
+elif id "apache" >/dev/null 2>&1; then
+  WEB_USER="apache:apache"
+else
+  WEB_USER="$(id -un):$(id -gn)"
+fi
+
+chown -R "$WEB_USER" "$APP_DIR" || true
 chmod -R 755 "$APP_DIR"
 mkdir -p "$APP_DIR/instance" "$APP_DIR/backend/uploads"
-chown -R www-data:www-data "$APP_DIR/instance" "$APP_DIR/backend/uploads"
+chown -R "$WEB_USER" "$APP_DIR/instance" "$APP_DIR/backend/uploads" || true
 chmod 775 "$APP_DIR/instance" "$APP_DIR/backend/uploads"
 
 # 6. Restart backend service & reload Nginx
