@@ -8,7 +8,7 @@
       <div class="text-center mb-16">
         <p class="text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-4 font-michroma">Decision Dynamics</p>
         <h2 class="section-title mb-4 font-microgramma">Simulate Before You Commit</h2>
-        <p class="text-black max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-normal">
+        <p class="sec-subtitle max-w-2xl mx-auto">
           Navigate emergent complexity by testing every strategic assumption against an autonomous multi-agent swarm.
         </p>
       </div>
@@ -69,6 +69,15 @@ const activeIdx = ref(0)
 </script>
 
 <style scoped>
+.sec-subtitle {
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
+  text-align: center;
+}
+
 .orb-1 {
   position: absolute;
   width: 320px;

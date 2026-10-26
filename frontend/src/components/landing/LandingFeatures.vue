@@ -165,13 +165,15 @@ const getSpotlightStyle = (index) => {
 }
 
 .sec-subtitle {
-  font-family: 'Inter', sans-serif;
-  font-size: 1.25rem;
-  line-height: 1.85rem;
-  color: #000000;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
   max-width: 44rem;
   margin-left: auto;
   margin-right: auto;
+  text-align: center;
 }
 
 .container-main {

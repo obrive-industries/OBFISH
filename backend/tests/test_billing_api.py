@@ -96,8 +96,8 @@ def test_plans_endpoint_is_public_and_has_three_tiers(app_instance):
     assert data["currency"] == "USD"
     assert [plan["id"] for plan in data["plans"]] == ["starter", "pro", "premium"]
     starter = data["plans"][0]
-    assert starter["monthly_cents"] == 900
-    assert starter["annual_cents"] == 9000
+    assert starter["monthly_cents"] == 1000
+    assert starter["annual_cents"] == 6000
     assert starter["limits"]["max_rounds"] == 15
     assert data["configured"] is False
 

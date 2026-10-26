@@ -32,7 +32,7 @@
               @click="selectInterval('annual')"
             >
               Annually
-              <span class="save-pill">SAVE 17%</span>
+              <span class="save-pill">SAVE UP TO 50%</span>
             </button>
           </div>
 
@@ -174,10 +174,10 @@ onUnmounted(() => {
   overflow-y: auto;
   padding: 40px 20px 60px;
   background:
-    radial-gradient(60% 45% at 50% 0%, rgba(120, 92, 255, 0.16), transparent 70%),
-    radial-gradient(45% 30% at 78% 12%, rgba(255, 166, 77, 0.1), transparent 70%),
-    #050505;
-  color: #f5f5f5;
+    radial-gradient(60% 45% at 50% 0%, rgba(255, 255, 255, 0.45), transparent 70%),
+    radial-gradient(45% 30% at 85% 15%, rgba(6, 65, 57, 0.08), transparent 70%),
+    #A2F1DF;
+  color: #073933;
   font-family: 'Inter', system-ui, sans-serif;
 }
 
@@ -192,21 +192,27 @@ onUnmounted(() => {
   position: absolute;
   top: 0;
   right: 0;
-  width: 36px;
-  height: 36px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(7, 57, 51, 0.2);
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
-  color: #b9b9b9;
-  font-size: 20px;
+  background: rgba(255, 255, 255, 0.65);
+  color: #073933;
+  font-size: 22px;
   line-height: 1;
   cursor: pointer;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(7, 57, 51, 0.06);
 }
 
 .pricing-close:hover {
-  color: #ffffff;
-  border-color: rgba(255, 255, 255, 0.35);
+  background: #ffffff;
+  border-color: #073933;
+  color: #000000;
+  transform: scale(1.05);
 }
 
 .pricing-top {
@@ -220,11 +226,12 @@ onUnmounted(() => {
 .billing-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   padding: 4px;
   border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: #0d0d0d;
+  border: 1px solid rgba(7, 57, 51, 0.18);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 4px 15px rgba(7, 57, 51, 0.05);
 }
 
 .toggle-option {
@@ -236,37 +243,39 @@ onUnmounted(() => {
   border: none;
   border-radius: 999px;
   background: transparent;
-  color: #a3a3a3;
+  color: #163830;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .toggle-option.active {
-  background: #f7f7f7;
-  color: #0a0a0a;
+  background: #073933;
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(7, 57, 51, 0.2);
 }
 
 .save-pill {
-  padding: 3px 7px;
+  padding: 3px 8px;
   border-radius: 999px;
-  background: rgba(130, 130, 130, 0.24);
-  color: #c9c9c9;
+  background: rgba(7, 57, 51, 0.12);
+  color: #073933;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
 }
 
 .toggle-option.active .save-pill {
-  background: rgba(0, 0, 0, 0.1);
-  color: #3f3f3f;
+  background: rgba(162, 241, 223, 0.35);
+  color: #A2F1DF;
 }
 
 .pricing-subtitle {
   margin: 0;
-  color: #8b8b8b;
-  font-size: 13px;
+  color: #163830;
+  font-size: 14px;
+  font-weight: 500;
   text-align: center;
 }
 
@@ -282,51 +291,39 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   min-height: 620px;
-  padding: 30px 30px 28px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 32px 30px 28px;
+  border: 1px solid rgba(7, 57, 51, 0.14);
   border-radius: 20px;
-  background: linear-gradient(180deg, #171717 0%, #0d0d0d 100%);
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 10px 30px rgba(7, 57, 51, 0.06);
   overflow: hidden;
+  transition: all 0.3s ease;
 }
 
-.price-card::before {
-  content: '';
-  position: absolute;
-  inset: -40% 10% auto;
-  height: 240px;
-  background: radial-gradient(closest-side, rgba(128, 96, 255, 0.16), transparent 75%);
-  pointer-events: none;
+.price-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 36px rgba(7, 57, 51, 0.1);
 }
 
 .price-card--featured {
-  border-color: rgba(255, 255, 255, 0.2);
-  background: linear-gradient(180deg, #1b191d 0%, #0e0d10 100%);
-}
-
-.price-card--featured::before {
-  background: radial-gradient(closest-side, rgba(145, 108, 255, 0.3), transparent 75%);
-}
-
-.price-card--featured::after {
-  content: '';
-  position: absolute;
-  inset: auto 18% -30% auto;
-  width: 220px;
-  height: 220px;
-  background: radial-gradient(closest-side, rgba(255, 170, 90, 0.12), transparent 72%);
-  pointer-events: none;
+  border: 2px solid #073933;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 16px 42px rgba(7, 57, 51, 0.14);
 }
 
 .plan-badge {
   position: relative;
   align-self: flex-start;
   margin-bottom: 18px;
-  padding: 5px 10px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 5px 12px;
+  border: 1px solid rgba(7, 57, 51, 0.25);
   border-radius: 999px;
-  color: #bdbdbd;
-  font-size: 9px;
-  font-weight: 700;
+  background: #A2F1DF;
+  color: #073933;
+  font-size: 10px;
+  font-weight: 800;
   letter-spacing: 0.09em;
 }
 
@@ -334,18 +331,18 @@ onUnmounted(() => {
   position: relative;
   margin: 0 0 12px;
   font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 27px;
-  font-weight: 600;
+  font-size: 28px;
+  font-weight: 700;
   letter-spacing: -0.03em;
-  color: #ffffff;
+  color: #073933;
 }
 
 .plan-description {
   position: relative;
-  margin: 0 0 26px;
+  margin: 0 0 24px;
   min-height: 54px;
-  color: #9a9a9a;
-  font-size: 13px;
+  color: #1d483f;
+  font-size: 13.5px;
   line-height: 1.55;
 }
 
@@ -359,41 +356,41 @@ onUnmounted(() => {
 .plan-currency {
   margin-top: 6px;
   font-size: 26px;
-  font-weight: 600;
-  color: #ffffff;
+  font-weight: 700;
+  color: #073933;
 }
 
 .plan-amount {
-  font-size: 46px;
-  font-weight: 600;
+  font-size: 48px;
+  font-weight: 800;
   line-height: 1;
   letter-spacing: -0.04em;
-  color: #ffffff;
+  color: #073933;
 }
 
 .plan-period {
   align-self: flex-end;
   margin-bottom: 7px;
   margin-left: 6px;
-  color: #8c8c8c;
+  color: #2d554c;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.05em;
 }
 
 .plan-strike {
   margin-top: 8px;
-  color: #6f6f6f;
-  font-size: 13px;
-  font-weight: 500;
+  color: #65857e;
+  font-size: 14px;
+  font-weight: 600;
   text-decoration: line-through;
 }
 
 .included-label {
-  margin: 26px 0 14px;
-  color: #8a8a8a;
-  font-size: 9px;
-  font-weight: 700;
+  margin: 24px 0 14px;
+  color: #073933;
+  font-size: 10px;
+  font-weight: 800;
   letter-spacing: 0.12em;
 }
 
@@ -410,7 +407,7 @@ onUnmounted(() => {
 .plan-features li {
   display: flex;
   gap: 10px;
-  color: #cfcfcf;
+  color: #163830;
   font-size: 13px;
   line-height: 1.45;
 }
@@ -420,7 +417,7 @@ onUnmounted(() => {
   width: 17px;
   height: 17px;
   margin-top: 1px;
-  color: #98a2b3;
+  color: #073933;
 }
 
 .feature-check svg {
@@ -433,41 +430,47 @@ onUnmounted(() => {
   margin-top: auto;
   width: 100%;
   height: 44px;
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  border: 1px solid #073933;
   border-radius: 999px;
-  background: transparent;
-  color: #f4f4f4;
+  background: #ffffff;
+  color: #073933;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .choose-btn:hover:not(:disabled) {
-  border-color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.04);
+  background: #073933;
+  color: #ffffff;
 }
 
 .choose-btn--primary {
-  border-color: #ffffff;
-  background: #ffffff;
-  color: #0a0a0a;
+  border-color: #073933;
+  background: #073933;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(7, 57, 51, 0.25);
 }
 
 .choose-btn--primary:hover:not(:disabled) {
-  background: #e8e8e8;
+  background: #032420;
+  border-color: #032420;
+  transform: translateY(-1px);
 }
 
 .choose-btn:disabled {
   cursor: not-allowed;
-  opacity: 0.55;
+  opacity: 0.45;
+  border-color: rgba(7, 57, 51, 0.2);
+  background: rgba(7, 57, 51, 0.05);
+  color: #163830;
 }
 
 .plan-footnote {
   position: relative;
   margin: 16px 0 0;
   min-height: 48px;
-  color: #777777;
+  color: #3b6158;
   font-size: 12px;
   line-height: 1.5;
 }
@@ -476,26 +479,28 @@ onUnmounted(() => {
   margin: 22px auto 0;
   max-width: 640px;
   padding: 12px 16px;
-  border: 1px solid rgba(255, 99, 99, 0.35);
+  border: 1px solid rgba(220, 38, 38, 0.35);
   border-radius: 10px;
-  background: rgba(255, 70, 70, 0.08);
-  color: #ffb4b4;
+  background: rgba(220, 38, 38, 0.08);
+  color: #b91c1c;
   font-size: 13px;
+  font-weight: 500;
   text-align: center;
 }
 
 .pricing-note {
   margin: 20px auto 0;
   max-width: 680px;
-  color: #a3a3a3;
-  font-size: 12px;
+  color: #1d483f;
+  font-size: 12.5px;
   text-align: center;
+  font-weight: 500;
 }
 
 .pricing-legal {
   margin: 26px auto 0;
-  color: #5f5f5f;
-  font-size: 11px;
+  color: #2d554c;
+  font-size: 11.5px;
   text-align: center;
 }
 
@@ -507,7 +512,7 @@ onUnmounted(() => {
   display: block;
   height: 12px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #1d1d1d, #262626, #1d1d1d);
+  background: linear-gradient(90deg, rgba(7, 57, 51, 0.06), rgba(7, 57, 51, 0.14), rgba(7, 57, 51, 0.06));
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
@@ -567,7 +572,7 @@ onUnmounted(() => {
     position: fixed;
     top: 14px;
     right: 14px;
-    background: #111111;
+    background: #ffffff;
   }
 }
 </style>

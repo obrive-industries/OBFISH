@@ -24,9 +24,10 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "id": "starter",
         "name": "Starter",
         "badge": None,
-        "monthly_cents": 900,
-        "annual_cents": 9000,
-        "monthly_equivalent_cents": 750,
+        "monthly_cents": 1000,
+        "annual_cents": 6000,
+        "monthly_equivalent_cents": 500,
+        "annual_strike_cents": 1000,
         "description": {
             "monthly": (
                 "For first paid runs when you want to take one real case "
@@ -73,9 +74,10 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "id": "pro",
         "name": "Pro",
         "badge": "MOST POPULAR",
-        "monthly_cents": 1900,
-        "annual_cents": 19000,
-        "monthly_equivalent_cents": 1583,
+        "monthly_cents": 2000,
+        "annual_cents": 18000,
+        "monthly_equivalent_cents": 1500,
+        "annual_strike_cents": 2500,
         "description": {
             "monthly": (
                 "For recurring simulation work across public-opinion, "
@@ -122,9 +124,10 @@ PLAN_CATALOG: list[dict[str, Any]] = [
         "id": "premium",
         "name": "Premium",
         "badge": "HIGHEST CAPACITY",
-        "monthly_cents": 4900,
-        "annual_cents": 49000,
-        "monthly_equivalent_cents": 4083,
+        "monthly_cents": 3000,
+        "annual_cents": 30000,
+        "monthly_equivalent_cents": 2500,
+        "annual_strike_cents": 3500,
         "description": {
             "monthly": (
                 "For heavy, continuous simulation usage when you are "
@@ -224,6 +227,7 @@ def public_catalog() -> dict[str, Any]:
                 "monthly_cents": plan["monthly_cents"],
                 "annual_cents": plan["annual_cents"],
                 "monthly_equivalent_cents": plan["monthly_equivalent_cents"],
+                "annual_strike_cents": plan.get("annual_strike_cents", plan["monthly_cents"]),
                 "description": plan["description"],
                 "features": plan["features"],
                 "footnote": plan["footnote"],
@@ -233,7 +237,7 @@ def public_catalog() -> dict[str, Any]:
         )
     return {
         "currency": CURRENCY,
-        "annual_discount_percent": 17,
+        "annual_discount_percent": 50,
         "plans": plans,
         "configured": billing_configured(),
     }

@@ -42,15 +42,15 @@
       <ul :class="['text-base text-black leading-relaxed mb-12 space-y-2 anim font-normal', { show: isVisible }]" style="transition-delay: 500ms;">
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
-          <span><strong class="text-[#073933] font-michroma text-sm">01 // Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
+          <span><strong class="text-[#073933] font-michroma text-sm">Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
         </li>
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
-          <span><strong class="text-[#073933] font-michroma text-sm">02 // Creative Level:</strong> A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.</span>
+          <span><strong class="text-[#073933] font-michroma text-sm">Creative Level:</strong> A generative sandbox for exploring ideas, developing fictional worlds, simulating character interactions, and discovering alternative storylines and creative endings.</span>
         </li>
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
-          <span><strong class="text-[#073933] font-michroma text-sm">03 // Research Level:</strong> Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.</span>
+          <span><strong class="text-[#073933] font-michroma text-sm">Research Level:</strong> Enable researchers and policy makers to investigate hypotheses, explore non-linear relationships, and generate targeted questions for real-world empirical validation.</span>
         </li>
       </ul>
 

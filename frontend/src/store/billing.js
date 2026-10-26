@@ -60,7 +60,7 @@ export const billingStore = {
       : money(plan.monthly_cents)
   },
   strikePrice(plan) {
-    return money(plan.monthly_cents)
+    return money(plan.annual_strike_cents || plan.monthly_cents)
   },
 
   async ensurePlans() {
