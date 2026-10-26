@@ -6,7 +6,7 @@
     <div class="container-main relative z-[2]">
       <div class="hero-content">
         <!-- Main Headline (Matching 'Owning the Future' from obrive.com) -->
-        <h1 class="text-4xl font-bold mb-8 tracking-tight hero-heading font-microgramma">
+        <h1 class="mb-8 tracking-tight hero-heading font-microgramma">
           <span>Predictive</span>
           <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
             Intelligence
@@ -143,6 +143,14 @@ const scrollDown = () => {
 @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
 
 @font-face {
+  font-family: 'microgrammaBold';
+  src: url('../../assets/fonts/microgramma-bold.otf') format('opentype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Microgramma';
   src: url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 400 900;
@@ -198,10 +206,11 @@ const scrollDown = () => {
 }
 
 .hero-heading {
-  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
-  font-size: var(--text-4xl) !important;
-  line-height: var(--tw-leading, var(--text-4xl--line-height)) !important;
-  color: #073933 !important;
+  font-family: microgrammaBold, "microgrammaBold Fallback", 'Microgramma', sans-serif !important;
+  font-size: 60px !important;
+  font-weight: 800 !important;
+  line-height: 60px !important;
+  color: oklch(0.3382 0.0575 180.815) !important;
   text-align: center;
   width: 100%;
   display: flex;
@@ -212,18 +221,22 @@ const scrollDown = () => {
 }
 
 .hero-heading span {
-  color: #073933 !important;
+  color: oklch(0.3382 0.0575 180.815) !important;
   font-family: inherit !important;
+  font-weight: inherit !important;
 }
 
 @media (max-width: 640px) {
   .hero-heading {
+    font-size: clamp(32px, 8vw, 60px) !important;
+    line-height: 1.15 !important;
     flex-wrap: wrap;
     gap: 8px 12px;
   }
 }
 
 .underline-path {
+  stroke: oklch(0.3382 0.0575 180.815);
   stroke-dasharray: 210;
   stroke-dashoffset: 210;
   animation: draw-underline 0.6s ease-out 0.5s forwards;
