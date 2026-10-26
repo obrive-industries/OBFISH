@@ -52,7 +52,7 @@ fi
 # 4. Rebuild image and restart container
 echo "[3/4] Rebuilding Docker image and launching container..."
 $COMPOSE_CMD down || true
-$COMPOSE_CMD build
+$COMPOSE_CMD build --no-cache
 $COMPOSE_CMD up -d
 
 # 5. Check container health & status
