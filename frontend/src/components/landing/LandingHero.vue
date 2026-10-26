@@ -6,7 +6,7 @@
     <div class="container-main relative z-[2]">
       <div class="hero-content">
         <!-- Main Headline (Matching 'Owning the Future' from obrive.com) -->
-        <h1 class="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight hero-heading font-microgramma">
+        <h1 class="font-bold mb-8 tracking-tight hero-heading font-microgramma">
           <span>Predictive</span>
           <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
             Intelligence
@@ -199,6 +199,8 @@ const scrollDown = () => {
 
 .hero-heading {
   font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
+  font-size: clamp(1.85rem, 3.2vw, 2.25rem) !important;
+  line-height: 1.15;
   color: #073933 !important;
   text-align: center;
   width: 100%;
