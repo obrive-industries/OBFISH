@@ -140,22 +140,30 @@ const scrollDown = () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap');
-
 @font-face {
   font-family: 'microgrammaBold';
-  src: url('../../assets/fonts/microgramma-bold.otf') format('opentype');
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 400 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
 }
 
 @font-face {
   font-family: 'Microgramma';
-  src: url('../../assets/fonts/microgramma-bold.otf') format('opentype');
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 400 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('/fonts/caveat.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: block;
 }
 
 .hero-section {

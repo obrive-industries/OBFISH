@@ -51,21 +51,40 @@ onUnmounted(() => {
 </script>
 
 <style>
-/* Microgramma Bold - Official Obrive Display Font */
+/* Microgramma Bold & Caveat - Official Display Fonts */
 @font-face {
-  font-family: 'Microgramma';
-  src: url('./assets/fonts/microgramma-bold.otf') format('opentype');
+  font-family: 'microgrammaBold';
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('./assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 400 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Microgramma';
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('./assets/fonts/microgramma-bold.otf') format('opentype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: block;
 }
 
 @font-face {
   font-family: 'Microgramma Bold';
-  src: url('./assets/fonts/microgramma-bold.otf') format('opentype');
+  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+       url('./assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 400 900;
   font-style: normal;
-  font-display: swap;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Caveat';
+  src: url('/fonts/caveat.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: block;
 }
 
 /* MiroFish & Obrive Design Tokens */
