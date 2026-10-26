@@ -8,11 +8,11 @@
       <!-- Top Navigation & Header -->
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-8 pb-6 border-b border-white/10">
         <div>
-          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-xs font-mono uppercase tracking-wider text-gray-400 mb-2">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
+          <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-michroma uppercase tracking-wider text-gray-300 mb-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             <span>Admin Portal</span>
           </div>
-          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white">
+          <h1 class="text-2xl sm:text-3xl font-bold tracking-tight text-white font-microgramma">
             Wishlist & Waitlist Leads
           </h1>
           <p class="text-sm text-gray-400 mt-1">
@@ -23,13 +23,13 @@
         <div class="flex items-center gap-3">
           <router-link
             to="/"
-            class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-gray-300 hover:text-white transition-colors"
+            class="px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold tracking-wider uppercase text-gray-300 hover:text-white transition-colors"
           >
             ← Back to Home
           </router-link>
           <router-link
             to="/console"
-            class="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-gray-300 hover:text-white transition-colors"
+            class="px-4 py-2.5 rounded-xl bg-[#073933] hover:bg-[#074139] border border-[#073933] text-xs font-semibold tracking-wider uppercase text-white transition-colors shadow-sm"
           >
             Console
           </router-link>
@@ -79,7 +79,7 @@
 
           <button
             type="submit"
-            class="w-full py-2.5 mt-2 rounded-lg bg-white text-black font-semibold text-sm hover:bg-gray-200 transition-colors disabled:opacity-50"
+            class="w-full py-3 mt-2 rounded-xl bg-[#073933] text-white font-semibold text-xs tracking-wider uppercase hover:bg-[#074139] transition-all disabled:opacity-50 shadow-sm border border-[#073933]"
             :disabled="loggingIn"
           >
             {{ loggingIn ? 'Authenticating...' : 'Sign In as Admin →' }}
@@ -92,27 +92,27 @@
         <!-- Metric Cards & Actions -->
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div class="p-5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Total Subscribers</span>
-            <div class="text-3xl font-bold text-white mt-2">{{ subscribers.length }}</div>
+            <span class="text-xs font-michroma uppercase tracking-wider text-gray-400">Total Subscribers</span>
+            <div class="text-3xl font-bold text-white mt-2 font-microgramma">{{ subscribers.length }}</div>
           </div>
 
           <div class="p-5 rounded-xl bg-white/[0.03] border border-white/10">
-            <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Unique Domains</span>
-            <div class="text-3xl font-bold text-cyan-400 mt-2">{{ uniqueDomainsCount }}</div>
+            <span class="text-xs font-michroma uppercase tracking-wider text-gray-400">Unique Domains</span>
+            <div class="text-3xl font-bold text-[#a2f1df] mt-2 font-microgramma">{{ uniqueDomainsCount }}</div>
           </div>
 
           <div class="p-5 rounded-xl bg-white/[0.03] border border-white/10 flex flex-col justify-between">
-            <span class="text-xs font-mono uppercase tracking-wider text-gray-400">Quick Actions</span>
+            <span class="text-xs font-michroma uppercase tracking-wider text-gray-400">Quick Actions</span>
             <div class="flex items-center gap-2 mt-2">
               <button
                 @click="copyAllEmails"
-                class="flex-1 px-3 py-2 rounded-lg bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-medium text-white transition-all text-center"
+                class="flex-1 px-3 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/10 text-xs font-semibold tracking-wider uppercase text-white transition-all text-center"
               >
                 {{ copied ? '✓ Copied!' : '📋 Copy All' }}
               </button>
               <button
                 @click="exportCsv"
-                class="flex-1 px-3 py-2 rounded-lg bg-white text-black hover:bg-gray-200 text-xs font-semibold transition-all text-center"
+                class="flex-1 px-3 py-2.5 rounded-xl bg-[#073933] text-white hover:bg-[#074139] border border-[#073933] text-xs font-semibold tracking-wider uppercase transition-all text-center shadow-sm"
               >
                 📥 Export CSV
               </button>
@@ -127,14 +127,14 @@
               v-model="searchQuery"
               type="text"
               placeholder="Search by email or domain..."
-              class="w-full px-4 py-2 pl-9 rounded-lg bg-white/5 border border-white/10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
+              class="w-full px-4 py-2 pl-9 rounded-xl bg-white/5 border border-white/10 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-white transition-colors"
             />
             <span class="absolute left-3 top-2.5 text-gray-500 text-sm">🔍</span>
           </div>
 
           <button
             @click="fetchSubscribers"
-            class="self-end sm:self-auto px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-xs text-gray-300 hover:text-white transition-colors flex items-center gap-2"
+            class="self-end sm:self-auto px-4 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-semibold tracking-wider uppercase text-gray-300 hover:text-white transition-colors flex items-center gap-2"
           >
             <span>↻</span> Refresh List
           </button>
@@ -159,7 +159,7 @@
         <div v-else class="rounded-xl overflow-hidden border border-white/10 bg-white/[0.02] shadow-2xl">
           <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
-              <thead class="bg-white/5 border-b border-white/10 text-xs font-mono uppercase tracking-wider text-gray-400">
+              <thead class="bg-white/5 border-b border-white/10 text-xs font-michroma uppercase tracking-wider text-gray-400">
                 <tr>
                   <th class="py-3 px-4 w-16 text-center">#</th>
                   <th class="py-3 px-4">Email Address</th>

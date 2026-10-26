@@ -8,7 +8,6 @@
         <!-- Logo -->
         <router-link to="/" class="logo" aria-label="Brain Home">
           <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" />
-          <span class="logo-divider">/</span>
           <span class="logo-text">BRAIN</span>
         </router-link>
 
@@ -151,22 +150,26 @@ onUnmounted(() => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1.25rem;
-  background-color: #0a1c17;
+  padding: 0.6rem 1.4rem;
+  background-color: #073933;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  border-radius: 0.5rem;
-  border: 1px solid #0a1c17;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 0.75rem;
+  border: 1px solid #073933;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(10, 28, 23, 0.15);
+  box-shadow: 0 2px 6px rgba(7, 57, 51, 0.2);
 }
 
 .nav-signin-btn:hover {
-  background-color: #000000;
+  background-color: #042823;
+  border-color: #042823;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(7, 57, 51, 0.3);
 }
 
 .nav-signin-btn:active {
@@ -229,28 +232,31 @@ onUnmounted(() => {
 }
 
 .status-dot.unverified {
-  background: #ff4500;
+  background: #f59e0b;
 }
 
 .nav-console-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.5rem 1.15rem;
-  background-color: #0a1c17;
+  padding: 0.6rem 1.35rem;
+  background-color: #073933;
   color: #ffffff;
   font-family: 'Inter', sans-serif;
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  border-radius: 0.5rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 0.75rem;
   text-decoration: none;
   transition: all 0.2s ease;
-  box-shadow: 0 1px 3px rgba(10, 28, 23, 0.15);
+  box-shadow: 0 2px 6px rgba(7, 57, 51, 0.2);
 }
 
 .nav-console-btn:hover {
-  background-color: #000000;
+  background-color: #042823;
   transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(7, 57, 51, 0.3);
 }
 
 .nav-console-btn:active {

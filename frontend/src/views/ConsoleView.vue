@@ -669,7 +669,7 @@ const handleStartEngine = async () => {
 }
 
 .status-dot.unverified {
-  background: #FF4500;
+  background: #f59e0b;
 }
 
 .link-obrive {
@@ -755,11 +755,11 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn {
-  background: #000000;
-  border: 1px solid #000000;
+  background: #073933;
+  border: 1px solid #073933;
   color: #FFFFFF;
   padding: 6px 14px;
-  border-radius: 6px;
+  border-radius: 0.75rem;
   font-family: var(--font-mono, monospace);
   font-weight: 600;
   font-size: 0.8rem;
@@ -768,8 +768,8 @@ const handleStartEngine = async () => {
 }
 
 .banner-btn:hover {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #042823;
+  border-color: #042823;
 }
 
 /* Console Grid */
@@ -813,8 +813,8 @@ const handleStartEngine = async () => {
   width: 7px;
   height: 7px;
   border-radius: 50%;
-  background: #FF4500;
-  box-shadow: 0 0 6px rgba(255, 69, 0, 0.5);
+  background: #00E5A3;
+  box-shadow: 0 0 6px rgba(0, 229, 163, 0.6);
 }
 
 .panel-heading {
@@ -1087,7 +1087,7 @@ const handleStartEngine = async () => {
 }
 
 .chip-remove:hover {
-  color: #FF4500;
+  color: #073933;
 }
 
 .console-section.input-section {
@@ -1148,7 +1148,7 @@ const handleStartEngine = async () => {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #FF4500;
+  background: #073933;
 }
 
 /* Plan / usage status card */
@@ -1218,22 +1218,24 @@ const handleStartEngine = async () => {
 }
 
 .plan-card-btn {
-  background: #000000;
+  background: #073933;
   color: #FFFFFF;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid #073933;
+  border-radius: 0.75rem;
   padding: 6px 14px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.74rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 
 .plan-card-btn:hover {
-  background: #FF4500;
+  background: #042823;
+  border-color: #042823;
 }
 
 .demo-link {
@@ -1258,30 +1260,32 @@ const handleStartEngine = async () => {
 /* MiroFish Pulsing Start Engine Button */
 .start-engine-btn {
   width: 100%;
-  background: #000000;
+  background: #073933;
   color: #FFFFFF;
-  border: 1px solid #000000;
-  padding: 18px 24px;
-  font-family: var(--font-mono, monospace);
+  border: 1px solid #073933;
+  padding: 16px 24px;
+  font-family: 'Microgramma', 'Microgramma Bold', sans-serif !important;
   font-weight: 700;
-  font-size: 1.05rem;
-  letter-spacing: 1px;
+  font-size: 0.95rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  border-radius: 6px;
+  border-radius: 0.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 4px 14px rgba(7, 57, 51, 0.25);
   animation: pulse-border 2s infinite;
 }
 
 .start-engine-btn:hover:not(:disabled) {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #074139;
+  border-color: #074139;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 69, 0, 0.35);
+  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.4);
 }
 
 .start-engine-btn:disabled {

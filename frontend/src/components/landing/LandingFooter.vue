@@ -6,7 +6,6 @@
         <div class="flex items-center gap-4">
           <router-link to="/" class="logo" aria-label="Brain Home">
             <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" />
-            <span class="logo-divider">/</span>
             <span class="logo-text">BRAIN</span>
           </router-link>
           <span class="text-[#0a1c17]/30">|</span>

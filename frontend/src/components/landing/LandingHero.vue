@@ -5,8 +5,8 @@
 
     <div class="container-main relative z-[2]">
       <div class="hero-content">
-        <!-- Main Headline -->
-        <h1 class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold mb-8 tracking-tight hero-heading font-microgramma">
+        <!-- Main Headline (Matching 'Owning the Future' from obrive.com) -->
+        <h1 class="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-8 tracking-tight hero-heading font-microgramma">
           <span>Predictive</span>
           <span class="relative inline-block whitespace-nowrap ml-2 sm:ml-4">
             Intelligence
@@ -253,9 +253,11 @@ const scrollDown = () => {
 
 .hero-btn-primary {
   font-family: 'Inter', sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   padding: 0.875rem 2.25rem;
   border-radius: 0.75rem;
   display: inline-flex;
@@ -264,56 +266,34 @@ const scrollDown = () => {
   gap: 0.5rem;
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #1e1e22, #35353c, #62626e, #8a8a98 45%, #a0a0b0, #8a8a98 55%, #62626e, #35353c, #1e1e22);
-  background-size: 200% 200%;
-  animation: metal-shift 8s ease infinite;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: inset 0 1px #ffffff40, inset 0 -1px #0000004d, 0 2px 12px #0006, 0 0 30px #b4b4c81a;
-  filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #073933;
+  color: #ffffff;
+  border: 1px solid #073933;
+  box-shadow: 0 4px 14px rgba(7, 57, 51, 0.25);
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
   cursor: pointer;
   text-decoration: none;
-  color: #ffffff;
   box-sizing: border-box;
 }
 
-.hero-btn-primary:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.15) 45%, rgba(255, 255, 255, 0.22) 50%, rgba(255, 255, 255, 0.15) 55%, transparent 80%);
-  background-size: 300% 100%;
-  animation: metal-shimmer 6s ease-in-out infinite;
-}
-
 .hero-btn-primary:hover {
+  background: #074139;
+  border-color: #074139;
   transform: translateY(-2px);
-  background: linear-gradient(135deg, #252529, #3e3e46, #70707e, #9898a8 45%, #b0b0c0, #9898a8 55%, #70707e, #3e3e46, #252529);
-  background-size: 200% 200%;
-  border-color: #ffffff4d;
-  box-shadow: inset 0 1px #ffffff59, inset 0 -1px #0000004d, 0 4px 20px #00000080, 0 0 40px #c8c8dc33;
+  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.38);
 }
 
 .hero-btn-primary:active {
   transform: translateY(0) scale(0.98);
 }
 
-@keyframes metal-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-@keyframes metal-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
 .hero-btn-github {
   font-family: 'Inter', sans-serif;
-  font-size: 1.125rem;
-  line-height: 1.75rem;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   padding: 0.875rem 2rem;
   border-radius: 0.75rem;
   display: inline-flex;
@@ -322,33 +302,21 @@ const scrollDown = () => {
   gap: 0.625rem;
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(10, 28, 23, 0.18);
-  -webkit-backdrop-filter: blur(16px);
-  backdrop-filter: blur(16px);
-  transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  border: 1px solid #074139;
+  color: #074139;
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
   cursor: pointer;
   text-decoration: none;
-  color: #0a1c17;
   box-sizing: border-box;
-  box-shadow: 0 2px 8px rgba(10, 28, 23, 0.08);
-}
-
-.hero-btn-github:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.5) 50%, transparent 60%);
-  background-size: 300% 100%;
-  background-position: 50% 0;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.08);
 }
 
 .hero-btn-github:hover {
-  background: #ffffff;
-  border-color: rgba(10, 28, 23, 0.35);
-  transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(10, 28, 23, 0.12);
+  background: rgba(7, 65, 57, 0.08);
+  border-color: #073933;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(7, 65, 57, 0.16);
 }
 
 .hero-btn-github:active {
@@ -400,9 +368,9 @@ const scrollDown = () => {
   background: #ffffff !important;
   border: 2px solid #073933 !important;
   color: #073933 !important;
-  border-radius: 0.65rem;
+  border-radius: 0.75rem;
   padding: 0.85rem 1.25rem;
-  font-size: 1rem;
+  font-size: 0.95rem;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(7, 57, 51, 0.08);
   transition: all 0.2s ease;
@@ -427,13 +395,15 @@ const scrollDown = () => {
   justify-content: center;
   background-color: #073933 !important;
   color: #ffffff !important;
-  border-radius: 0.65rem;
+  border-radius: 0.75rem;
   padding: 0.85rem 1.75rem;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   transition: all 0.2s ease;
   cursor: pointer;
-  border: 2px solid #073933;
+  border: 1px solid #073933;
   box-shadow: 0 2px 10px rgba(7, 57, 51, 0.25);
   box-sizing: border-box;
 }
