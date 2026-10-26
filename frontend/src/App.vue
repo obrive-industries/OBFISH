@@ -97,8 +97,8 @@ onUnmounted(() => {
   --obrive-accent-light: #caede5;
   --obrive-accent-gradient: linear-gradient(to right, #caede5, #beeee3, #b2f0e1, #a5f1df, #98f2dd);
   --obrive-text-dark: #073933;
-  --obrive-text-body: #0a1c17;
-  --obrive-text-muted: #163830;
+  --obrive-text-body: #000000;
+  --obrive-text-muted: #000000;
   --obrive-text-subtle: #2d554c;
   --obrive-border: rgba(7, 57, 51, 0.15);
   --obrive-border-focus: rgba(7, 57, 51, 0.4);

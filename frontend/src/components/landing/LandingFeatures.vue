@@ -6,7 +6,7 @@
         <h2 class="sec-title">How BRAIN Works</h2>
         <p class="sec-subtitle">
           <span class="block">Built for universality and end-to-end automation.</span>
-          <span class="block text-gray-500">Compatible with virtually any analytical prediction task.</span>
+          <span class="block text-black/80">Compatible with virtually any analytical prediction task.</span>
         </p>
       </div>
 
@@ -62,7 +62,7 @@
           </h3>
 
           <!-- Description -->
-          <p class="relative text-[#163830] text-sm leading-relaxed">
+          <p class="relative text-black text-sm leading-relaxed font-normal">
             {{ card.description }}
           </p>
         </div>
@@ -167,7 +167,7 @@ const getSpotlightStyle = (index) => {
   font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   line-height: 1.85rem;
-  color: #163830;
+  color: #000000;
   max-width: 44rem;
   margin-left: auto;
   margin-right: auto;

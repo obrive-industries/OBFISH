@@ -13,7 +13,7 @@
             href="https://www.linkedin.com/company/obrive-industries"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[#163830] hover:text-[#0a1c17] transition-colors"
+            class="text-black hover:text-[#073933] transition-colors"
             aria-label="LinkedIn"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -24,7 +24,7 @@
             href="https://x.com/obriveinc"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[#163830] hover:text-[#0a1c17] transition-colors"
+            class="text-black hover:text-[#073933] transition-colors"
             aria-label="X"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -35,7 +35,7 @@
             href="https://www.instagram.com/obrive.inc"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-[#163830] hover:text-[#0a1c17] transition-colors"
+            class="text-black hover:text-[#073933] transition-colors"
             aria-label="Instagram"
           >
             <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
@@ -45,7 +45,7 @@
         </div>
 
         <!-- Right: FAQs, Legal, Terms Links & Admin Wishlist -->
-        <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-[#163830]">
+        <div class="flex flex-wrap items-center gap-4 md:gap-6 text-sm text-black">
           <a href="https://obrive.com/legal" target="_blank" rel="noopener noreferrer" class="hover:text-[#0a1c17] transition-colors">Legal</a>
           <a href="https://obrive.com/terms-accessibility" target="_blank" rel="noopener noreferrer" class="hover:text-[#0a1c17] transition-colors">Terms</a>
           <router-link

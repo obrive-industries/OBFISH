@@ -8,7 +8,7 @@
       <div class="text-center mb-16">
         <p class="text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-4 font-michroma">Decision Dynamics</p>
         <h2 class="text-4xl md:text-5xl font-bold text-[#073933] mb-4 font-microgramma">Simulate Before You Commit</h2>
-        <p class="text-[#163830] max-w-2xl mx-auto text-base md:text-lg leading-relaxed">
+        <p class="text-black max-w-2xl mx-auto text-base md:text-lg leading-relaxed font-normal">
           Navigate emergent complexity by testing every strategic assumption against an autonomous multi-agent swarm.
         </p>
       </div>
@@ -26,7 +26,7 @@
             <div class="flex items-start gap-4">
               <span
                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-michroma shrink-0 mt-0.5"
-                :class="activeIdx === 0 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
+                :class="activeIdx === 0 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-black font-semibold'"
               >
                 1
               </span>
@@ -34,7 +34,7 @@
                 <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
                   The Future Is Uncertain
                 </h3>
-                <p class="text-sm text-[#163830] mt-3 leading-relaxed">
+                <p class="text-sm text-black mt-3 leading-relaxed font-normal">
                   Traditional planning often relies on historical data, assumptions, and individual opinions.
                 </p>
               </div>
@@ -50,7 +50,7 @@
             <div class="flex items-start gap-4">
               <span
                 class="w-8 h-8 rounded-full flex items-center justify-center text-sm font-michroma shrink-0 mt-0.5"
-                :class="activeIdx === 1 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-[#163830] font-semibold'"
+                :class="activeIdx === 1 ? 'bg-[#073933] text-white font-semibold' : 'bg-black/5 text-black font-semibold'"
               >
                 2
               </span>
@@ -58,7 +58,7 @@
                 <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
                   Your Decisions Don’t Have to Be Blind.
                 </h3>
-                <p class="text-sm text-[#163830] mt-3 leading-relaxed">
+                <p class="text-sm text-black mt-3 leading-relaxed font-normal">
                   But real-world outcomes are shaped by multiple people, competing interests, changing conditions, and unexpected reactions.
                 </p>
               </div>
@@ -146,7 +146,7 @@ const activeIdx = ref(0)
 .video-btn.is-idle {
   background: rgba(255, 255, 255, 0.45);
   border-color: rgba(10, 28, 23, 0.12);
-  color: #163830;
+  color: #000000;
 }
 
 .video-btn.is-idle:hover {

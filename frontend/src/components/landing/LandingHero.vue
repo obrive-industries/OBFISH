@@ -17,7 +17,7 @@
         </h1>
 
         <!-- Tagline -->
-        <p class="text-xl md:text-2xl text-[#163830] mb-12 max-w-2xl mx-auto leading-relaxed">
+        <p class="text-xl md:text-2xl text-black mb-12 max-w-2xl mx-auto leading-relaxed">
           Brain helps transform information, research, and ideas into simulated scenarios that support better-informed decisions.
         </p>
 
@@ -46,7 +46,7 @@
           <h2 class="wishlist-heading text-3xl sm:text-4xl md:text-5xl font-bold text-[#073933] mb-3" style="font-family: 'Caveat', cursive; font-style: italic;">
             Join the Wishlist to get notified about offers !
           </h2>
-          <p class="wishlist-subtitle text-sm sm:text-base text-[#163830] mb-6 leading-relaxed">
+          <p class="wishlist-subtitle text-sm sm:text-base text-black mb-6 leading-relaxed">
             <span class="block">Proposed product positioning.</span>
             <span class="block">Capabilities should be enabled and validated before being presented as live features.</span>
           </p>

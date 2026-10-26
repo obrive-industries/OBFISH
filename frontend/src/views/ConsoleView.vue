@@ -575,7 +575,7 @@ const handleStartEngine = async () => {
 
 .console-nav-link {
   font-family: var(--font-mono, monospace);
-  color: #163830;
+  color: #000000;
   font-size: 0.82rem;
   font-weight: 600;
   text-decoration: none;

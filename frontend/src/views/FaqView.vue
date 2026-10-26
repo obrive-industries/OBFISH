@@ -216,7 +216,7 @@ const faqs = [
   max-width: 34rem;
   font-size: 1.05rem;
   line-height: 1.6;
-  color: #163830;
+  color: #000000;
 }
 
 .faq-list {
@@ -325,7 +325,7 @@ const faqs = [
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.7;
-  color: #163830;
+  color: #000000;
 }
 
 .faq-cta {

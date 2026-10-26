@@ -7,9 +7,9 @@
         <h2 class="sec-title text-[#073933]">
           BRAIN is Built to Explore
         </h2>
-        <p class="sec-subtitle text-[#163830]">
+        <p class="sec-subtitle text-black">
           <span class="block">From a question to a structured exploration of possibilities</span>
-          <span class="block text-[#163830]/80">across all strategic and creative dimensions.</span>
+          <span class="block text-black/80">across all strategic and creative dimensions.</span>
         </p>
       </div>
 
@@ -31,7 +31,7 @@
           <h3 class="relative text-lg font-semibold text-[#073933] mb-2 leading-snug">
             {{ card.title }}
           </h3>
-          <p class="relative text-sm text-[#163830] leading-relaxed">
+          <p class="relative text-sm text-black leading-relaxed font-normal">
             {{ card.description }}
           </p>
         </div>
@@ -136,7 +136,7 @@ const getSpotlightStyle = (index) => {
   font-family: 'Inter', sans-serif;
   font-size: 1.25rem;
   line-height: 1.85rem;
-  color: #163830;
+  color: #000000;
   max-width: 44rem;
   margin-left: auto;
   margin-right: auto;
