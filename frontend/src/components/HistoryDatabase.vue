@@ -403,6 +403,7 @@ const goToReport = () => {
   }
 }
 
+let inFlightHistory = false
 // Load history items
 const loadHistory = async () => {
   if (!authStore.isAuthenticated.value) {
@@ -410,6 +411,8 @@ const loadHistory = async () => {
     loading.value = false
     return
   }
+  if (inFlightHistory) return
+  inFlightHistory = true
   try {
     loading.value = true
     const response = await getSimulationHistory(20)
@@ -420,6 +423,7 @@ const loadHistory = async () => {
     console.error('Failed to load simulation history:', error)
   } finally {
     loading.value = false
+    inFlightHistory = false
   }
 }
 

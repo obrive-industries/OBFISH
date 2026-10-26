@@ -38,6 +38,7 @@ const state = reactive({
 })
 
 let loadPromise = null
+let refreshPromise = null
 
 const money = (cents) => {
   const value = Number(cents || 0) / 100
@@ -91,17 +92,26 @@ export const billingStore = {
     if (!authStore.isAuthenticated.value) {
       state.entitlement = { ...FREE_ENTITLEMENT }
       state.subscription = null
+      state.error = ''
       return state.entitlement
     }
-    try {
-      const res = await billingApi.getMe()
-      state.entitlement = { ...FREE_ENTITLEMENT, ...(res.entitlement || {}) }
-      state.subscription = res.subscription || null
-      state.configured = Boolean(res.entitlement?.configured)
-    } catch (err) {
-      state.error = err.message || 'Could not load your plan.'
-    }
-    return state.entitlement
+    if (refreshPromise) return refreshPromise
+    state.error = ''
+    refreshPromise = (async () => {
+      try {
+        const res = await billingApi.getMe()
+        state.entitlement = { ...FREE_ENTITLEMENT, ...(res.entitlement || {}) }
+        state.subscription = res.subscription || null
+        state.configured = Boolean(res.entitlement?.configured)
+        state.error = ''
+      } catch (err) {
+        state.error = err.message || 'Could not load your plan.'
+      } finally {
+        refreshPromise = null
+      }
+      return state.entitlement
+    })()
+    return refreshPromise
   },
 
   openPricing({ resume = false } = {}) {

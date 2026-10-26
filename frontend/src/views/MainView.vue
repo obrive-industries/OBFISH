@@ -206,8 +206,8 @@ const handleNewProject = async () => {
   const hasHypothesis = Boolean(pending && pending.simulationRequirement && pending.simulationRequirement.trim().length > 0)
 
   if (!hasFiles && !hasHypothesis) {
-    error.value = 'No pending files or scenario hypothesis found.'
-    addLog('Error: No pending files or hypothesis found for new project.')
+    addLog('No pending dossier found; returning to console.')
+    router.replace('/console')
     return
   }
 

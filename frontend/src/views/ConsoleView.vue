@@ -1,43 +1,6 @@
 <template>
   <div class="console-container">
-    <!-- Minimal Application Header (Full-width sticky Obrive header) -->
-    <header class="console-navbar">
-      <div class="nav-left">
-        <router-link to="/" class="brand-link" title="Return to Brain Home">
-          <img src="/obrive-logo.svg" alt="Brain Logo" class="brand-logo-img" />
-          <span class="brand-name font-microgramma">BRAIN</span>
-          <span class="console-tag font-microgramma">CONSOLE</span>
-        </router-link>
 
-        <nav class="console-nav-links">
-          <a href="#history" class="console-nav-link font-microgramma" @click.prevent="scrollToHistory">Simulation History</a>
-          <router-link
-            v-if="authStore.isAdmin.value"
-            to="/admin/wishlist"
-            class="console-nav-link wishlist-leads-link font-microgramma"
-          >
-            📋 Wishlist Leads
-          </router-link>
-        </nav>
-      </div>
-
-      <div class="nav-right">
-        <!-- User Profile Pill (Only shown when authenticated) -->
-        <div v-if="authStore.isAuthenticated.value" class="user-pill" @click="authStore.openProfileModal" title="Account & Settings">
-          <div class="avatar">{{ userInitials }}</div>
-          <span class="user-name">{{ authStore.user.value?.full_name || 'My Account' }}</span>
-          <span v-if="authStore.isVerified.value" class="status-dot verified" title="Email Verified"></span>
-          <span v-else class="status-dot unverified" title="Verification Pending"></span>
-        </div>
-        <button v-else class="console-signin-btn font-microgramma" @click="authStore.openAuthModal('login')">
-          Sign In
-        </button>
-
-        <a href="https://obrive.com" target="_blank" rel="noopener noreferrer" class="link-obrive font-microgramma">
-          Explore Obrive <span class="arrow">↗</span>
-        </a>
-      </div>
-    </header>
 
     <!-- Main Workspace -->
     <main class="console-main">
@@ -212,9 +175,7 @@
                 </span>
                 <span class="btn-arrow">→</span>
               </button>
-              <router-link to="/demo" class="demo-link font-microgramma">
-                FIRST TIME? EXPLORE THE SAMPLE REPORT →
-              </router-link>
+
             </div>
           </div>
         </div>
@@ -341,14 +302,6 @@ const handleResendVerification = async () => {
   }
 }
 
-const userInitials = computed(() => {
-  const name = authStore.user.value?.full_name || 'User'
-  const parts = name.trim().split(' ')
-  if (parts.length >= 2) {
-    return (parts[0][0] + parts[1][0]).toUpperCase()
-  }
-  return name.slice(0, 2).toUpperCase()
-})
 
 const canSubmit = computed(() => {
   return formData.value.simulationRequirement.trim().length > 0
@@ -443,12 +396,6 @@ const removeFile = (idx) => {
   files.value.splice(idx, 1)
 }
 
-const scrollToHistory = () => {
-  const el = document.getElementById('history')
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth' })
-  }
-}
 
 // Start Engine with Authentication Interception Gate
 const handleStartEngine = async () => {
@@ -513,190 +460,6 @@ const handleStartEngine = async () => {
   font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
 }
 
-/* Minimal Application Header (#A2F1DF Obrive Mint Header) */
-.console-navbar {
-  height: 60px;
-  background: #A2F1DF;
-  color: #0a1c17;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-  border-bottom: 1px solid rgba(10, 28, 23, 0.12);
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 24px;
-}
-
-.brand-link {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  color: #0a1c17;
-}
-
-.brand-logo-img {
-  height: 32px;
-  width: auto;
-}
-
-.brand-name {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
-  font-weight: 800;
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
-  color: #074139;
-}
-
-.console-tag {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 8px;
-  background: rgba(7, 65, 57, 0.08);
-  border: 1px solid rgba(7, 65, 57, 0.25);
-  color: #074139;
-  border-radius: 4px;
-  letter-spacing: 0.08em;
-}
-
-.console-nav-links {
-  display: flex;
-  gap: 20px;
-  margin-left: 8px;
-}
-
-.console-nav-link {
-  font-family: var(--font-mono, monospace);
-  color: #000000;
-  font-size: 0.82rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: color 0.2s ease;
-  letter-spacing: 0.04em;
-}
-
-.console-nav-link:hover {
-  color: #0a1c17;
-}
-
-.wishlist-leads-link {
-  color: #074139 !important;
-  font-weight: 700;
-}
-
-.wishlist-leads-link:hover {
-  color: #000000 !important;
-}
-
-.nav-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.user-pill {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 4px 12px 4px 5px;
-  background: rgba(255, 255, 255, 0.65);
-  border: 1px solid rgba(10, 28, 23, 0.15);
-  border-radius: 9999px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.user-pill:hover {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: rgba(10, 28, 23, 0.3);
-}
-
-.console-signin-btn {
-  padding: 6px 16px;
-  background: #0a1c17;
-  color: #FFFFFF;
-  border: none;
-  border-radius: 9999px;
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.console-signin-btn:hover {
-  background: #000000;
-  transform: translateY(-1px);
-}
-
-.avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: #0a1c17;
-  color: #FFFFFF;
-  font-size: 0.7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.user-name {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: #0a1c17;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-}
-
-.status-dot.verified {
-  background: #00E5A3;
-  box-shadow: 0 0 6px rgba(0, 229, 163, 0.6);
-}
-
-.status-dot.unverified {
-  background: #f59e0b;
-}
-
-.link-obrive {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 14px;
-  background: #0a1c17;
-  color: #FFFFFF;
-  text-decoration: none;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.82rem;
-  font-weight: 600;
-  border-radius: 8px;
-  transition: all 0.2s ease;
-}
-
-.link-obrive:hover {
-  background: #000000;
-  transform: translateY(-1px);
-}
-
-.link-obrive .arrow {
-  font-family: sans-serif;
-  font-size: 0.75rem;
-  opacity: 0.6;
-}
 
 .panel-sub-desc {
   font-size: 0.88rem;
@@ -1238,20 +1001,6 @@ const handleStartEngine = async () => {
   border-color: #042823;
 }
 
-.demo-link {
-  display: block;
-  margin-top: 14px;
-  text-align: center;
-  color: #737373;
-  font-size: 0.68rem;
-  letter-spacing: 0.06em;
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.demo-link:hover {
-  color: #000000;
-}
 
 .launch-section {
   padding: 12px;

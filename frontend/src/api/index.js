@@ -15,12 +15,17 @@ let isRefreshing = false
 let refreshSubscribers = []
 
 function onRefreshed(token) {
-  refreshSubscribers.forEach(cb => cb(token))
+  refreshSubscribers.forEach(sub => (typeof sub === 'function' ? sub(token) : sub.resolve(token)))
   refreshSubscribers = []
 }
 
-function addRefreshSubscriber(cb) {
-  refreshSubscribers.push(cb)
+function onRefreshFailed(err) {
+  refreshSubscribers.forEach(sub => (sub.reject ? sub.reject(err) : null))
+  refreshSubscribers = []
+}
+
+function addRefreshSubscriber(sub) {
+  refreshSubscribers.push(sub)
 }
 
 // Request interceptor: attach language and Bearer JWT token
@@ -92,9 +97,12 @@ service.interceptors.response.use(
 
               originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
               return service(originalRequest)
+            } else {
+              throw new Error('Refresh response missing access token')
             }
           } catch (refreshErr) {
             isRefreshing = false
+            onRefreshFailed(refreshErr)
             localStorage.removeItem('brain_access_token')
             localStorage.removeItem('obmind_access_token')
             localStorage.removeItem('token')
@@ -110,10 +118,15 @@ service.interceptors.response.use(
           }
         } else {
           // Queue duplicate requests until token refresh completes
-          return new Promise(resolve => {
-            addRefreshSubscriber(token => {
-              originalRequest.headers['Authorization'] = `Bearer ${token}`
-              resolve(service(originalRequest))
+          return new Promise((resolve, reject) => {
+            addRefreshSubscriber({
+              resolve: token => {
+                originalRequest.headers['Authorization'] = `Bearer ${token}`
+                resolve(service(originalRequest))
+              },
+              reject: err => {
+                reject(err)
+              }
             })
           })
         }
