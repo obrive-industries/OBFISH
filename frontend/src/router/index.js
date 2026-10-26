@@ -95,6 +95,14 @@ const routes = [
     component: () => import('../views/ResetPasswordView.vue')
   },
   {
+    path: '/login',
+    redirect: '/?auth=login'
+  },
+  {
+    path: '/signin',
+    redirect: '/?auth=login'
+  },
+  {
     path: '/home',
     redirect: '/'
   },
