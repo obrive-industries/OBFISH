@@ -14,19 +14,19 @@
       </div>
 
       <!-- Side-by-Side Flex Layout (Exact match with reference screenshot) -->
-      <div class="decision-row flex flex-col md:flex-row gap-8 max-w-5xl mx-auto items-stretch">
+      <div class="decision-row flex flex-col md:flex-row gap-8 max-w-5xl mx-auto items-center">
         <!-- Left Side: 2 Decision Blocks -->
-        <div class="decision-col-left md:w-[38%] flex flex-col justify-between gap-5">
+        <div class="decision-col-left md:w-[38%] w-full grid grid-cols-1 gap-4">
           <!-- Box 1: The Future Is Uncertain -->
           <div
             class="video-btn text-left rounded-2xl transition-all duration-300 cursor-pointer"
             :class="activeIdx === 0 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 0"
           >
-            <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
+            <h3 class="font-semibold text-[#073933] text-base leading-snug">
               The Future Is Uncertain
             </h3>
-            <p class="text-sm text-black mt-3 leading-relaxed font-normal">
+            <p class="text-xs sm:text-sm text-black mt-2 leading-relaxed font-normal">
               Traditional planning relies on static assumptions and historical data that fail when unexpected real-world reactions emerge.
             </p>
           </div>
@@ -37,10 +37,10 @@
             :class="activeIdx === 1 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 1"
           >
-            <h3 class="font-semibold text-[#073933] text-base sm:text-lg leading-snug">
+            <h3 class="font-semibold text-[#073933] text-base leading-snug">
               Check Your Decisions
             </h3>
-            <p class="text-sm text-black mt-3 leading-relaxed font-normal">
+            <p class="text-xs sm:text-sm text-black mt-2 leading-relaxed font-normal">
               Shaped by multiple people, competing interests, changing conditions, and unexpected reactions
             </p>
           </div>
@@ -88,6 +88,12 @@ const activeIdx = ref(0)
   flex-direction: column;
 }
 
+.decision-col-left {
+  display: grid;
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
 @media (min-width: 768px) {
   .decision-row {
     flex-direction: row;
@@ -101,7 +107,7 @@ const activeIdx = ref(0)
 }
 
 .video-btn {
-  padding: 1.75rem 1.5rem;
+  padding: 1.15rem 1.25rem;
   border-radius: 1rem;
   border: 1px solid rgba(10, 28, 23, 0.12);
   -webkit-backdrop-filter: blur(12px);
@@ -111,13 +117,12 @@ const activeIdx = ref(0)
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex: 1 1 0%;
-  min-height: 180px;
+  min-height: 110px;
 }
 
 @media (min-width: 640px) {
   .video-btn {
-    padding: 1.875rem 1.75rem;
+    padding: 1.25rem 1.35rem;
   }
 }
 
