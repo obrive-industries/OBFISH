@@ -142,7 +142,9 @@ const scrollDown = () => {
 <style scoped>
 @font-face {
   font-family: 'microgrammaBold';
-  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+  src: url('/fonts/microgramma-bold.woff2') format('woff2'),
+       url('../../assets/fonts/microgramma-bold.woff2') format('woff2'),
+       url('/fonts/microgramma-bold.otf') format('opentype'),
        url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 100 900;
   font-style: normal;
@@ -151,7 +153,9 @@ const scrollDown = () => {
 
 @font-face {
   font-family: 'microgrammaBold';
-  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+  src: url('/fonts/microgramma-bold.woff2') format('woff2'),
+       url('../../assets/fonts/microgramma-bold.woff2') format('woff2'),
+       url('/fonts/microgramma-bold.otf') format('opentype'),
        url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 100 900;
   font-style: italic;
@@ -160,7 +164,9 @@ const scrollDown = () => {
 
 @font-face {
   font-family: 'Microgramma';
-  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+  src: url('/fonts/microgramma-bold.woff2') format('woff2'),
+       url('../../assets/fonts/microgramma-bold.woff2') format('woff2'),
+       url('/fonts/microgramma-bold.otf') format('opentype'),
        url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 100 900;
   font-style: normal;
@@ -169,7 +175,9 @@ const scrollDown = () => {
 
 @font-face {
   font-family: 'Microgramma';
-  src: url('/fonts/microgramma-bold.otf') format('opentype'),
+  src: url('/fonts/microgramma-bold.woff2') format('woff2'),
+       url('../../assets/fonts/microgramma-bold.woff2') format('woff2'),
+       url('/fonts/microgramma-bold.otf') format('opentype'),
        url('../../assets/fonts/microgramma-bold.otf') format('opentype');
   font-weight: 100 900;
   font-style: italic;

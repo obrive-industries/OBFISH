@@ -29,11 +29,20 @@ echo "=========================================================="
 
 cd "$APP_DIR"
 
-# 2. Pull latest git changes
-echo "[1/5] Pulling latest production code from GitHub..."
-git fetch origin main
+# 2. Pull latest git changes (auto-detect ob-fish, obrive, or origin)
+TARGET_REMOTE="origin"
+if git remote -v | grep -qE "ob-fish|OBFISH"; then
+  TARGET_REMOTE=$(git remote -v | grep -E "ob-fish|OBFISH" | head -n1 | awk '{print $1}')
+elif git remote get-url origin 2>/dev/null | grep -q "666ghj/MiroFish"; then
+  echo "[!] Detected upstream MiroFish repository in origin. Updating origin to Obrive repo..."
+  git remote set-url origin https://github.com/obrive-industries/OBFISH.git || true
+  TARGET_REMOTE="origin"
+fi
+
+echo "[1/5] Pulling latest production code from remote '$TARGET_REMOTE' branch 'main'..."
+git fetch "$TARGET_REMOTE" main
 git checkout main
-git reset --hard origin/main
+git reset --hard "$TARGET_REMOTE/main"
 
 # 3. Update backend virtualenv dependencies
 echo "[2/5] Updating backend python dependencies..."
