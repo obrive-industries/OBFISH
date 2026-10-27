@@ -67,6 +67,50 @@
         />
       </div>
     </main>
+
+    <!-- User-Friendly Error Modal -->
+    <Teleport to="body">
+      <div v-if="errorModalOpen" class="error-modal-backdrop" @click.self="clearError">
+        <div class="error-modal-box">
+          <div class="error-modal-header">
+            <div class="error-badge-icon">
+              <span>⚠️</span>
+            </div>
+            <div class="error-title-wrap">
+              <h3 class="error-dialog-title font-microgramma">{{ errorTitle }}</h3>
+              <p class="error-dialog-subtitle">{{ errorSubtitle }}</p>
+            </div>
+            <button class="error-close-btn" @click="clearError" title="Dismiss">×</button>
+          </div>
+
+          <div class="error-modal-content">
+            <div class="error-raw-card">
+              <span class="raw-label">SYSTEM DETAILS</span>
+              <p class="raw-message">{{ error }}</p>
+            </div>
+
+            <div class="error-instructions-card">
+              <h4 class="instruction-header font-microgramma">HOW TO PROCEED</h4>
+              <ul class="instruction-list">
+                <li v-for="(tip, i) in errorTips" :key="i">
+                  <span class="bullet-dot">•</span>
+                  <span>{{ tip }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="error-modal-footer">
+            <button class="btn-error-ghost font-microgramma" @click="clearError">
+              Dismiss
+            </button>
+            <button class="btn-error-action font-microgramma" @click="handleErrorAction">
+              {{ errorActionLabel }} →
+            </button>
+          </div>
+        </div>
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -112,12 +156,109 @@ const currentProjectId = ref(route.params.projectId)
 const loading = ref(false)
 const graphLoading = ref(false)
 const error = ref('')
+const errorModalOpen = ref(false)
 const projectData = ref(null)
 const graphData = ref(null)
 const currentPhase = ref(-1) // -1: Upload, 0: Ontology, 1: Build, 2: Complete
 const ontologyProgress = ref(null)
 const buildProgress = ref(null)
 const systemLogs = ref([])
+
+// Error Modal Helpers
+const triggerError = (msg) => {
+  error.value = msg || 'An unexpected simulation error occurred'
+  errorModalOpen.value = true
+}
+
+const clearError = () => {
+  errorModalOpen.value = false
+}
+
+const errorTitle = computed(() => {
+  const err = (error.value || '').toLowerCase()
+  if (err.includes('simulation requirement') || err.includes('simulation_requirement') || err.includes('requirement')) {
+    return 'Scenario Requirement Needed'
+  }
+  if (err.includes('token') || err.includes('auth') || err.includes('login') || err.includes('401')) {
+    return 'Authentication Required'
+  }
+  if (err.includes('plan') || err.includes('limit') || err.includes('402')) {
+    return 'Subscription Plan Required'
+  }
+  if (err.includes('network') || err.includes('timeout') || err.includes('failed to fetch')) {
+    return 'Network Connection Error'
+  }
+  return 'Simulation Engine Notice'
+})
+
+const errorSubtitle = computed(() => {
+  const err = (error.value || '').toLowerCase()
+  if (err.includes('simulation requirement') || err.includes('simulation_requirement') || err.includes('requirement')) {
+    return 'The swarm intelligence engine needs a concrete scenario or hypothesis to simulate.'
+  }
+  if (err.includes('token') || err.includes('auth') || err.includes('login') || err.includes('401')) {
+    return 'Please sign in to access your simulation workspaces.'
+  }
+  if (err.includes('plan') || err.includes('limit') || err.includes('402')) {
+    return 'You have reached your current simulation run limit.'
+  }
+  return 'The simulation workflow encountered an issue during processing.'
+})
+
+const errorTips = computed(() => {
+  const err = (error.value || '').toLowerCase()
+  if (err.includes('simulation requirement') || err.includes('simulation_requirement') || err.includes('requirement')) {
+    return [
+      'Enter a clear prompt describing what you want to simulate (e.g. "Simulate market adoption and competitor reaction").',
+      'Attach source documents (PDF, DOCX, TXT, MD) containing background facts, metrics, and policies.',
+      'Return to Console to quickly review and launch your scenario.'
+    ]
+  }
+  if (err.includes('token') || err.includes('auth') || err.includes('login') || err.includes('401')) {
+    return [
+      'Click the button below to sign in or register your account.',
+      'Your uploaded materials and inputs will be preserved.'
+    ]
+  }
+  if (err.includes('plan') || err.includes('limit') || err.includes('402')) {
+    return [
+      'Choose a Starter, Pro, or Premium subscription to unlock more simulation capacity.',
+      'All plans support deep persona modeling and multi-round agent debates.'
+    ]
+  }
+  return [
+    'Check your internet connection and verify that the backend engine is running.',
+    'You can return to the Console to re-verify your documents and try again.'
+  ]
+})
+
+const errorActionLabel = computed(() => {
+  const err = (error.value || '').toLowerCase()
+  if (err.includes('simulation requirement') || err.includes('simulation_requirement') || err.includes('requirement')) {
+    return 'Return to Console & Add Scenario'
+  }
+  if (err.includes('token') || err.includes('auth') || err.includes('login') || err.includes('401')) {
+    return 'Sign In to Brain'
+  }
+  if (err.includes('plan') || err.includes('limit') || err.includes('402')) {
+    return 'View Subscription Plans'
+  }
+  return 'Return to Console'
+})
+
+const handleErrorAction = () => {
+  const err = (error.value || '').toLowerCase()
+  clearError()
+  if (err.includes('token') || err.includes('auth') || err.includes('login') || err.includes('401')) {
+    authStore.openAuthModal('login', 'Please sign in to continue your simulation.')
+    return
+  }
+  if (err.includes('plan') || err.includes('limit') || err.includes('402')) {
+    billingStore.openPricing({ resume: false })
+    return
+  }
+  router.push('/console')
+}
 
 // Polling timers
 let pollTimer = null
@@ -223,7 +364,9 @@ const handleNewProject = async () => {
     if (hasFiles) {
       pending.files.forEach(f => formData.append('files', f))
     }
-    formData.append('simulation_requirement', pending.simulationRequirement || '')
+    const reqText = (pending.simulationRequirement || '').trim() ||
+      (hasFiles ? `Simulate key stakeholder dynamics, strategic outcomes, and emerging risks based on ${pending.files[0]?.name || 'uploaded dossier'}.` : '')
+    formData.append('simulation_requirement', reqText)
     
     const res = await generateOntology(formData)
     if (res.success) {
@@ -236,12 +379,12 @@ const handleNewProject = async () => {
       addLog(`Ontology generated successfully for project ${res.data.project_id}`)
       await startBuildGraph()
     } else {
-      error.value = res.error || 'Ontology generation failed'
+      triggerError(res.error || 'Ontology generation failed')
       addLog(`Error generating ontology: ${error.value}`)
       ontologyProgress.value = null
     }
   } catch (err) {
-    error.value = err.message
+    triggerError(err.message)
     addLog(`Exception in handleNewProject: ${err.message}`)
     ontologyProgress.value = null
     if (String(err.code || '').startsWith('PLAN_') || err.status === 402) {
@@ -273,11 +416,11 @@ const loadProject = async () => {
         await loadGraph(res.data.graph_id)
       }
     } else {
-      error.value = res.error
+      triggerError(res.error || 'Failed to load project')
       addLog(`Error loading project: ${res.error}`)
     }
   } catch (err) {
-    error.value = err.message
+    triggerError(err.message)
     addLog(`Exception in loadProject: ${err.message}`)
   } finally {
     loading.value = false
@@ -290,7 +433,7 @@ const updatePhaseByStatus = (status) => {
     case 'ontology_generated': currentPhase.value = 0; break;
     case 'graph_building': currentPhase.value = 1; break;
     case 'graph_completed': currentPhase.value = 2; break;
-    case 'failed': error.value = 'Project failed'; break;
+    case 'failed': triggerError('Project build failed'); break;
   }
 }
 
@@ -316,11 +459,11 @@ const startBuildGraph = async () => {
       addLog(`Graph build task started. Task ID: ${res.data.task_id}`)
       startPollingTask(res.data.task_id)
     } else {
-      error.value = res.error
+      triggerError(res.error || 'Failed to initiate graph build')
       addLog(`Error starting build: ${res.error}`)
     }
   } catch (err) {
-    error.value = err.message
+    triggerError(err.message)
     addLog(`Exception in startBuildGraph: ${err.message}`)
   }
 }
@@ -381,7 +524,7 @@ const pollTaskStatus = async (taskId) => {
         }
       } else if (task.status === 'failed') {
         stopPolling()
-        error.value = task.error
+        triggerError(task.error || 'Graph construction task failed')
         addLog(`Graph build task failed: ${task.error}`)
       }
     }
@@ -647,5 +790,213 @@ onUnmounted(() => {
 .sign-in-btn-header:hover {
   background: #FF4500;
   border-color: #FF4500;
+}
+
+/* User-Friendly Error Modal Styles */
+.error-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(7, 57, 51, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.error-modal-box {
+  background: #FFFFFF;
+  border: 1px solid rgba(7, 57, 51, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 24px 60px rgba(7, 57, 51, 0.25);
+  width: 100%;
+  max-width: 540px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalPop {
+  from {
+    opacity: 0;
+    transform: scale(0.96) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.error-modal-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 24px 28px 18px;
+  border-bottom: 1px solid rgba(7, 57, 51, 0.08);
+}
+
+.error-badge-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: #FEF3C7;
+  border: 1px solid #FDE68A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.error-title-wrap {
+  flex: 1;
+}
+
+.error-dialog-title {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #073933;
+  letter-spacing: -0.01em;
+}
+
+.error-dialog-subtitle {
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: #2D554C;
+  line-height: 1.45;
+}
+
+.error-close-btn {
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  color: #6B7280;
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.error-close-btn:hover {
+  color: #111827;
+}
+
+.error-modal-content {
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.error-raw-card {
+  background: #FFFBEB;
+  border: 1px solid #FCD34D;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.raw-label {
+  display: block;
+  font-size: 9px;
+  font-weight: 800;
+  color: #92400E;
+  letter-spacing: 0.1em;
+  margin-bottom: 4px;
+}
+
+.raw-message {
+  margin: 0;
+  font-family: var(--font-mono, monospace);
+  font-size: 12.5px;
+  color: #78350F;
+  word-break: break-word;
+  line-height: 1.45;
+}
+
+.error-instructions-card {
+  background: #F8FAFA;
+  border: 1px solid rgba(7, 57, 51, 0.1);
+  border-radius: 12px;
+  padding: 14px 18px;
+}
+
+.instruction-header {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #073933;
+  letter-spacing: 0.08em;
+}
+
+.instruction-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.instruction-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 13px;
+  color: #1F2937;
+  line-height: 1.45;
+}
+
+.bullet-dot {
+  color: #073933;
+  font-weight: 800;
+}
+
+.error-modal-footer {
+  padding: 16px 28px 22px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  background: #FAFAFA;
+  border-top: 1px solid rgba(7, 57, 51, 0.08);
+}
+
+.btn-error-ghost {
+  background: transparent;
+  border: 1px solid rgba(7, 57, 51, 0.2);
+  color: #2D554C;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-error-ghost:hover {
+  background: rgba(7, 57, 51, 0.05);
+  color: #073933;
+}
+
+.btn-error-action {
+  background: #073933;
+  border: 1px solid #073933;
+  color: #FFFFFF;
+  border-radius: 999px;
+  padding: 8px 22px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(7, 57, 51, 0.25);
+  transition: all 0.2s;
+}
+
+.btn-error-action:hover {
+  background: #032420;
+  border-color: #032420;
+  transform: translateY(-1px);
 }
 </style>

@@ -342,22 +342,23 @@ def generate_ontology():
         logger.debug(f"项目名称: {project_name}")
         logger.debug(f"模拟需求: {simulation_requirement[:100]}...")
         
-        if not simulation_requirement:
-            return jsonify({
-                "success": False,
-                "error": t('api.requireSimulationRequirement')
-            }), 400
-        
         # 获取上传的文件
         uploaded_files = request.files.getlist('files')
         has_uploaded_files = bool(uploaded_files and any(f.filename for f in uploaded_files))
         
-        # 允许纯文本假设输入，无需强制上传物理文件
+        # 允许纯文本假设输入，或物理文件输入
         if not has_uploaded_files and not simulation_requirement.strip():
             return jsonify({
                 "success": False,
                 "error": t('api.requireSimulationRequirement')
             }), 400
+        
+        # 如果上传了文件但未填写需求文本，根据文件名智能补全默认模拟需求
+        if has_uploaded_files and not simulation_requirement.strip():
+            valid_names = [f.filename for f in uploaded_files if f and f.filename]
+            doc_label = ", ".join(valid_names[:2]) if valid_names else "attached documents"
+            simulation_requirement = f"Simulate key stakeholder dynamics, strategic outcomes, and emerging risks based on {doc_label}."
+            logger.info(f"Auto-generated simulation requirement: {simulation_requirement}")
         
         # 创建项目（要求登录、邮箱验证与可用的付费计划）
         from ..utils.auth_middleware import get_current_user
