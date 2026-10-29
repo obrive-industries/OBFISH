@@ -66,4 +66,5 @@ backend/logs/
 backend/uploads/
 
 # Docker 数据
-data/MiroFish_AI_Simulation_Concurrency_Report.pdf
+data/
+MiroFish_AI_Simulation_Concurrency_Report.pdf
