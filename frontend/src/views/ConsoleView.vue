@@ -164,17 +164,35 @@
             <!-- Launch Button Section matching MiroFish start-engine-btn -->
             <div class="console-section launch-section">
               <button 
-                class="start-engine-btn font-microgramma"
+                class="start-engine-btn font-microgramma btn btn-animated"
                 @click="handleStartEngine"
                 :disabled="loading"
               >
-                <span v-if="!loading" class="btn-text-content">
-                  <span class="btn-label">Start Engine</span>
+                <span class="btn-inner relative inline-flex items-center justify-center">
+                  <!-- Left sliding arrow (enters on hover) -->
+                  <span
+                    class="btn-animated__icon btn__icon --1"
+                    style="width: 15px; height: 15px;"
+                    aria-hidden="true"
+                  >
+                    <RightAnimateIcon color="accent" :size="15" />
+                  </span>
+
+                  <!-- Label -->
+                  <span class="btn-animated__label btn__label">
+                    <span v-if="!loading">Start Engine</span>
+                    <span v-else>Initializing Swarm...</span>
+                  </span>
+
+                  <!-- Right sliding arrow (leaves on hover) -->
+                  <span
+                    class="btn-animated__icon btn__icon --2"
+                    style="width: 15px; height: 15px; margin-left: 10px;"
+                    aria-hidden="true"
+                  >
+                    <RightAnimateIcon color="accent" :size="15" />
+                  </span>
                 </span>
-                <span v-else class="btn-text-content">
-                  <span>Initializing Swarm...</span>
-                </span>
-                <span class="btn-arrow">→</span>
               </button>
 
             </div>
@@ -198,6 +216,7 @@ import HistoryDatabase from '../components/HistoryDatabase.vue'
 import authStore from '../store/auth'
 import authApi from '../api/auth'
 import billingStore from '../store/billing'
+import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
 import { savePendingUpload, getPendingUpload } from '../utils/pendingUpload.js'
 
 const router = useRouter()
@@ -1059,7 +1078,7 @@ const handleStartEngine = async () => {
   border-radius: 0.75rem;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   box-shadow: 0 4px 14px rgba(7, 57, 51, 0.25);
   animation: pulse-border 2s infinite;
 }
@@ -1088,25 +1107,6 @@ const handleStartEngine = async () => {
   100% {
     box-shadow: 0 0 0 0 rgba(7, 57, 51, 0);
   }
-}
-
-.btn-text-content {
-  display: flex;
-  align-items: center;
-}
-
-.btn-label {
-  letter-spacing: 0.06em;
-}
-
-.btn-arrow {
-  font-size: 1.25rem;
-  font-weight: 700;
-  transition: transform 0.2s ease;
-}
-
-.start-engine-btn:hover:not(:disabled) .btn-arrow {
-  transform: translateX(4px);
 }
 
 /* History */

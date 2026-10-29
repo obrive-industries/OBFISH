@@ -7,7 +7,7 @@
     :rel="rel"
     :type="isButton ? type : undefined"
     :disabled="disabled"
-    class="btn-animated"
+    class="btn-animated btn"
     :class="[
       `btn-variant-${variant}`,
       `btn-size-${size}`,
@@ -20,22 +20,24 @@
       <!-- Sliding Left Arrow (enters on hover) -->
       <span
         v-if="showArrow"
-        class="btn-animated__icon --1"
+        class="btn-animated__icon btn__icon --1"
         :style="{ width: `${iconSize}px`, height: `${iconSize}px` }"
+        aria-hidden="true"
       >
         <RightAnimateIcon :color="resolvedArrowColor" :size="iconSize" />
       </span>
 
       <!-- Label / Slot -->
-      <span class="btn-animated__label">
+      <span class="btn-animated__label btn__label">
         <slot />
       </span>
 
       <!-- Sliding Right Arrow (leaves on hover) -->
       <span
         v-if="showArrow"
-        class="btn-animated__icon --2"
-        :style="{ width: `${iconSize}px`, height: `${iconSize}px`, marginLeft: '8px' }"
+        class="btn-animated__icon btn__icon --2"
+        :style="{ width: `${iconSize}px`, height: `${iconSize}px`, marginInlineStart: '8px' }"
+        aria-hidden="true"
       >
         <RightAnimateIcon :color="resolvedArrowColor" :size="iconSize" />
       </span>
@@ -70,7 +72,7 @@ const props = defineProps({
   },
   variant: {
     type: String,
-    default: 'primary', // 'primary' | 'accent' | 'outline' | 'outline-white' | 'ghost'
+    default: 'primary', // 'primary' | 'outline' | 'white' | 'outline-white' | 'dark' | 'accent' | 'ghost'
   },
   size: {
     type: String,
@@ -114,11 +116,14 @@ const componentType = computed(() => {
 
 const resolvedArrowColor = computed(() => {
   if (props.arrowColor) return props.arrowColor
-  if (props.variant === 'accent') return 'primary'
-  if (props.variant === 'outline') return 'primary'
+  if (props.variant === 'primary') return 'default' // #CAEDE5 mint
+  if (props.variant === 'outline') return 'primary' // #074139 forest
   if (props.variant === 'outline-white') return 'white'
+  if (props.variant === 'white') return 'primary'
+  if (props.variant === 'accent') return 'primary'
+  if (props.variant === 'dark' || props.variant === 'black') return 'accent'
   if (props.variant === 'ghost') return 'primary'
-  return 'default' // Primary variant has CAEDE5 arrow
+  return 'default'
 })
 </script>
 
@@ -131,54 +136,56 @@ const resolvedArrowColor = computed(() => {
   width: 100%;
 }
 
-/* MiroFish Variants */
+/* Obrive Variants */
 .btn-variant-primary {
-  background-color: #ffffff;
-  color: #000000;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.12);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid #ffffff;
+  background-color: #073933;
+  color: #ffffff;
+  border: 1px solid #073933;
+  box-shadow: 0 4px 14px rgba(7, 57, 51, 0.25);
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
   font-weight: 600;
 }
 
 .btn-variant-primary:hover {
-  background-color: #e5e7eb;
-  color: #000000;
-  border-color: #e5e7eb;
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
-}
-
-.btn-variant-accent {
-  background-color: #ffffff;
-  color: #000000;
-  box-shadow: 0 2px 10px rgba(255, 255, 255, 0.12);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  border: 1px solid #ffffff;
-  font-weight: 600;
-}
-
-.btn-variant-accent:hover {
-  background-color: #e5e7eb;
-  color: #000000;
-  border-color: #e5e7eb;
-  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.25);
-  transform: translateY(-1px);
+  background-color: #074139;
+  border-color: #074139;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.38);
 }
 
 .btn-variant-outline {
   background-color: transparent;
-  color: #ffffff;
-  border: 1.5px solid rgba(255, 255, 255, 0.45);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  font-weight: 500;
+  color: #074139;
+  border: 1px solid #074139;
+  box-shadow: 0 2px 8px rgba(7, 65, 57, 0.08);
+  transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
+  font-weight: 600;
 }
 
 .btn-variant-outline:hover {
+  background-color: rgba(7, 65, 57, 0.08);
+  border-color: #073933;
+  color: #073933;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(7, 65, 57, 0.16);
+}
+
+.btn-variant-white {
   background-color: #ffffff;
-  color: #000000;
-  border-color: #ffffff;
-  transform: translateY(-1px);
+  color: #073933;
+  border: 1px solid #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 600;
+}
+
+.btn-variant-white:hover {
+  background-color: #f3f4f6;
+  border-color: #f3f4f6;
+  color: #073933;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
 }
 
 .btn-variant-outline-white {
@@ -191,39 +198,80 @@ const resolvedArrowColor = computed(() => {
 
 .btn-variant-outline-white:hover {
   background-color: #ffffff;
-  color: #000000;
+  color: #073933;
   border-color: #ffffff;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+}
+
+.btn-variant-dark,
+.btn-variant-black {
+  background-color: #000000;
+  color: #A2F1DF;
+  border: 1px solid #000000;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+  transition: all 0.3s ease;
+  font-weight: 700;
+}
+
+.btn-variant-dark:hover,
+.btn-variant-black:hover {
+  background-color: #073933;
+  border-color: #073933;
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.35);
+}
+
+.btn-variant-accent {
+  background-color: #A2F1DF;
+  color: #073933;
+  border: 1px solid #A2F1DF;
+  box-shadow: 0 2px 10px rgba(7, 57, 51, 0.12);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 600;
+}
+
+.btn-variant-accent:hover {
+  background-color: #8eebd6;
+  border-color: #8eebd6;
+  color: #073933;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(7, 57, 51, 0.2);
 }
 
 .btn-variant-ghost {
   background-color: transparent;
-  color: #ffffff;
+  color: #073933;
+  border: 1px solid transparent;
   transition: all 0.2s ease;
+  font-weight: 600;
 }
 
 .btn-variant-ghost:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #ffffff;
+  background-color: rgba(7, 57, 51, 0.08);
+  color: #073933;
 }
 
-/* Sizes */
+/* Sizes matching Obrive */
 .btn-size-sm {
-  padding: 6px 14px;
-  font-size: 11px;
-  border-radius: 8px;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  border-radius: 0.75rem;
 }
 
 .btn-size-default {
-  padding: 10px 22px;
-  font-size: 12px;
-  border-radius: 10px;
+  padding: 0.75rem 1.85rem;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  border-radius: 0.75rem;
 }
 
 .btn-size-lg {
-  padding: 14px 28px;
-  font-size: 13px;
-  border-radius: 12px;
+  padding: 0.875rem 2.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+  border-radius: 0.75rem;
 }
 
 .btn-pill {

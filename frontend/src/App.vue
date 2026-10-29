@@ -231,20 +231,25 @@ body {
 }
 
 /* Obrive Button with Sliding Icons */
+.btn,
 .btn-animated {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   position: relative;
   overflow: hidden;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   font-weight: 600;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
   cursor: pointer;
   border: none;
   outline: none;
+  box-sizing: border-box;
 }
 
+.btn__icon,
 .btn-animated__icon {
   display: flex;
   align-items: center;
@@ -252,6 +257,7 @@ body {
   transition: transform 0.75s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+.btn__icon.--1,
 .btn-animated__icon.--1 {
   position: absolute;
   left: 0;
@@ -260,11 +266,13 @@ body {
   transition-delay: 0s;
 }
 
+.btn:hover .btn__icon.--1,
 .btn-animated:hover .btn-animated__icon.--1 {
-  transform: translate(-0.35rem) translateY(-50%);
+  transform: translate(-0.4rem) translateY(-50%);
   transition-delay: 0.2s;
 }
 
+.btn__icon.--2,
 .btn-animated__icon.--2 {
   position: relative;
   transform: translate(0);
@@ -272,19 +280,46 @@ body {
   margin-left: 8px;
 }
 
+.btn:hover .btn__icon.--2,
 .btn-animated:hover .btn-animated__icon.--2 {
   transform: translate(100%) translate(2rem);
   transition-delay: 0s;
 }
 
+.btn__label,
 .btn-animated__label {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transform: translate(0);
-  transition: transform 0.85s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
 }
 
+.btn:hover .btn__label,
 .btn-animated:hover .btn-animated__label {
-  transform: translate(1.35rem);
+  transform: translate(1.5rem) translate(-0.1rem);
+}
+
+/* RTL Button Animation Overrides */
+html[dir="rtl"] .btn__icon.--1,
+html[dir="rtl"] .btn-animated__icon.--1 {
+  transform: translate(250%) translate(2rem) translateY(-50%);
+}
+html[dir="rtl"] .btn:hover .btn__icon.--1,
+html[dir="rtl"] .btn-animated:hover .btn-animated__icon.--1 {
+  transform: translate(0.4rem) translateY(-50%);
+}
+html[dir="rtl"] .btn:hover .btn__icon.--2,
+html[dir="rtl"] .btn-animated:hover .btn-animated__icon.--2 {
+  transform: translate(-100%) translate(-2rem);
+}
+html[dir="rtl"] .btn:hover .btn__label,
+html[dir="rtl"] .btn-animated:hover .btn-animated__label {
+  transform: translate(-1.5rem) translate(-0.1rem);
+}
+html[dir="rtl"] .btn__icon svg,
+html[dir="rtl"] .btn-animated__icon svg {
+  transform: scaleX(-1);
 }
 
 /* Obrive Slim Minimalist Scrollbar */

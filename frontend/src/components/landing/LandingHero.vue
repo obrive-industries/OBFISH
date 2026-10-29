@@ -5,6 +5,12 @@
 
     <div class="container-main relative z-[2]">
       <div class="hero-content">
+        <!-- Eyebrow Brand Pill -->
+        <div class="hero-eyebrow-pill">
+          <span class="eyebrow-dot" aria-hidden="true"></span>
+          <span class="eyebrow-text">BRAIN BY OBRIVE</span>
+        </div>
+
         <!-- Main Headline (Matching 'Owning the Future' from obrive.com) -->
         <h1 class="mb-8 tracking-tight hero-heading font-microgramma">
           <span>Predictive</span>
@@ -23,22 +29,30 @@
 
         <!-- CTA Buttons -->
         <div class="flex flex-wrap gap-5 justify-center mb-8">
-          <router-link
+          <AnimatedButton
             to="/console"
-            class="hero-btn-primary group"
+            variant="primary"
+            size="lg"
+            :iconSize="14"
+            arrowColor="default"
           >
-            <span class="relative z-[1]">Predict Now</span>
-          </router-link>
+            Predict Now
+          </AnimatedButton>
 
-          <a
+          <AnimatedButton
             href="https://obrive.com"
             target="_blank"
             rel="noopener noreferrer"
-            class="hero-btn-github group"
+            variant="outline"
+            size="lg"
+            :iconSize="14"
+            arrowColor="primary"
           >
-            <img src="/obrive-logo.svg" alt="Obrive" class="hero-btn-logo" />
-            <span class="relative z-[1]">Explore Obrive</span>
-          </a>
+            <span class="inline-flex items-center gap-2">
+              <img src="/obrive-logo.svg" alt="Obrive" class="hero-btn-logo" />
+              <span>Explore Obrive</span>
+            </span>
+          </AnimatedButton>
         </div>
 
         <!-- Wishlist Form (MiroFish Style) -->
@@ -60,20 +74,23 @@
               class="wishlist-input"
               :disabled="submitting"
             />
-            <button
+            <AnimatedButton
               type="submit"
-              class="wishlist-submit"
+              variant="primary"
+              size="default"
               :disabled="submitting || !emailInput"
+              :iconSize="13"
+              arrowColor="default"
             >
               <span v-if="!submitting">Send</span>
-              <span v-else class="flex items-center gap-2">
-                <svg class="animate-spin h-4 w-4 text-white" viewBox="0 0 24 24" fill="none">
+              <span v-else class="inline-flex items-center gap-2">
+                <svg class="animate-spin h-3.5 w-3.5 text-white" viewBox="0 0 24 24" fill="none">
                   <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                   <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
                 </svg>
                 Sending...
               </span>
-            </button>
+            </AnimatedButton>
           </form>
 
           <!-- Feedback alerts (Prominent Confirmation Card) -->
@@ -101,6 +118,7 @@
 <script setup>
 import { ref } from 'vue'
 import wishlistApi from '../../api/wishlist'
+import AnimatedButton from '../common/AnimatedButton.vue'
 
 const emailInput = ref('')
 const submitting = ref(false)
@@ -245,6 +263,55 @@ const scrollDown = () => {
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+.hero-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 18px;
+  border-radius: 9999px;
+  background: rgba(7, 57, 51, 0.05);
+  border: 1px solid rgba(7, 57, 51, 0.22);
+  margin-bottom: 24px;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.hero-eyebrow-pill:hover {
+  background: rgba(7, 57, 51, 0.09);
+  border-color: rgba(7, 57, 51, 0.4);
+  transform: translateY(-1px);
+}
+
+.eyebrow-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #073933;
+  box-shadow: 0 0 8px rgba(7, 57, 51, 0.5);
+  display: inline-block;
+  animation: pulseDot 2s infinite ease-in-out;
+}
+
+@keyframes pulseDot {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.6;
+  }
+}
+
+.eyebrow-text {
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: #073933;
+  text-transform: uppercase;
 }
 
 .hero-heading {

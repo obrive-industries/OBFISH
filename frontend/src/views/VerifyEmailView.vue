@@ -22,10 +22,15 @@
         <div class="status-icon success-icon">✓</div>
         <h2 class="state-title font-microgramma">Email Verified!</h2>
         <p class="state-desc">{{ message || 'Your Brain account is now fully active.' }}</p>
-        <button class="primary-btn font-microgramma" @click="goToDashboard">
-          <span>Launch Brain Platform</span>
-          <span class="btn-arrow">→</span>
-        </button>
+        <AnimatedButton
+          variant="primary"
+          size="default"
+          :iconSize="13"
+          @click="goToDashboard"
+          customClass="font-microgramma"
+        >
+          Launch Brain Platform
+        </AnimatedButton>
       </div>
 
       <!-- State: Error -->
@@ -94,6 +99,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import authApi from '../api/auth'
 import authStore from '../store/auth'
+import AnimatedButton from '../components/common/AnimatedButton.vue'
 
 const route = useRoute()
 const router = useRouter()

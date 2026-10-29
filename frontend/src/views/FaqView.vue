@@ -58,7 +58,14 @@
             <p class="cta-eyebrow">STILL CURIOUS</p>
             <p class="cta-text">The fastest way to understand Brain is to run a scenario.</p>
           </div>
-          <router-link to="/console" class="cta-btn">Open the console</router-link>
+          <AnimatedButton
+            to="/console"
+            variant="primary"
+            size="default"
+            :iconSize="13"
+          >
+            Open the console
+          </AnimatedButton>
         </section>
       </div>
     </main>
@@ -73,6 +80,7 @@ import authStore from '../store/auth'
 import LandingHeader from '../components/landing/LandingHeader.vue'
 import LandingFooter from '../components/landing/LandingFooter.vue'
 import RoundedBallIcon from '../components/common/RoundedBallIcon.vue'
+import AnimatedButton from '../components/common/AnimatedButton.vue'
 
 const openAuth = () => {
   authStore.openAuthModal('login')

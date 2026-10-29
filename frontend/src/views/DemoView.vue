@@ -6,7 +6,9 @@
       </router-link>
       <div class="nav-right">
         <router-link to="/console" class="nav-link">Console</router-link>
-        <button type="button" class="nav-cta" @click="openPlans">Get a plan</button>
+        <AnimatedButton variant="white" size="sm" pill :iconSize="11" @click="openPlans">
+          Get a plan
+        </AnimatedButton>
       </div>
     </header>
 
@@ -88,8 +90,12 @@
           ontology, run parallel simulations, and generate a live prediction report.
         </p>
         <div class="cta-actions">
-          <button type="button" class="cta-primary" @click="openPlans">Choose a plan</button>
-          <router-link to="/console" class="cta-secondary">Back to console</router-link>
+          <AnimatedButton variant="white" size="default" pill :iconSize="13" @click="openPlans">
+            Choose a plan
+          </AnimatedButton>
+          <AnimatedButton to="/console" variant="outline-white" size="default" pill :iconSize="13">
+            Back to console
+          </AnimatedButton>
         </div>
       </section>
     </main>
@@ -99,6 +105,7 @@
 <script setup>
 import billingStore from '../store/billing'
 import authStore from '../store/auth'
+import AnimatedButton from '../components/common/AnimatedButton.vue'
 
 const summary = [
   {

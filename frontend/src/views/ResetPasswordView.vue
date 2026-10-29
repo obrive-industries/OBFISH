@@ -14,10 +14,15 @@
         <div class="status-icon success-icon">✓</div>
         <h2 class="state-title font-microgramma">Password Reset Complete!</h2>
         <p class="state-desc">Your password has been securely updated. You can now log in.</p>
-        <button class="primary-btn font-microgramma" @click="openLogin">
-          <span>Log In to Brain</span>
-          <span class="btn-arrow">→</span>
-        </button>
+        <AnimatedButton
+          variant="primary"
+          size="default"
+          :iconSize="13"
+          @click="openLogin"
+          customClass="font-microgramma"
+        >
+          Log In to Brain
+        </AnimatedButton>
       </div>
 
       <!-- Form State -->
@@ -52,14 +57,16 @@
           />
         </div>
 
-        <button
+        <AnimatedButton
           type="submit"
-          class="primary-btn full-width font-microgramma"
+          variant="primary"
+          size="default"
           :disabled="loading || !newPassword || !confirmPassword"
+          :iconSize="13"
+          customClass="full-width font-microgramma"
         >
-          <span>{{ loading ? 'Updating Password...' : 'Save New Password' }}</span>
-          <span class="btn-arrow">→</span>
-        </button>
+          {{ loading ? 'Updating Password...' : 'Save New Password' }}
+        </AnimatedButton>
 
         <button type="button" class="text-link font-microgramma" @click="goToHome">
           ← Cancel and return home
@@ -74,6 +81,7 @@ import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import authApi from '../api/auth'
 import authStore from '../store/auth'
+import AnimatedButton from '../components/common/AnimatedButton.vue'
 
 const route = useRoute()
 const router = useRouter()

@@ -5,10 +5,9 @@
   >
     <div class="container-main">
       <div class="flex items-center justify-between h-20">
-        <!-- Logo -->
-        <router-link to="/" class="logo" aria-label="Brain Home">
+        <!-- Logo (Only Icon) -->
+        <router-link to="/" class="logo" aria-label="Obrive Brain Home">
           <img src="/obrive-logo.svg" alt="Obrive" class="logo-img" width="70" height="50" />
-          <span class="logo-text">BRAIN</span>
         </router-link>
 
         <!-- Right Actions: Profile Pill when Logged In, Sign In when Logged Out -->
@@ -27,23 +26,29 @@
               <span v-else class="status-dot unverified" title="Verification Pending"></span>
             </div>
 
-            <router-link
+            <AnimatedButton
               v-if="route.path !== '/console'"
               to="/console"
-              class="nav-console-btn"
+              variant="primary"
+              size="sm"
+              :iconSize="12"
+              arrowColor="default"
             >
-              Console →
-            </router-link>
+              Console
+            </AnimatedButton>
           </template>
 
-          <button
+          <AnimatedButton
             v-else
             type="button"
             @click="handleSignIn"
-            class="nav-signin-btn"
+            variant="primary"
+            size="sm"
+            :iconSize="12"
+            arrowColor="default"
           >
             Sign In
-          </button>
+          </AnimatedButton>
         </div>
       </div>
     </div>
@@ -54,6 +59,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import authStore from '../../store/auth'
+import AnimatedButton from '../common/AnimatedButton.vue'
 
 const emit = defineEmits(['open-auth'])
 const router = useRouter()
