@@ -243,8 +243,12 @@ const getEntityStyle = (p) => {
 // Image appearance
 const getImageStyle = (p) => {
   const flip = p.flip ? -1 : 1
+  const filters = ['drop-shadow(0 4px 12px rgba(10, 28, 23, 0.22))']
+  if (p.blur > 0) {
+    filters.push(`blur(${p.blur.toFixed(1)}px)`)
+  }
   return {
-    filter: p.blur > 0 ? `blur(${p.blur.toFixed(1)}px)` : 'none',
+    filter: filters.join(' '),
     opacity: p.opacity,
     transform: `scaleX(${flip})`,
     width: '100%',
