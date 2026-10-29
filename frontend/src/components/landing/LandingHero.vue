@@ -5,11 +5,6 @@
 
     <div class="container-main relative z-[2]">
       <div class="hero-content">
-        <!-- Eyebrow Brand Pill -->
-        <div class="hero-eyebrow-pill">
-          <span class="eyebrow-dot" aria-hidden="true"></span>
-          <span class="eyebrow-text">BRAIN BY OBRIVE</span>
-        </div>
 
         <!-- Main Headline (Matching 'Owning the Future' from obrive.com) -->
         <h1 class="mb-8 tracking-tight hero-heading font-microgramma">
@@ -265,54 +260,6 @@ const scrollDown = () => {
   align-items: center;
 }
 
-.hero-eyebrow-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 6px 18px;
-  border-radius: 9999px;
-  background: rgba(7, 57, 51, 0.05);
-  border: 1px solid rgba(7, 57, 51, 0.22);
-  margin-bottom: 24px;
-  transition: all 0.3s ease;
-  user-select: none;
-}
-
-.hero-eyebrow-pill:hover {
-  background: rgba(7, 57, 51, 0.09);
-  border-color: rgba(7, 57, 51, 0.4);
-  transform: translateY(-1px);
-}
-
-.eyebrow-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: #073933;
-  box-shadow: 0 0 8px rgba(7, 57, 51, 0.5);
-  display: inline-block;
-  animation: pulseDot 2s infinite ease-in-out;
-}
-
-@keyframes pulseDot {
-  0%, 100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  50% {
-    transform: scale(1.3);
-    opacity: 0.6;
-  }
-}
-
-.eyebrow-text {
-  font-family: Michroma, "Michroma Fallback", sans-serif;
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  color: #073933;
-  text-transform: uppercase;
-}
 
 .hero-heading {
   font-family: microgrammaBold, "microgrammaBold Fallback", 'Microgramma', sans-serif !important;
