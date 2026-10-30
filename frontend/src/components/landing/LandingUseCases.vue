@@ -28,10 +28,10 @@
           <span class="relative block text-xs font-semibold text-[#2d554c] uppercase tracking-widest mb-3 font-michroma">
             {{ card.tag }}
           </span>
-          <h3 class="relative text-lg font-semibold text-[#073933] mb-2 leading-snug">
+          <h3 class="relative case-card-title mb-2">
             {{ card.title }}
           </h3>
-          <p class="relative text-sm text-black leading-relaxed font-normal">
+          <p class="relative case-card-desc">
             {{ card.description }}
           </p>
         </div>
@@ -143,6 +143,22 @@ const getSpotlightStyle = (index) => {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+}
+
+.case-card-title {
+  font-family: Microgramma, "Microgramma Bold", sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24.75px;
+  color: rgb(10, 28, 23);
+}
+
+.case-card-desc {
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
 }
 
 .container-main {
@@ -275,4 +291,5 @@ const getSpotlightStyle = (index) => {
   right: 6%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
 }
+
 </style>

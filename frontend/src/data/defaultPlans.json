@@ -1,0 +1,122 @@
+[
+  {
+    "id": "starter",
+    "name": "Starter",
+    "badge": null,
+    "monthly_cents": 1000,
+    "annual_cents": 6000,
+    "monthly_equivalent_cents": 500,
+    "annual_strike_cents": 1000,
+    "inr_monthly_paise": 85000,
+    "inr_annual_paise": 510000,
+    "description": {
+      "monthly": "For first paid runs when you want to take one real case from source material to prediction report.",
+      "annual": "For first paid runs when you already know you want a lower annual cost for recurring work."
+    },
+    "features": {
+      "monthly": [
+        "Upload PDF, Markdown, and text seed material",
+        "Turn source material into ontology and graph structure",
+        "Run parallel simulation and generate a prediction report",
+        "Continue analysis with follow-up questions in the same workspace",
+        "Email support"
+      ],
+      "annual": [
+        "Upload PDF, Markdown, and text seed material",
+        "Turn source material into ontology and graph structure",
+        "Run parallel simulation and generate a prediction report",
+        "Continue analysis with follow-up questions in the same workspace",
+        "Email support"
+      ]
+    },
+    "footnote": {
+      "monthly": "Start here if you want to validate one active prediction workflow before committing further.",
+      "annual": "Best entry point if you already expect to run Brain through the year."
+    },
+    "cta": "Choose Starter",
+    "limits": {
+      "runs_per_period": { "monthly": 3, "annual": 36 },
+      "max_rounds": 15
+    }
+  },
+  {
+    "id": "pro",
+    "name": "Pro",
+    "badge": "MOST POPULAR",
+    "monthly_cents": 2000,
+    "annual_cents": 18000,
+    "monthly_equivalent_cents": 1500,
+    "annual_strike_cents": 2500,
+    "inr_monthly_paise": 170000,
+    "inr_annual_paise": 1530000,
+    "description": {
+      "monthly": "For recurring simulation work across public-opinion, market, and narrative scenarios.",
+      "annual": "For recurring simulation work across public-opinion, market, and narrative scenarios."
+    },
+    "features": {
+      "monthly": [
+        "Everything in Starter",
+        "More monthly simulation capacity",
+        "Better for repeated scenario review and comparison",
+        "Built for ongoing report, risk, and narrative analysis",
+        "Priority email support"
+      ],
+      "annual": [
+        "Everything in Starter",
+        "More yearly simulation capacity at a lower annual cost",
+        "Better for repeated scenario review and comparison",
+        "Built for ongoing report, risk, and narrative analysis",
+        "Priority email support"
+      ]
+    },
+    "footnote": {
+      "monthly": "Choose Pro when Brain becomes part of your normal weekly research loop.",
+      "annual": "Best value once Brain is part of your normal weekly operating rhythm."
+    },
+    "cta": "Choose Pro",
+    "limits": {
+      "runs_per_period": { "monthly": 10, "annual": 120 },
+      "max_rounds": 40
+    }
+  },
+  {
+    "id": "premium",
+    "name": "Premium",
+    "badge": "HIGHEST CAPACITY",
+    "monthly_cents": 3000,
+    "annual_cents": 30000,
+    "monthly_equivalent_cents": 2500,
+    "annual_strike_cents": 3500,
+    "inr_monthly_paise": 255000,
+    "inr_annual_paise": 2550000,
+    "description": {
+      "monthly": "For heavy, continuous simulation usage when you are iterating on live questions and refreshing reports often.",
+      "annual": "For heavy, continuous simulation usage when you are iterating on live questions and refreshing reports often."
+    },
+    "features": {
+      "monthly": [
+        "Everything in Pro",
+        "Highest monthly simulation capacity",
+        "Best for heavier iteration across multiple live questions",
+        "More headroom for continuous simulation and report refreshes",
+        "Priority support"
+      ],
+      "annual": [
+        "Everything in Pro",
+        "Highest yearly simulation capacity",
+        "Best for heavier iteration across multiple live questions",
+        "More headroom for continuous simulation and report refreshes",
+        "Priority support"
+      ]
+    },
+    "footnote": {
+      "monthly": "Choose Premium when throughput matters more than keeping the lowest monthly spend.",
+      "annual": "Choose Premium when Brain stays in your operating loop all year and throughput matters most."
+    },
+    "cta": "Choose Premium",
+    "limits": {
+      "runs_per_period": { "monthly": 30, "annual": 360 },
+      "max_rounds": 80
+    }
+  }
+]

@@ -1,7 +1,9 @@
 import { computed, reactive } from 'vue'
+import router from '../router'
 import billingApi from '../api/billing'
 import { openRazorpayCheckout } from '../utils/razorpay'
 import authStore from './auth'
+import defaultPlans from '../data/defaultPlans.json'
 
 const FREE_ENTITLEMENT = {
   plan: 'free',
@@ -22,7 +24,7 @@ const FREE_ENTITLEMENT = {
 
 const state = reactive({
   catalog: null,
-  plans: [],
+  plans: defaultPlans,
   entitlement: { ...FREE_ENTITLEMENT },
   subscription: null,
   loading: false,
@@ -64,22 +66,28 @@ export const billingStore = {
   },
 
   async ensurePlans() {
-    if (state.loaded) return state.plans
+    if (state.loaded && state.plans?.length) return state.plans
     if (loadPromise) return loadPromise
     state.loading = true
     state.error = ''
     loadPromise = billingApi
       .getPlans()
       .then((res) => {
-        state.catalog = res.data
-        state.plans = res.data?.plans || []
+        if (res.data?.plans && res.data.plans.length) {
+          state.catalog = res.data
+          state.plans = res.data.plans
+        }
         state.configured = Boolean(res.data?.configured)
         state.loaded = true
         return state.plans
       })
       .catch((err) => {
-        state.error = err.message || 'Could not load plans.'
-        return []
+        // Fall back gracefully to default catalog so pricing is always present
+        if (!state.plans || !state.plans.length) {
+          state.plans = defaultPlans
+        }
+        state.loaded = true
+        return state.plans
       })
       .finally(() => {
         state.loading = false
@@ -105,7 +113,7 @@ export const billingStore = {
         state.configured = Boolean(res.entitlement?.configured)
         state.error = ''
       } catch (err) {
-        state.error = err.message || 'Could not load your plan.'
+        console.warn('Billing refresh warning:', err?.message)
       } finally {
         refreshPromise = null
       }
@@ -116,10 +124,13 @@ export const billingStore = {
 
   openPricing({ resume = false } = {}) {
     state.error = ''
-    state.pricingOpen = true
+    state.pricingOpen = false
     state.pendingResume = resume
     this.ensurePlans()
     if (authStore.isAuthenticated.value) this.refresh()
+    if (router && router.currentRoute.value.path !== '/pricing') {
+      router.push('/pricing')
+    }
   },
 
   closePricing() {
@@ -155,6 +166,9 @@ export const billingStore = {
           state.purchaseVersion += 1
           state.pricingOpen = false
           state.pendingResume = false
+          if (router && router.currentRoute.value.path === '/pricing') {
+            router.push('/console')
+          }
         },
         onFailure: (err) => {
           state.error = err.message

@@ -210,7 +210,7 @@
 
 <script setup>
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import LandingHeader from '../components/landing/LandingHeader.vue'
 import HistoryDatabase from '../components/HistoryDatabase.vue'
 import authStore from '../store/auth'
@@ -220,6 +220,7 @@ import RightAnimateIcon from '../components/common/RightAnimateIcon.vue'
 import { savePendingUpload, getPendingUpload } from '../utils/pendingUpload.js'
 
 const router = useRouter()
+const route = useRoute()
 
 const openAuth = () => {
   authStore.openAuthModal('login')
@@ -280,6 +281,11 @@ onMounted(async () => {
   }
   if (authStore.isAuthenticated.value) {
     billingStore.refresh()
+  }
+
+  // Pre-load prompt from query parameter (e.g. from Use Cases or Prediction Lab)
+  if (route.query.prompt && !formData.value.simulationRequirement) {
+    formData.value.simulationRequirement = String(route.query.prompt)
   }
 })
 

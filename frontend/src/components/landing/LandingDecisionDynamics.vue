@@ -23,10 +23,10 @@
             :class="activeIdx === 0 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 0"
           >
-            <h3 class="font-semibold text-[#073933] text-base leading-snug">
+            <h3 class="decision-card-title">
               The Future Is Uncertain
             </h3>
-            <p class="text-xs sm:text-sm text-black mt-2 leading-relaxed font-normal">
+            <p class="decision-card-desc">
               Traditional planning relies on static assumptions and historical data that fail when unexpected real-world reactions emerge.
             </p>
           </div>
@@ -37,10 +37,10 @@
             :class="activeIdx === 1 ? 'is-active' : 'is-idle'"
             @click="activeIdx = 1"
           >
-            <h3 class="font-semibold text-[#073933] text-base leading-snug">
+            <h3 class="decision-card-title">
               Check Your Decisions
             </h3>
-            <p class="text-xs sm:text-sm text-black mt-2 leading-relaxed font-normal">
+            <p class="decision-card-desc">
               Shaped by multiple people, competing interests, changing conditions, and unexpected reactions
             </p>
           </div>
@@ -76,6 +76,23 @@ const activeIdx = ref(0)
   line-height: 22.75px;
   color: rgb(0, 0, 0);
   text-align: center;
+}
+
+.decision-card-title {
+  font-family: Microgramma, "Microgramma Bold", sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 22px;
+  color: rgb(10, 28, 23);
+}
+
+.decision-card-desc {
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
+  margin-top: 0.5rem;
 }
 
 .orb-1 {

@@ -215,7 +215,8 @@ const scrollDown = () => {
 
 .hero-section {
   position: relative;
-  min-height: 75vh;
+  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;

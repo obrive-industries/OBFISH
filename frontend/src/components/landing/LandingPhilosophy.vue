@@ -10,18 +10,18 @@
         </h2>
       </div>
 
-      <p :class="['text-base text-black leading-relaxed mb-6 anim font-normal', { show: isVisible }]" style="transition-delay: 200ms;">
+      <p :class="['philosophy-text mb-6 anim', { show: isVisible }]" style="transition-delay: 200ms;">
         BRAIN is an AI-powered simulation and predictive intelligence platform designed to explore possibilities, understand complex behaviours, and evaluate potential outcomes.
       </p>
 
-      <p :class="['text-base text-black leading-relaxed mb-12 anim font-normal', { show: isVisible }]" style="transition-delay: 250ms;">
+      <p :class="['philosophy-text mb-12 anim', { show: isVisible }]" style="transition-delay: 250ms;">
         By transforming real-world information, business challenges, research materials, and creative ideas into interactive scenarios, BRAIN helps users examine how different factors, decisions, and interactions could shape future outcomes. It creates a virtual environment where possibilities can be explored before decisions are made in the real world.
       </p>
 
       <h3 :class="['text-lg font-semibold text-[#073933] mb-4 anim font-michroma', { show: isVisible }]" style="transition-delay: 300ms;">
         How It Works
       </h3>
-      <ul :class="['text-base text-black leading-relaxed mb-12 space-y-2 anim font-normal', { show: isVisible }]" style="transition-delay: 350ms;">
+      <ul :class="['philosophy-text mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 350ms;">
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
           <span>You provide source materials such as data reports, research dossiers, or policy drafts and define your scenario in natural language.</span>
@@ -35,11 +35,11 @@
       <h3 :class="['text-lg font-semibold text-[#073933] mb-4 anim font-michroma', { show: isVisible }]" style="transition-delay: 400ms;">
         Our Vision
       </h3>
-      <p :class="['text-base text-black leading-relaxed mb-4 anim font-normal', { show: isVisible }]" style="transition-delay: 450ms;">
+      <p :class="['philosophy-text mb-4 anim', { show: isVisible }]" style="transition-delay: 450ms;">
         Making advanced multi-agent simulation accessible to everyone — from founders and enterprise leaders to researchers and creative storytellers:
       </p>
 
-      <ul :class="['text-base text-black leading-relaxed mb-12 space-y-2 anim font-normal', { show: isVisible }]" style="transition-delay: 500ms;">
+      <ul :class="['philosophy-text mb-12 space-y-2 anim', { show: isVisible }]" style="transition-delay: 500ms;">
         <li class="flex gap-2">
           <span class="text-[#2d554c] shrink-0">—</span>
           <span><strong class="text-[#073933] font-michroma text-sm">Strategic Level:</strong> Explore business strategies, evaluate market opportunities, examine stakeholder responses, and assess potential risks before committing real capital and organizational resources.</span>
@@ -140,6 +140,14 @@ onUnmounted(() => {
     opacity: 1;
     transform: none;
   }
+}
+
+.philosophy-text {
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
 }
 
 .section-title {

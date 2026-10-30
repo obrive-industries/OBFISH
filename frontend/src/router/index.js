@@ -23,6 +23,72 @@ const routes = [
     component: () => import('../views/AdminWishlistView.vue')
   },
   {
+    path: '/pricing',
+    name: 'Pricing',
+    component: () => import('../views/PricingView.vue')
+  },
+  {
+    path: '/use-cases',
+    name: 'UseCases',
+    component: () => import('../views/UseCasesView.vue')
+  },
+  {
+    path: '/use-cases/market-simulation-ai',
+    name: 'MarketSimulation',
+    component: () => import('../views/usecases/MarketSimulationView.vue')
+  },
+  {
+    path: '/use-cases/public-opinion-simulation-ai',
+    name: 'PublicOpinionSimulation',
+    component: () => import('../views/usecases/PublicOpinionView.vue')
+  },
+  {
+    path: '/use-cases/world-cup-prediction',
+    name: 'WorldCupPrediction',
+    component: () => import('../views/usecases/WorldCupPredictionView.vue')
+  },
+  {
+    path: '/use-cases/:slug',
+    name: 'UseCaseDetail',
+    component: () => import('../views/usecases/UseCaseDetailView.vue')
+  },
+  {
+    path: '/world-cup-prediction',
+    redirect: '/use-cases/world-cup-prediction'
+  },
+  {
+    path: '/legal',
+    name: 'Legal',
+    component: () => import('../views/LegalView.vue')
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: () => import('../views/LegalView.vue')
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: () => import('../views/LegalView.vue')
+  },
+  {
+    path: '/refund',
+    name: 'Refund',
+    component: () => import('../views/LegalView.vue')
+  },
+  {
+    path: '/terms-of-service',
+    redirect: '/terms'
+  },
+  {
+    path: '/privacy-policy',
+    redirect: '/privacy'
+  },
+  {
+    path: '/refund-policy',
+    redirect: '/refund'
+  },
+  {
     path: '/demo',
     name: 'Demo',
     component: () => import('../views/DemoView.vue')

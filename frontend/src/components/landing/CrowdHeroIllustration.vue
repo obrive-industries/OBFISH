@@ -51,10 +51,11 @@ const mouseOffsetX = ref(0)
 const mouseOffsetY = ref(0)
 const persons = ref([])
 
-// Total pool of 105 verified OpenPeeps SVGs in /peeps/
-const TOTAL_SVGS = 105
+// Total pool of 57 crowd images in /crowd/
+const TOTAL_SVGS = 57
 const getSvgUrl = (index) => {
-  return `/peeps/openpeeps${index}.svg`
+  const padIndex = String(index).padStart(2, '0')
+  return `/crowd/person_${padIndex}.png`
 }
 
 // Generate crowd where EVERY single image moves (half LTR, half RTL)
@@ -82,7 +83,7 @@ const generateCrowd = () => {
   }
 
   // Helper to populate a moving tier with staggered starting points
-  const addMovingTier = ({ count, layer, baseDuration, scaleMin, scaleMax, blur, opacity, zBase, bottomMin, bottomMax, bobDurationBase, bobAmount, swayDeg }) => {
+  const addMovingTier = ({ count, layer, baseDuration, scaleMin, scaleMax, blur, opacity, zBase, submersion, bobDurationBase, bobAmount, swayDeg }) => {
     for (let i = 0; i < count; i++) {
       // Alternate direction: every even is walk-ltr, every odd is walk-rtl
       const movingLtr = i % 2 === 0
@@ -98,7 +99,13 @@ const generateCrowd = () => {
       const staggerDelay = duration * clampedFraction
 
       const scale = scaleMin + (i % 3) * ((scaleMax - scaleMin) / 2)
-      const bottomPercent = bottomMin + (i % 4) * ((bottomMax - bottomMin) / 3)
+
+      // Calculate bottom offset in pixels:
+      // OpenPeeps bust SVGs have ~22px empty transparent padding at the bottom of the 324px viewBox.
+      // We cancel that empty space and submerge the flat torso edge slightly below the window bottom,
+      // ensuring ZERO floating gap at the bottom under all screen sizes, bobbing, and parallax.
+      const emptyBottomPadding = Math.round(24 * scale)
+      const bottomOffset = -(emptyBottomPadding + submersion)
 
       const chosenSvgIndex = nextSvgIndex()
 
@@ -113,7 +120,7 @@ const generateCrowd = () => {
         blur,
         opacity,
         zIndex: zBase + i,
-        bottomPercent,
+        bottomOffset,
         duration,
         staggerDelay,
         flip: !movingLtr, // RTL characters face left, LTR characters face right
@@ -125,7 +132,7 @@ const generateCrowd = () => {
     }
   }
 
-  // Tier 1: Background Crowd (All moving, slower, softer silhouettes, higher up)
+  // Tier 1: Background Crowd (All moving, slower, softer silhouettes)
   const bgCount = isMobile ? 8 : isTablet ? 14 : 22
   addMovingTier({
     count: bgCount,
@@ -136,8 +143,7 @@ const generateCrowd = () => {
     blur: 0.8,
     opacity: 0.75,
     zBase: 10,
-    bottomMin: 3,
-    bottomMax: 7,
+    submersion: 10,
     bobDurationBase: 3.5,
     bobAmount: 2.5,
     swayDeg: 0.6,
@@ -154,8 +160,7 @@ const generateCrowd = () => {
     blur: 0,
     opacity: 0.92,
     zBase: 30,
-    bottomMin: 0,
-    bottomMax: 3,
+    submersion: 14,
     bobDurationBase: 3.0,
     bobAmount: 3,
     swayDeg: 0.8,
@@ -172,8 +177,7 @@ const generateCrowd = () => {
     blur: 0,
     opacity: 1.0,
     zBase: 60,
-    bottomMin: -2,
-    bottomMax: 1,
+    submersion: 18,
     bobDurationBase: 2.5,
     bobAmount: 3,
     swayDeg: 0.8,
@@ -182,8 +186,12 @@ const generateCrowd = () => {
   persons.value = list
 }
 
-// Fallback if SVG fails to load
+// Fallback if image fails to load: try SVG fallback first, then another index
 const handleSvgError = (person, event) => {
+  if (person.svgUrl.endsWith('.png')) {
+    person.svgUrl = person.svgUrl.replace('.png', '.svg')
+    return
+  }
   if (person._hasRetried) {
     if (event?.target) event.target.style.opacity = '0'
     return
@@ -194,17 +202,16 @@ const handleSvgError = (person, event) => {
   person.svgUrl = getSvgUrl(nextIndex)
 }
 
-// Gentle mouse parallax
+// Gentle horizontal mouse parallax
 const stageStyle = computed(() => {
   if (reducedMotion.value) return {}
-  const shiftX = mouseOffsetX.value * 12
-  const shiftY = mouseOffsetY.value * 5
+  const shiftX = mouseOffsetX.value * 16
   return {
-    transform: `translate3d(${shiftX}px, ${shiftY}px, 0)`,
+    transform: `translate3d(${shiftX}px, 0, 0)`,
   }
 })
 
-// Styles per person wrapper - continuous infinite keyframe motion
+// Styles per person wrapper - continuous infinite keyframe motion anchored to window bottom
 const getPersonWrapperStyle = (p) => {
   // OpenPeeps native SVG viewBox is 240x324
   const baseWidth = 240
@@ -215,7 +222,7 @@ const getPersonWrapperStyle = (p) => {
   const style = {
     position: 'absolute',
     left: '0',
-    bottom: `${p.bottomPercent}%`,
+    bottom: `${p.bottomOffset}px`,
     width: `${w}px`,
     height: `${h}px`,
     zIndex: p.zIndex,
@@ -359,11 +366,10 @@ onUnmounted(() => {
   bottom: 0;
   width: 100vw;
   max-width: 100vw;
-  height: 58vh;
-  min-height: 480px;
-  max-height: 640px;
-  overflow-x: clip;
-  overflow-y: visible;
+  height: 52vh;
+  min-height: 420px;
+  max-height: 580px;
+  overflow: hidden;
   pointer-events: none;
   z-index: 1000;
   transition: transform 0.8s cubic-bezier(0.2, 0.9, 0.3, 1), opacity 0.65s ease, filter 0.65s ease;

@@ -1,5 +1,5 @@
 <template>
-  <div class="marketing-page relative min-h-screen overflow-x-hidden text-[#0a1c17] font-sans">
+  <div class="marketing-page relative min-h-screen overflow-x-hidden text-[#0a1c17]">
     <main class="relative z-10">
       <LandingHeader @open-auth="openAuth" />
       <LandingHero />
@@ -51,7 +51,7 @@ onUnmounted(() => {
 
 <style scoped>
 .marketing-page {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   background-color: #A2F1DF;
   color: #0a1c17;
 }

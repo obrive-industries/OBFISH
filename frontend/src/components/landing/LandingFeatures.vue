@@ -62,7 +62,7 @@
           </h3>
 
           <!-- Description -->
-          <p class="relative text-black text-sm leading-relaxed font-normal">
+          <p class="relative feature-card-desc">
             {{ card.description }}
           </p>
         </div>
@@ -174,6 +174,14 @@ const getSpotlightStyle = (index) => {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+}
+
+.feature-card-desc {
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22.75px;
+  color: rgb(0, 0, 0);
 }
 
 .container-main {

@@ -17,7 +17,22 @@
   - `02-landing-wishlist-and-lead-management/PLAN.md`: Full implementation plan for Hero Wishlist form, database model, API endpoints, AuthModal footer button, and `/admin/wishlist` dashboard.
 
 ## Phase 3: Obrive Visual System Alignment & Typography Polish
-- **Status**: Planned (Ready for Execution)
+- **Status**: Completed & Verified
 - **Goal**: Align logo branding (remove `/`), match hero title sizing to `obrive.com`'s "Owning the Future", standardize headings, subheadings, and buttons across Landing, Console, FAQs, and Admin Wishlist, and purge legacy orange accents.
 - **Plans**:
   - `03-obrive-visual-system-alignment/PLAN.md`: Complete execution plan for logo divider removal, typography scaling, button harmonization, and view-level styling.
+
+## Phase 4: Native Use Cases Suite & Scalable Footer Architecture
+- **Status**: Completed & Verified
+- **Goal**: Build dedicated native Obrive simulation use case pages (`/use-cases`, `/use-cases/market-simulation-ai`, `/use-cases/public-opinion-simulation-ai`, `/use-cases/world-cup-prediction#prediction-lab`) matching our visual design system, typography (`Microgramma` and `Michroma`), and mint/teal styling. Refactor `LandingFooter.vue` into a scalable 4-column architecture to organize all links cleanly without visual overcrowding.
+- **Plans Executed & Verified**:
+  - `04-use-cases-suite-and-footer-architecture/PLAN.md`: Full implementation of 4-column footer restructuring, Use Cases Hub view, Market Simulation view, Public Opinion view, interactive World Cup Prediction Lab, routing, and headless Chromium quality verification.
+
+## Phase 5: Comprehensive Use Cases Suite
+- **Status**: Completed & Verified
+- **Goal**: Build full-fidelity dedicated pages for all remaining use cases on the platform via a structured domain registry and universal dynamic detail view (`/use-cases/:slug`), matching Obrive brand standards. Update `UseCasesView.vue` so every card features active `Explore View →` navigation.
+- **Plans Executed & Verified**:
+  - `05-comprehensive-use-cases-suite/PLAN.md`: Complete implementation of useCasesRegistry.js (scraped authentic domain data from mirofish.my), universal UseCaseDetailView.vue, dynamic router mapping (`/use-cases/:slug`), hub card activation (`Explore View →` on all cards), and headless Chromium quality verification.
+
+
+

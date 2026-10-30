@@ -1,0 +1,998 @@
+{
+  "terms": {
+    "id": "terms",
+    "title": "Terms of Service",
+    "badge": "TERMS & CONDITIONS",
+    "documentTitle": "TERMS OF SERVICE — OBRIVE BRAIN",
+    "company": "Obrive Industries Private Limited",
+    "platform": "Obrive Brain (https://brain.obrive.com/)",
+    "effectiveDate": "29 October 2026",
+    "lastUpdated": "29 October 2026",
+    "preamble": [
+      "TERMS OF SERVICE",
+      "OBRIVE BRAIN",
+      "Operated by Obrive Industries Private Limited",
+      "https://brain.obrive.com/",
+      "Draft for website publication",
+      "Effective date: 29 October 2026"
+    ],
+    "sections": [
+      {
+        "id": "section-1",
+        "num": "1",
+        "title": "1. Acceptance of These Terms",
+        "shortTitle": "Acceptance of These Terms",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "These Terms of Service (“Terms”) govern access to and use of Obrive Brain at https://brain.obrive.com/ (the “Platform”), including AI-assisted analysis, scenario simulation, graph-based workflows, report generation, interactive analysis and related features made available by Obrive Industries Private Limited (“Obrive”, “Company”, “we”, “us” or “our”). By accessing or using the Platform, you agree to these Terms. If you do not agree, do not access or use the Platform."
+          },
+          {
+            "type": "paragraph",
+            "text": "If you use the Platform on behalf of a company or other organisation, you represent that you are authorised to bind that organisation to these Terms. In that case, “you” includes the organisation."
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "num": "2",
+        "title": "2. The Service",
+        "shortTitle": "The Service",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Obrive Brain is intended to help users explore scenarios, analyse submitted materials, generate simulations and produce reports or other outputs. Features, usage limits, integrations and availability may change as the Platform develops. Certain features may be experimental, unavailable at times, subject to usage limits, or offered only to selected users or under a separate agreement."
+          },
+          {
+            "type": "paragraph",
+            "text": "The Platform is a decision-support tool. It does not guarantee that a scenario, forecast, simulation, analysis or generated output will accurately predict real-world events or outcomes."
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "num": "3",
+        "title": "3. Eligibility and Accounts",
+        "shortTitle": "Eligibility and Accounts",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "You must be legally capable of entering into a binding agreement to use the Platform. If a feature has an age or eligibility restriction, you must meet it."
+          },
+          {
+            "type": "paragraph",
+            "text": "You agree to provide accurate information when creating or maintaining an account and to keep it reasonably current. You are responsible for safeguarding your credentials, restricting unauthorised access to your account, and activities performed through your account. Notify us promptly if you suspect unauthorised access or a security incident."
+          }
+        ]
+      },
+      {
+        "id": "section-4",
+        "num": "4",
+        "title": "4. Permitted Use",
+        "shortTitle": "Permitted Use",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Subject to these Terms, Obrive grants you a limited, non-exclusive, non-transferable and revocable right to access and use the Platform for lawful purposes and in accordance with any applicable plan, usage limits and written agreement."
+          },
+          {
+            "type": "paragraph",
+            "text": "You are responsible for evaluating whether the Platform is suitable for your intended use and for ensuring that your use complies with applicable laws, regulations, professional obligations and third-party rights."
+          }
+        ]
+      },
+      {
+        "id": "section-5",
+        "num": "5",
+        "title": "5. Prohibited Conduct",
+        "shortTitle": "Prohibited Conduct",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "You must not, and must not help another person to:"
+          },
+          {
+            "type": "paragraph",
+            "text": "Use the Platform in violation of applicable law, regulation, court order or third-party rights."
+          },
+          {
+            "type": "paragraph",
+            "text": "Upload or submit content that you do not have the right or lawful basis to use, or that infringes intellectual property, privacy, confidentiality or other rights."
+          },
+          {
+            "type": "paragraph",
+            "text": "Use the Platform to distribute malware, conduct fraud, threaten others, facilitate unlawful activity, or create or distribute content prohibited by applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "Attempt to gain unauthorised access to accounts, systems, data, models, infrastructure or non-public areas of the Platform."
+          },
+          {
+            "type": "paragraph",
+            "text": "Probe, scan, disrupt, overload, interfere with or impair the security, integrity or availability of the Platform or its underlying services."
+          },
+          {
+            "type": "paragraph",
+            "text": "Reverse engineer, decompile, disassemble or attempt to derive source code, model weights or non-public components, except to the extent such restriction is prohibited by applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "Circumvent access controls, authentication, usage limits, rate limits, subscription restrictions or other technical safeguards."
+          },
+          {
+            "type": "paragraph",
+            "text": "Scrape, copy, resell, sublicense or commercially exploit the Platform except as expressly permitted by us in writing or by applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "Misrepresent simulated agents, synthetic responses, forecasts or generated reports as verified statements from real people or as established facts."
+          },
+          {
+            "type": "paragraph",
+            "text": "Use generated outputs as the sole basis for consequential decisions where independent review or professional judgment is necessary."
+          }
+        ]
+      },
+      {
+        "id": "section-6",
+        "num": "6",
+        "title": "6. User Content and Submitted Materials",
+        "shortTitle": "User Content and Submitted Materials",
+        "items": [
+          {
+            "type": "subsection",
+            "num": "6.1",
+            "title": "6.1 Your responsibility"
+          },
+          {
+            "type": "paragraph",
+            "text": "“User Content” means prompts, instructions, documents, files, datasets, text, links, scenario descriptions and other material you submit to or through the Platform. You retain any ownership rights you hold in your User Content. You are responsible for its legality, accuracy, quality, and the permissions required to submit and process it."
+          },
+          {
+            "type": "subsection",
+            "num": "6.2",
+            "title": "6.2 Permission to process User Content"
+          },
+          {
+            "type": "paragraph",
+            "text": "You grant Obrive a limited, non-exclusive permission to host, store, reproduce, transmit and process User Content only as reasonably necessary to operate, secure, maintain and provide the Platform and its requested features, comply with law, enforce these Terms, and provide support. This permission lasts for the period reasonably needed for those purposes, subject to applicable retention practices, backup cycles and legal obligations."
+          },
+          {
+            "type": "subsection",
+            "num": "6.3",
+            "title": "6.3 Sensitive or confidential material"
+          },
+          {
+            "type": "paragraph",
+            "text": "Do not submit passwords, payment-card data, highly sensitive personal information, regulated data, confidential third-party material or trade secrets unless you are authorised to do so and the relevant service configuration and written agreement are suitable for that use. If you use the Platform for an organisation, you are responsible for obtaining required permissions and providing any notices required by law."
+          },
+          {
+            "type": "subsection",
+            "num": "6.4",
+            "title": "6.4 Removal"
+          },
+          {
+            "type": "paragraph",
+            "text": "We may remove, restrict or decline to process User Content where reasonably necessary to comply with law, protect users or the Platform, investigate misuse, or enforce these Terms. We do not promise to review all User Content in advance."
+          }
+        ]
+      },
+      {
+        "id": "section-7",
+        "num": "7",
+        "title": "7. Generated Outputs and AI Limitations",
+        "shortTitle": "Generated Outputs and AI Limitations",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "“Generated Outputs” means simulations, agent behaviours, summaries, analyses, predictions, reports, recommendations and other material produced by the Platform. You may use Generated Outputs subject to these Terms and applicable law, but similar or identical outputs may be produced for other users, and rights in underlying models, software, templates or platform components remain with their respective owners."
+          },
+          {
+            "type": "paragraph",
+            "text": "AI-generated results may be incorrect, incomplete, outdated, biased, inconsistent or fabricated. Simulated agents and conversations do not necessarily represent real people, real interviews, genuine market demand or observed behaviour. A forecast is not a guarantee. You must independently verify material claims and apply appropriate human judgment before relying on an output."
+          },
+          {
+            "type": "paragraph",
+            "text": "The Platform does not provide legal, medical, financial, investment, tax, employment, safety or other professional advice. Do not use it as a substitute for qualified professional advice or for emergency decision-making."
+          }
+        ]
+      },
+      {
+        "id": "section-8",
+        "num": "8",
+        "title": "8. Intellectual Property",
+        "shortTitle": "Intellectual Property",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "The Platform, including its software, models and model integrations, design, interface, branding, logos, documentation, and other materials supplied by Obrive, is owned by or licensed to Obrive Industries Private Limited and is protected by applicable intellectual property laws. Except for the limited access rights expressly granted in these Terms, no ownership or licence is transferred to you."
+          },
+          {
+            "type": "paragraph",
+            "text": "You must not use Obrive’s name, trademarks, branding or other intellectual property in a way that implies endorsement or affiliation without prior written permission."
+          },
+          {
+            "type": "paragraph",
+            "text": "You retain rights in User Content to the extent you own them. Your rights in Generated Outputs may depend on applicable law, third-party components, the nature of the output and any separate plan or agreement. These Terms do not transfer ownership of Obrive’s underlying technology."
+          }
+        ]
+      },
+      {
+        "id": "section-9",
+        "num": "9",
+        "title": "9. Plans, Fees and Payments",
+        "shortTitle": "Plans, Fees and Payments",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Some features may be free, paid, subscription-based, credit-based or offered under a separate commercial agreement. Where fees apply, the applicable price, billing period, usage limits, taxes and payment terms will be shown at checkout or in the relevant order form, plan description or written agreement."
+          },
+          {
+            "type": "paragraph",
+            "text": "You authorise the applicable payment provider to process charges you approve. You are responsible for applicable taxes except taxes based on Obrive’s net income. Subscription renewal, cancellation, credit expiry and refund terms will be disclosed in the relevant checkout flow or separate policy. Nothing in these Terms limits any non-waivable rights you may have under applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "If a payment is overdue, we may, after any notice required by law or contract, restrict paid features or suspend access until the account is brought up to date."
+          }
+        ]
+      },
+      {
+        "id": "section-10",
+        "num": "10",
+        "title": "10. Third-Party Services",
+        "shortTitle": "Third-Party Services",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "The Platform may rely on or link to third-party services, including hosting, authentication, AI models, APIs, analytics, communications or payment providers. Those services may be governed by their own terms and privacy policies. We are not responsible for third-party services that we do not control. Features that depend on third parties may change or become unavailable."
+          }
+        ]
+      },
+      {
+        "id": "section-11",
+        "num": "11",
+        "title": "11. Privacy",
+        "shortTitle": "Privacy",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Our handling of personal information is described in the Obrive Brain Privacy Policy, available through the Platform or at the applicable privacy-policy URL. The Privacy Policy should be read together with these Terms. By using the Platform, you acknowledge that personal information will be handled as described in that policy and subject to applicable law."
+          }
+        ]
+      },
+      {
+        "id": "section-12",
+        "num": "12",
+        "title": "12. Availability, Changes and Support",
+        "shortTitle": "Availability, Changes and Support",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We aim to maintain a useful and secure service, but do not guarantee that the Platform will be uninterrupted, error-free, available at all times, compatible with every device, or free of security vulnerabilities. We may modify, suspend, discontinue or limit any feature for maintenance, security, legal, operational or product-development reasons."
+          },
+          {
+            "type": "paragraph",
+            "text": "Support channels and response times, if any, are those specified on the Platform or in a separate written agreement. Unless expressly agreed in writing, no service-level agreement or guaranteed support response time applies."
+          }
+        ]
+      },
+      {
+        "id": "section-13",
+        "num": "13",
+        "title": "13. Suspension and Termination",
+        "shortTitle": "Suspension and Termination",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "You may stop using the Platform at any time. If account deletion or subscription cancellation is available, use the relevant account controls or contact the applicable support address."
+          },
+          {
+            "type": "paragraph",
+            "text": "We may suspend, restrict or terminate your access where we reasonably believe that you have breached these Terms, created a security or legal risk, failed to pay fees when due, misused the Platform, or where suspension is required by law or a service provider. Where reasonably practicable and legally permitted, we will provide notice or an opportunity to address the issue."
+          },
+          {
+            "type": "paragraph",
+            "text": "Upon termination, your right to use the Platform ends. Sections that by their nature should survive termination—including provisions concerning fees owed, intellectual property, disclaimers, liability, indemnity, dispute resolution and interpretation—will survive. User Content and account information may be retained or deleted according to the Privacy Policy, applicable agreements, operational requirements and law."
+          }
+        ]
+      },
+      {
+        "id": "section-14",
+        "num": "14",
+        "title": "14. Disclaimers",
+        "shortTitle": "Disclaimers",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, THE PLATFORM AND GENERATED OUTPUTS ARE PROVIDED “AS IS” AND “AS AVAILABLE.” OBRIVE DISCLAIMS ALL WARRANTIES THAT MAY LAWFULLY BE DISCLAIMED, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, NON-INFRINGEMENT, ACCURACY, AVAILABILITY AND UNINTERRUPTED OPERATION."
+          },
+          {
+            "type": "paragraph",
+            "text": "We do not warrant that the Platform will meet every requirement, that outputs will be accurate or reliable, that defects will be corrected, or that the Platform will achieve any particular business, commercial, scientific or personal result. These disclaimers do not exclude warranties or rights that cannot legally be excluded."
+          }
+        ]
+      },
+      {
+        "id": "section-15",
+        "num": "15",
+        "title": "15. Limitation of Liability",
+        "shortTitle": "Limitation of Liability",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "To the maximum extent permitted by applicable law, Obrive Industries Private Limited will not be liable for indirect, incidental, special, exemplary, punitive or consequential losses, or for loss of profits, revenue, business opportunities, goodwill, anticipated savings, data or business interruption arising from or related to use of the Platform."
+          },
+          {
+            "type": "paragraph",
+            "text": "To the maximum extent permitted by law, the Company’s aggregate liability for claims arising out of or relating to the Platform or these Terms will be limited to the amount you paid to Obrive for access to the Platform during the twelve (12) months immediately preceding the event giving rise to the claim. If you used the Platform without paying fees, the aggregate cap will be the minimum amount permitted by applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "Nothing in these Terms excludes or limits liability where such exclusion or limitation is prohibited by applicable law, including liability that cannot legally be excluded."
+          }
+        ]
+      },
+      {
+        "id": "section-16",
+        "num": "16",
+        "title": "16. Indemnity",
+        "shortTitle": "Indemnity",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "To the extent permitted by applicable law, you agree to indemnify and hold harmless Obrive Industries Private Limited and its directors, officers, employees and service providers from third-party claims, liabilities, damages and reasonable costs arising from your unlawful use of the Platform, your breach of these Terms, or your infringement of another person’s rights through User Content or your use of Generated Outputs. This section does not apply to the extent a claim results from the Company’s own unlawful conduct or liability that cannot legally be shifted to you."
+          }
+        ]
+      },
+      {
+        "id": "section-17",
+        "num": "17",
+        "title": "17. Changes to These Terms",
+        "shortTitle": "Changes to These Terms",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We may update these Terms to reflect changes in the Platform, business practices or legal requirements. We will update the effective date when changes are made and provide additional notice where required by law. Unless otherwise stated, changes apply from the date they are posted. If you continue to use the Platform after updated Terms become effective, that use will be subject to the updated Terms to the extent permitted by law. If you do not agree, stop using the Platform."
+          }
+        ]
+      },
+      {
+        "id": "section-18",
+        "num": "18",
+        "title": "18. Governing Law and Disputes",
+        "shortTitle": "Governing Law and Disputes",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "These Terms are governed by the laws of India, without regard to conflict-of-law principles, subject to any mandatory protections or rights that apply under the law of your jurisdiction. Courts of competent jurisdiction in Bengaluru, Karnataka, India shall have jurisdiction over disputes arising from these Terms, subject to applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "Before commencing formal proceedings, the parties are encouraged to contact one another and attempt in good faith to resolve the dispute. Nothing in this section prevents either party from seeking urgent legal relief where appropriate."
+          }
+        ]
+      },
+      {
+        "id": "section-19",
+        "num": "19",
+        "title": "19. General Terms",
+        "shortTitle": "General Terms",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Entire agreement: These Terms, together with the Privacy Policy and any applicable order form or written agreement, govern your use of the Platform."
+          },
+          {
+            "type": "paragraph",
+            "text": "Order of precedence: If a signed enterprise agreement or order form expressly conflicts with these Terms, the signed agreement will govern for the relevant service to the extent of the conflict."
+          },
+          {
+            "type": "paragraph",
+            "text": "Severability: If a provision is held unenforceable, the remaining provisions will continue in effect to the extent possible."
+          },
+          {
+            "type": "paragraph",
+            "text": "No waiver: Failure to enforce a provision is not a waiver of the right to enforce it later."
+          },
+          {
+            "type": "paragraph",
+            "text": "Assignment: You may not assign these Terms without our prior written consent, except where applicable law provides otherwise. We may assign these Terms in connection with a merger, restructuring or transfer of the relevant business, subject to applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "No agency: These Terms do not create a partnership, joint venture, employment or agency relationship between you and Obrive."
+          },
+          {
+            "type": "paragraph",
+            "text": "Force majeure: We are not responsible for delay or failure caused by events beyond our reasonable control, subject to applicable law."
+          }
+        ]
+      },
+      {
+        "id": "section-20",
+        "num": "20",
+        "title": "20. Contact Information",
+        "shortTitle": "Contact Information",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Questions about these Terms may be sent to:"
+          },
+          {
+            "type": "paragraph",
+            "text": "Obrive Industries Private Limited\nWebsite: https://brain.obrive.com/\nLegal: legal@obrive.com\nSupport: support@obrive.com\nAddress: Sree Gururaya Mansion, 3rd Floor, 759, 8th Main Road, KSRTC Layout, 3rd Phase, J. P. Nagar, Bengaluru, Karnataka 560078, India"
+          }
+        ]
+      }
+    ]
+  },
+  "privacy": {
+    "id": "privacy",
+    "title": "Privacy Policy",
+    "badge": "PRIVACY POLICY",
+    "documentTitle": "PRIVACY POLICY — OBRIVE BRAIN",
+    "company": "Obrive Industries Private Limited",
+    "platform": "Obrive Brain (https://brain.obrive.com/)",
+    "effectiveDate": "29 October 2026",
+    "lastUpdated": "29 October 2026",
+    "preamble": [
+      "PRIVACY POLICY",
+      "OBRIVE BRAIN",
+      "Operated by Obrive Industries Private Limited",
+      "Website: https://brain.obrive.com/",
+      "Draft for website publication",
+      "Effective date: 29 October 2026"
+    ],
+    "sections": [
+      {
+        "id": "section-1",
+        "num": "1",
+        "title": "1. Introduction",
+        "shortTitle": "Introduction",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Obrive Industries Private Limited (“Obrive”, “Company”, “we”, “us” or “our”) respects your privacy and is committed to handling personal information responsibly. This Privacy Policy explains how information may be collected, used, stored, disclosed and otherwise processed when you visit or use Obrive Brain at https://brain.obrive.com/ (the “Platform”), including its AI-assisted analysis, scenario simulation, research, report-generation and related features, where available."
+          },
+          {
+            "type": "paragraph",
+            "text": "This Policy should be read together with any applicable terms of service, notices shown within the Platform, and any separate agreement that applies to your use. If you do not agree with this Policy, please do not use the Platform."
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "num": "2",
+        "title": "2. Scope",
+        "shortTitle": "Scope",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "This Policy applies to information processed in connection with the Platform, including website visitors, registered users, people who submit prompts or source materials, and people who contact us for support or business enquiries. If a particular Obrive product or enterprise engagement has a separate privacy notice or written agreement, that notice or agreement may provide additional details."
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "num": "3",
+        "title": "3. Information We May Collect",
+        "shortTitle": "Information We May Collect",
+        "items": [
+          {
+            "type": "subsection",
+            "num": "3.1",
+            "title": "3.1 Account and contact information"
+          },
+          {
+            "type": "paragraph",
+            "text": "Depending on the features you use, we may collect information such as your name, email address, organisation, account identifiers, authentication-related information, and communications you send to us. We do not ask you to provide more personal information than is reasonably needed for the relevant purpose."
+          },
+          {
+            "type": "subsection",
+            "num": "3.2",
+            "title": "3.2 Prompts, uploads and generated outputs"
+          },
+          {
+            "type": "paragraph",
+            "text": "When you use simulation or analysis features, you may submit prompts, instructions, documents, PDFs, text, links, datasets, scenario descriptions or other materials (“Submitted Content”). The Platform may process this content to create structured representations, simulated agents or scenarios, analyses, reports, summaries and related outputs (“Generated Outputs”). Submitted Content may include personal information if you choose to include it."
+          },
+          {
+            "type": "subsection",
+            "num": "3.3",
+            "title": "3.3 Technical and usage information"
+          },
+          {
+            "type": "paragraph",
+            "text": "Our systems and service providers may process technical information such as IP address, browser and device type, operating system, approximate timestamps, pages or features accessed, diagnostic events, performance information, and security logs. The exact information collected depends on the Platform configuration and the services enabled."
+          },
+          {
+            "type": "subsection",
+            "num": "3.4",
+            "title": "3.4 Billing and transactions"
+          },
+          {
+            "type": "paragraph",
+            "text": "If paid features are offered, we or our payment service providers may process transaction details such as plan, invoice, payment status and billing contact information. Payment card details, if accepted, should be handled by the relevant payment processor according to its own terms and privacy notice; the Company should not be understood to store full card details unless explicitly stated in a separate notice."
+          },
+          {
+            "type": "subsection",
+            "num": "3.5",
+            "title": "3.5 Support and communications"
+          },
+          {
+            "type": "paragraph",
+            "text": "We may process messages, feedback, support requests, attachments and other information you provide when contacting us."
+          }
+        ]
+      },
+      {
+        "id": "section-4",
+        "num": "4",
+        "title": "4. How We Use Information",
+        "shortTitle": "How We Use Information",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We may use information for the following purposes, subject to applicable law:"
+          },
+          {
+            "type": "paragraph",
+            "text": "To provide, operate and maintain the Platform and its features."
+          },
+          {
+            "type": "paragraph",
+            "text": "To process Submitted Content and generate simulations, analyses, reports and responses requested by you."
+          },
+          {
+            "type": "paragraph",
+            "text": "To create and administer accounts, authenticate users and maintain account security."
+          },
+          {
+            "type": "paragraph",
+            "text": "To respond to questions, support requests, feedback and business enquiries."
+          },
+          {
+            "type": "paragraph",
+            "text": "To monitor performance, troubleshoot errors, improve reliability and develop features."
+          },
+          {
+            "type": "paragraph",
+            "text": "To detect, investigate and help prevent fraud, misuse, security incidents and violations of our terms."
+          },
+          {
+            "type": "paragraph",
+            "text": "To process payments, manage subscriptions and maintain business records, where applicable."
+          },
+          {
+            "type": "paragraph",
+            "text": "To comply with legal obligations, respond to lawful requests and protect the rights, property, safety and security of users, the Company or others."
+          },
+          {
+            "type": "paragraph",
+            "text": "To send service announcements, policy updates and other communications relevant to your use of the Platform."
+          }
+        ]
+      },
+      {
+        "id": "section-5",
+        "num": "5",
+        "title": "5. AI, Simulation and Generated Content",
+        "shortTitle": "AI, Simulation and Generated Content",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Obrive Brain may use artificial intelligence, machine-learning models, graph-based analysis, automated processing and other computational methods to process Submitted Content and generate outputs. The specific models, infrastructure and processing arrangements may vary by feature or deployment."
+          },
+          {
+            "type": "paragraph",
+            "text": "Generated Outputs are machine-generated and may be incomplete, inaccurate, biased or unsuitable for a particular purpose. Simulated people, agents, reactions, opinions or events are not necessarily real people’s views or observed real-world behaviour. You should independently review outputs before relying on them for business, financial, legal, medical, employment, public-policy or other consequential decisions."
+          },
+          {
+            "type": "paragraph",
+            "text": "Please submit only content you are authorised to provide. Unless the Company has expressly agreed otherwise in writing, do not upload passwords, payment-card details, highly sensitive personal information, confidential third-party information, trade secrets or regulated data that you do not have a lawful basis to share."
+          }
+        ]
+      },
+      {
+        "id": "section-6",
+        "num": "6",
+        "title": "6. Legal Bases and Permissions",
+        "shortTitle": "Legal Bases and Permissions",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Where applicable data-protection law requires a legal basis for processing, we will process personal information on an appropriate basis, which may include providing the service you request, performing a contract, pursuing legitimate interests such as securing and improving the Platform, complying with legal obligations, or obtaining consent where required. Where we rely on consent, you may withdraw it subject to legal and technical limitations."
+          }
+        ]
+      },
+      {
+        "id": "section-7",
+        "num": "7",
+        "title": "7. Cookies and Similar Technologies",
+        "shortTitle": "Cookies and Similar Technologies",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "The Platform or its service providers may use cookies, local storage or similar technologies for essential operation, session management, security, preferences and analytics. If non-essential analytics or advertising technologies are enabled, the Platform should provide any notices or choices required by applicable law. You can also manage cookies through your browser settings, although disabling certain cookies may affect functionality."
+          },
+          {
+            "type": "paragraph",
+            "text": "The Company should update this section to accurately identify any analytics, advertising or tracking tools actually enabled on brain.obrive.com before publication."
+          }
+        ]
+      },
+      {
+        "id": "section-8",
+        "num": "8",
+        "title": "8. How We Share Information",
+        "shortTitle": "How We Share Information",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We do not sell personal information as that term is defined under applicable law. We may disclose information in the following limited circumstances:"
+          },
+          {
+            "type": "paragraph",
+            "text": "Service providers: vendors that support hosting, cloud infrastructure, authentication, AI or model processing, storage, analytics, communications, customer support, security or payments."
+          },
+          {
+            "type": "paragraph",
+            "text": "Professional advisers: lawyers, accountants, auditors, insurers and other advisers where reasonably necessary."
+          },
+          {
+            "type": "paragraph",
+            "text": "Legal and safety reasons: where disclosure is required by law, regulation, court order or lawful governmental request, or is reasonably necessary to protect rights, safety, security or prevent fraud or abuse."
+          },
+          {
+            "type": "paragraph",
+            "text": "Business changes: in connection with a proposed or completed merger, acquisition, restructuring, financing or sale of all or part of the business, subject to appropriate safeguards."
+          },
+          {
+            "type": "paragraph",
+            "text": "With your direction or consent: where you ask us to share information or otherwise authorise the disclosure."
+          },
+          {
+            "type": "paragraph",
+            "text": "Service providers are permitted to process information as needed to perform their services, subject to applicable contractual, confidentiality and legal requirements. The Company should maintain an accurate list of material processors and update this Policy or a supplementary notice where appropriate."
+          }
+        ]
+      },
+      {
+        "id": "section-9",
+        "num": "9",
+        "title": "9. International Data Transfers",
+        "shortTitle": "International Data Transfers",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Information may be processed or stored in India or other countries where the Company or its service providers operate. Data-protection laws in those locations may differ. Where required, we will use appropriate safeguards and comply with applicable requirements for international transfers."
+          }
+        ]
+      },
+      {
+        "id": "section-10",
+        "num": "10",
+        "title": "10. Data Retention",
+        "shortTitle": "Data Retention",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We retain personal information, Submitted Content and Generated Outputs only for as long as reasonably necessary for the purposes described in this Policy, including providing the Platform, maintaining account history, addressing support requests, ensuring security, resolving disputes and meeting legal or accounting obligations."
+          },
+          {
+            "type": "paragraph",
+            "text": "Actual retention periods may vary by data type, account settings, product configuration, backup cycles and contractual commitments. This draft does not promise automatic deletion after a specific number of days. Before publication, Obrive should confirm the retention period for uploaded files, simulation runs, reports, account data, logs and backups, and publish any applicable deletion schedule."
+          }
+        ]
+      },
+      {
+        "id": "section-11",
+        "num": "11",
+        "title": "11. Security",
+        "shortTitle": "Security",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We use reasonable technical, organisational and administrative measures designed to protect information against unauthorised access, loss, misuse, alteration or disclosure. No website, transmission method or storage system can be guaranteed to be completely secure. You are responsible for protecting your account credentials and for notifying us promptly if you believe your account has been compromised."
+          }
+        ]
+      },
+      {
+        "id": "section-12",
+        "num": "12",
+        "title": "12. Your Privacy Rights and Choices",
+        "shortTitle": "Your Privacy Rights and Choices",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Depending on your location and applicable law, you may have the right to request access to, correction of or deletion of personal information, to withdraw consent, to object to or restrict certain processing, to request a copy of information, or to raise a complaint with a competent authority."
+          },
+          {
+            "type": "paragraph",
+            "text": "To submit a request, contact us using the details in the Contact section. We may need to verify your identity and clarify the scope of your request before responding. Some information may need to be retained where permitted or required by law, for security, or to establish, exercise or defend legal claims."
+          }
+        ]
+      },
+      {
+        "id": "section-13",
+        "num": "13",
+        "title": "13. Children’s Privacy",
+        "shortTitle": "Children’s Privacy",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "The Platform is not intended for children who are not legally able to use the service under applicable law. We do not knowingly seek to collect personal information from children in violation of applicable requirements. If you believe a child has provided personal information improperly, contact us so we can review the matter and take appropriate action."
+          }
+        ]
+      },
+      {
+        "id": "section-14",
+        "num": "14",
+        "title": "14. Third-Party Services and Links",
+        "shortTitle": "Third-Party Services and Links",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "The Platform may link to or integrate with third-party websites, APIs, models or services. Those third parties may process information under their own terms and privacy policies. We do not control third-party privacy practices, and you should review the relevant notices before using those services. The Company should disclose material third-party processors and integrations where required."
+          }
+        ]
+      },
+      {
+        "id": "section-15",
+        "num": "15",
+        "title": "15. Your Responsibilities for Submitted Content",
+        "shortTitle": "Your Responsibilities for Submitted Content",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "You are responsible for ensuring that you have the necessary rights, permissions and lawful basis to submit any material to the Platform. Do not submit unlawful content, content that infringes another person’s rights, or personal information that you are not authorised to disclose. Where your content includes information about other people, you should provide any notices and obtain any permissions required by law."
+          }
+        ]
+      },
+      {
+        "id": "section-16",
+        "num": "16",
+        "title": "16. Changes to This Privacy Policy",
+        "shortTitle": "Changes to This Privacy Policy",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We may update this Policy to reflect changes in the Platform, our practices or legal requirements. We will revise the “Last updated” date when changes are made. Where required by law, we will provide additional notice or obtain consent for material changes. Your continued use of the Platform after an updated Policy becomes effective is subject to applicable law."
+          }
+        ]
+      },
+      {
+        "id": "section-17",
+        "num": "17",
+        "title": "17. Contact Us",
+        "shortTitle": "Contact Us",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "For questions, concerns or privacy requests relating to Obrive Brain, please contact:"
+          },
+          {
+            "type": "paragraph",
+            "text": "Obrive Industries Private Limited\nWebsite: https://brain.obrive.com/\nPrivacy contact email: [INSERT A MONITORED PRIVACY EMAIL ADDRESS]\nRegistered/business address: [INSERT COMPANY ADDRESS, IF REQUIRED]"
+          }
+        ]
+      }
+    ]
+  },
+  "refund": {
+    "id": "refund",
+    "title": "Refund Policy",
+    "badge": "CANCELLATION & REFUNDS",
+    "documentTitle": "REFUND POLICY — OBRIVE BRAIN",
+    "company": "Obrive Industries Private Limited",
+    "platform": "Obrive Brain (https://brain.obrive.com/)",
+    "effectiveDate": "29 October 2026",
+    "lastUpdated": "29 October 2026",
+    "preamble": [
+      "REFUND POLICY",
+      "Obrive Brain — brain.obrive.com",
+      "Operated by Obrive Industries Private Limited",
+      "Effective date: 29 October 2026",
+      "This Refund Policy explains how Obrive Industries Private Limited (“Obrive”, “we”, “us” or “our”) reviews refund requests for paid access, subscriptions, credits, and other digital services offered through Obrive Brain at https://brain.obrive.com/ (the “Service”)."
+    ],
+    "sections": [
+      {
+        "id": "section-1",
+        "num": "1",
+        "title": "1. General Principles",
+        "shortTitle": "General Principles",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Obrive Brain provides digital and AI-assisted services. Access to paid features, credits, processing capacity, simulations, reports, or other digital deliverables may begin immediately after payment."
+          },
+          {
+            "type": "paragraph",
+            "text": "We assess refund requests fairly and individually, taking into account the nature of the purchase, whether the Service was available and materially performed as described, the usage already consumed, the evidence provided, and applicable law."
+          },
+          {
+            "type": "paragraph",
+            "text": "Nothing in this Policy limits any consumer right or remedy that cannot lawfully be excluded under applicable law."
+          }
+        ]
+      },
+      {
+        "id": "section-2",
+        "num": "2",
+        "title": "2. When a Refund May Be Considered",
+        "shortTitle": "When a Refund May Be Considered",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "You may contact us to request a refund if you believe that:"
+          },
+          {
+            "type": "paragraph",
+            "text": "You were charged more than once for the same purchase or were charged an incorrect amount."
+          },
+          {
+            "type": "paragraph",
+            "text": "A payment was completed but the paid entitlement or credits were not made available to your account."
+          },
+          {
+            "type": "paragraph",
+            "text": "A material platform-side technical failure prevented the purchased Service from functioning substantially as described, and we were unable to resolve the issue within a reasonable time."
+          },
+          {
+            "type": "paragraph",
+            "text": "A refund is otherwise required by applicable law or is appropriate in the specific circumstances."
+          }
+        ]
+      },
+      {
+        "id": "section-3",
+        "num": "3",
+        "title": "3. Digital Services and Completed Usage",
+        "shortTitle": "Digital Services and Completed Usage",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Because Obrive Brain provides digital access and computational services, refunds are not normally available solely because you changed your mind, no longer need the Service, did not use all purchased credits, or were dissatisfied with an AI-generated result that was produced as requested."
+          },
+          {
+            "type": "paragraph",
+            "text": "Refunds may be declined for credits, simulations, processing runs, reports, or other digital services that have already been delivered or substantially consumed, except where required by law or where a verified platform-side failure justifies a refund."
+          },
+          {
+            "type": "paragraph",
+            "text": "AI-generated results may vary and may contain errors, omissions, or unexpected outcomes. A difference between a user's expectations and a generated result does not, by itself, establish that the Service failed."
+          }
+        ]
+      },
+      {
+        "id": "section-4",
+        "num": "4",
+        "title": "4. Subscription Cancellations and Renewals",
+        "shortTitle": "Subscription Cancellations and Renewals",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "If the Service offers recurring subscriptions, you may cancel future renewals using the subscription-management options made available in your account or by contacting support. Cancellation generally prevents future renewal charges; it does not automatically refund a payment already processed."
+          },
+          {
+            "type": "paragraph",
+            "text": "Unless applicable law or the terms shown at checkout require otherwise, subscription fees for the current paid period are not prorated or refunded when you cancel partway through that period. Your access may continue until the end of the paid period, subject to the plan terms."
+          },
+          {
+            "type": "paragraph",
+            "text": "Please review the price, billing frequency, renewal terms, and any plan-specific conditions displayed before completing a purchase. This section applies only where recurring subscriptions are offered."
+          }
+        ]
+      },
+      {
+        "id": "section-5",
+        "num": "5",
+        "title": "5. How to Request a Refund",
+        "shortTitle": "How to Request a Refund",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Email support@obrive.com with the subject line “Refund Request — Obrive Brain”. To help us review the request, include:"
+          },
+          {
+            "type": "paragraph",
+            "text": "The email address associated with your Obrive Brain account."
+          },
+          {
+            "type": "paragraph",
+            "text": "The order, invoice, payment, subscription, or transaction reference, if available."
+          },
+          {
+            "type": "paragraph",
+            "text": "The date and amount of the charge and the payment method used (do not send full card numbers or passwords)."
+          },
+          {
+            "type": "paragraph",
+            "text": "A concise explanation of the issue and, where relevant, screenshots or error details."
+          },
+          {
+            "type": "paragraph",
+            "text": "Please submit your request as soon as reasonably possible after identifying the issue. We may ask for additional information needed to verify the transaction or investigate the reported problem."
+          }
+        ]
+      },
+      {
+        "id": "section-6",
+        "num": "6",
+        "title": "6. Review and Decision",
+        "shortTitle": "Review and Decision",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We will review the information provided and may check payment records, account entitlements, service logs, and relevant technical details. We aim to respond within a reasonable period, but review time may vary depending on the complexity of the issue and any verification required."
+          },
+          {
+            "type": "paragraph",
+            "text": "Submitting a request does not guarantee approval. If we approve a refund, we will communicate the decision and the amount to be refunded."
+          }
+        ]
+      },
+      {
+        "id": "section-7",
+        "num": "7",
+        "title": "7. Refund Method and Processing Time",
+        "shortTitle": "Refund Method and Processing Time",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "Approved refunds will generally be returned to the original payment method where practicable. If the original method is unavailable, we may contact you to determine an appropriate lawful alternative."
+          },
+          {
+            "type": "paragraph",
+            "text": "The time required for the funds to appear in your account depends on the payment provider, bank, card issuer, and payment method. Any estimate provided by us or a payment provider is not a guarantee of the date funds will be credited."
+          }
+        ]
+      },
+      {
+        "id": "section-8",
+        "num": "8",
+        "title": "8. Payment Provider Disputes and Suspected Fraud",
+        "shortTitle": "Payment Provider Disputes and Suspected Fraud",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "If you do not recognize a charge, please contact us promptly and also contact your bank or payment provider where appropriate. We may pause a refund review while a related chargeback or payment-provider investigation is underway, to the extent permitted by law."
+          },
+          {
+            "type": "paragraph",
+            "text": "We may decline or investigate requests involving suspected fraud, abuse, materially inaccurate information, or duplicate recovery of the same amount. This does not affect any rights you have under applicable law."
+          }
+        ]
+      },
+      {
+        "id": "section-9",
+        "num": "9",
+        "title": "9. Changes to This Policy",
+        "shortTitle": "Changes to This Policy",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "We may update this Policy to reflect changes in the Service, payment arrangements, or legal requirements. We will update the effective date when changes are made. The version applicable to a purchase will be interpreted subject to applicable law and any mandatory consumer protections."
+          }
+        ]
+      },
+      {
+        "id": "section-10",
+        "num": "10",
+        "title": "10. Contact Information",
+        "shortTitle": "Contact Information",
+        "items": [
+          {
+            "type": "paragraph",
+            "text": "For refund, billing, or payment questions, contact:"
+          },
+          {
+            "type": "paragraph",
+            "text": "Obrive Industries Private Limited\nWebsite: https://brain.obrive.com/\nSupport: support@obrive.com\nLegal: legal@obrive.com\nAddress: Sree Gururaya Mansion, 3rd Floor, 759, 8th Main Road, KSRTC Layout, 3rd Phase, J. P. Nagar, Bengaluru, Karnataka 560078, India"
+          }
+        ]
+      }
+    ]
+  }
+}
