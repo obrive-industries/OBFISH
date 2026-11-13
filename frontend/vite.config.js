@@ -13,7 +13,7 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true,
+    open: false,
     allowedHosts: ['brain.obrive.com', 'obmind.obrive.com', 'obfish.obrive.com'],
     proxy: {
       '/api': {
