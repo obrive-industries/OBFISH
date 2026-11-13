@@ -147,7 +147,7 @@ const goToHome = () => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   color: #000000;
 }
 
@@ -177,7 +177,7 @@ const goToHome = () => {
 }
 
 .brand-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
   font-size: 1.55rem;
   letter-spacing: -0.01em;
   color: #000000;
@@ -186,7 +186,7 @@ const goToHome = () => {
 }
 
 .brand-sub {
-  font-family: var(--font-mono, monospace);
+  font-family: 'Michroma', sans-serif;
   font-size: 0.74rem;
   font-weight: 600;
   color: #666666;
@@ -207,9 +207,9 @@ const goToHome = () => {
 }
 
 .form-label {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
-  font-weight: 700;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.74rem;
+  font-weight: 600;
   color: #000000;
   letter-spacing: 0.04em;
 }
@@ -218,16 +218,16 @@ const goToHome = () => {
   padding: 10px 14px;
   background: #FAFAFA;
   border: 1px solid #DDDDDD;
-  border-radius: 6px;
+  border-radius: 8px;
   color: #000000;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.88rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.85rem;
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: #000000;
+  border-color: #073933;
   background: #FFFFFF;
 }
 
@@ -236,21 +236,22 @@ const goToHome = () => {
   color: #991B1B;
   padding: 12px 14px;
   border-radius: 6px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.82rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.78rem;
   border: 1px solid #FCA5A5;
 }
 
 .primary-btn {
-  background: #000000;
+  background: #073933;
   color: #FFFFFF;
-  border: 1px solid #000000;
-  border-radius: 6px;
+  border: 1px solid #073933;
+  border-radius: 9999px;
   padding: 12px 28px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.92rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -260,8 +261,8 @@ const goToHome = () => {
 }
 
 .primary-btn:hover:not(:disabled) {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #042823;
+  border-color: #042823;
   transform: translateY(-1px);
 }
 
@@ -285,9 +286,9 @@ const goToHome = () => {
 .text-link {
   background: transparent;
   border: none;
-  color: #000000;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.82rem;
+  color: #073933;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -298,7 +299,7 @@ const goToHome = () => {
 }
 
 .text-link:hover {
-  color: #FF4500;
+  color: #000000;
 }
 
 .state-container {
@@ -327,7 +328,7 @@ const goToHome = () => {
 }
 
 .state-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
   font-size: 1.35rem;
   font-weight: 700;
   color: #000000;

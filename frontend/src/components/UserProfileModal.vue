@@ -343,7 +343,7 @@ const handleLogout = () => {
   max-width: 480px;
   padding: 30px;
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
-  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   animation: modalEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -400,7 +400,7 @@ const handleLogout = () => {
 }
 
 .user-name {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
   font-size: 1.15rem;
   font-weight: 700;
   color: #000000;
@@ -455,16 +455,17 @@ const handleLogout = () => {
   border: none;
   border-radius: 4px;
   padding: 5px 12px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
   cursor: pointer;
   white-space: nowrap;
   transition: all 0.2s ease;
 }
 
 .resend-action-btn:hover:not(:disabled) {
-  background: #FF4500;
+  background: #074139;
 }
 
 .settings-tabs {
@@ -479,9 +480,11 @@ const handleLogout = () => {
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #888888;
   cursor: pointer;
   margin-bottom: -1px;
@@ -704,22 +707,25 @@ const handleLogout = () => {
 }
 
 .primary-btn {
-  background: #000000;
+  background: #073933;
   color: #FFFFFF;
-  border: 1px solid #000000;
-  border-radius: 6px;
+  border: 1px solid #073933;
+  border-radius: 9999px;
   padding: 10px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.88rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.78rem;
   font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   margin-top: 6px;
   transition: all 0.2s ease;
 }
 
 .primary-btn:hover:not(:disabled) {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #042823;
+  border-color: #042823;
+  transform: translateY(-1px);
 }
 
 .primary-btn:disabled {
@@ -761,11 +767,12 @@ const handleLogout = () => {
   background: #000000;
   color: #ffffff;
   border: 1px solid #000000;
-  border-radius: 6px;
+  border-radius: 9999px;
   padding: 6px 14px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.82rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.04em;
   cursor: pointer;
   transition: all 0.2s ease;
   display: inline-flex;
@@ -774,18 +781,21 @@ const handleLogout = () => {
 }
 
 .admin-wishlist-pill:hover {
-  background: #333333;
+  background: #073933;
+  border-color: #073933;
 }
 
 .logout-btn {
   background: transparent;
   color: #DC2626;
   border: 1px solid #FCA5A5;
-  border-radius: 6px;
+  border-radius: 9999px;
   padding: 6px 14px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.82rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -903,18 +913,22 @@ const handleLogout = () => {
 .secondary-plan-btn {
   width: 100%;
   padding: 10px 14px;
-  border: 1px solid #dddddd;
-  border-radius: 8px;
+  border: 1px solid rgba(7, 57, 51, 0.2);
+  border-radius: 9999px;
   background: #ffffff;
-  color: #555555;
-  font-size: 0.78rem;
+  color: #073933;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .secondary-plan-btn:hover {
-  border-color: #999999;
-  color: #111111;
+  border-color: #073933;
+  color: #000000;
 }
 
 .plan-note {

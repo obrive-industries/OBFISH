@@ -474,7 +474,7 @@ watch(isAdmin, (val) => {
   min-height: 100vh;
   background-color: #A2F1DF;
   color: #0a1c17;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   position: relative;
   overflow-x: hidden;
 }

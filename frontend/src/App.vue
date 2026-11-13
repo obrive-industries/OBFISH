@@ -238,7 +238,7 @@ body {
   justify-content: center;
   position: relative;
   overflow: hidden;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Michroma', sans-serif !important;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -254,7 +254,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.75s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), opacity 0.35s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform, opacity;
 }
 
 .btn__icon.--1,
@@ -262,27 +263,34 @@ body {
   position: absolute;
   left: 0;
   top: 50%;
-  transform: translate(-250%) translate(-2rem) translateY(-50%);
+  transform: translate(-150%) translate(-1.2rem) translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
   transition-delay: 0s;
 }
 
 .btn:hover .btn__icon.--1,
 .btn-animated:hover .btn-animated__icon.--1 {
-  transform: translate(-0.4rem) translateY(-50%);
-  transition-delay: 0.2s;
+  transform: translate(0) translateY(-50%);
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0.12s;
 }
 
 .btn__icon.--2,
 .btn-animated__icon.--2 {
   position: relative;
   transform: translate(0);
-  transition-delay: 0.2s;
+  opacity: 1;
+  transition-delay: 0.12s;
   margin-left: 8px;
 }
 
 .btn:hover .btn__icon.--2,
 .btn-animated:hover .btn-animated__icon.--2 {
-  transform: translate(100%) translate(2rem);
+  transform: translate(150%) translate(1.5rem);
+  opacity: 0;
+  pointer-events: none;
   transition-delay: 0s;
 }
 
@@ -292,30 +300,50 @@ body {
   align-items: center;
   justify-content: center;
   transform: translate(0);
-  transition: transform 1s cubic-bezier(0.19, 1, 0.22, 1);
+  transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1);
+  will-change: transform;
 }
 
 .btn:hover .btn__label,
 .btn-animated:hover .btn-animated__label {
-  transform: translate(1.5rem) translate(-0.1rem);
+  transform: translate(1.4rem) translate(-0.1rem);
 }
 
 /* RTL Button Animation Overrides */
 html[dir="rtl"] .btn__icon.--1,
 html[dir="rtl"] .btn-animated__icon.--1 {
-  transform: translate(250%) translate(2rem) translateY(-50%);
+  left: auto;
+  right: 0;
+  transform: translate(150%) translate(1.2rem) translateY(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
 }
 html[dir="rtl"] .btn:hover .btn__icon.--1,
 html[dir="rtl"] .btn-animated:hover .btn-animated__icon.--1 {
-  transform: translate(0.4rem) translateY(-50%);
+  transform: translate(0) translateY(-50%);
+  opacity: 1;
+  pointer-events: auto;
+  transition-delay: 0.12s;
+}
+html[dir="rtl"] .btn__icon.--2,
+html[dir="rtl"] .btn-animated__icon.--2 {
+  transform: translate(0);
+  opacity: 1;
+  transition-delay: 0.12s;
+  margin-left: 0;
+  margin-right: 8px;
 }
 html[dir="rtl"] .btn:hover .btn__icon.--2,
 html[dir="rtl"] .btn-animated:hover .btn-animated__icon.--2 {
-  transform: translate(-100%) translate(-2rem);
+  transform: translate(-150%) translate(-1.5rem);
+  opacity: 0;
+  pointer-events: none;
+  transition-delay: 0s;
 }
 html[dir="rtl"] .btn:hover .btn__label,
 html[dir="rtl"] .btn-animated:hover .btn-animated__label {
-  transform: translate(-1.5rem) translate(-0.1rem);
+  transform: translate(-1.4rem) translate(-0.1rem);
 }
 html[dir="rtl"] .btn__icon svg,
 html[dir="rtl"] .btn-animated__icon svg {

@@ -190,7 +190,7 @@ const goToDashboard = () => {
   align-items: center;
   justify-content: center;
   padding: 24px;
-  font-family: var(--font-sans, "Space Grotesk", system-ui, sans-serif);
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   color: #000000;
 }
 
@@ -220,7 +220,7 @@ const goToDashboard = () => {
 }
 
 .brand-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
   font-size: 1.55rem;
   letter-spacing: -0.01em;
   color: #000000;
@@ -229,7 +229,7 @@ const goToDashboard = () => {
 }
 
 .brand-sub {
-  font-family: var(--font-mono, monospace);
+  font-family: 'Michroma', sans-serif;
   font-size: 0.74rem;
   font-weight: 600;
   color: #666666;
@@ -282,7 +282,7 @@ const goToDashboard = () => {
 }
 
 .state-title {
-  font-family: var(--font-display, "Space Grotesk", sans-serif);
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
   font-size: 1.35rem;
   font-weight: 700;
   color: #000000;
@@ -298,8 +298,8 @@ const goToDashboard = () => {
 }
 
 .error-desc {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.85rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.8rem;
   color: #991B1B;
   background: #FEF2F2;
   border: 1px solid #FCA5A5;
@@ -310,15 +310,16 @@ const goToDashboard = () => {
 }
 
 .primary-btn {
-  background: #000000;
+  background: #073933;
   color: #FFFFFF;
-  border: 1px solid #000000;
-  border-radius: 6px;
+  border: 1px solid #073933;
+  border-radius: 9999px;
   padding: 12px 28px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.92rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -327,8 +328,8 @@ const goToDashboard = () => {
 }
 
 .primary-btn:hover {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #042823;
+  border-color: #042823;
   transform: translateY(-1px);
 }
 
@@ -351,8 +352,8 @@ const goToDashboard = () => {
 }
 
 .resend-label {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.76rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.74rem;
   font-weight: 700;
   color: #000000;
   letter-spacing: 0.04em;
@@ -371,33 +372,34 @@ const goToDashboard = () => {
   border: 1px solid #DDDDDD;
   border-radius: 6px;
   color: #000000;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.88rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.85rem;
   outline: none;
   transition: border-color 0.2s ease;
 }
 
 .input-field:focus {
-  border-color: #000000;
+  border-color: #073933;
 }
 
 .secondary-btn {
-  background: #000000;
-  border: 1px solid #000000;
+  background: #073933;
+  border: 1px solid #073933;
   color: #FFFFFF;
-  border-radius: 6px;
+  border-radius: 9999px;
   padding: 9px 16px;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.75rem;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .secondary-btn:hover:not(:disabled) {
-  background: #FF4500;
-  border-color: #FF4500;
+  background: #042823;
+  border-color: #042823;
 }
 
 .secondary-btn:disabled {
@@ -406,8 +408,8 @@ const goToDashboard = () => {
 }
 
 .resend-success-msg {
-  font-family: var(--font-mono, monospace);
-  font-size: 0.78rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.76rem;
   font-weight: 600;
   color: #2E7D32;
   margin-top: 8px;
@@ -416,9 +418,9 @@ const goToDashboard = () => {
 .text-link {
   background: transparent;
   border: none;
-  color: #000000;
-  font-family: var(--font-mono, monospace);
-  font-size: 0.82rem;
+  color: #073933;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -428,6 +430,6 @@ const goToDashboard = () => {
 }
 
 .text-link:hover {
-  color: #FF4500;
+  color: #000000;
 }
 </style>

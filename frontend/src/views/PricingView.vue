@@ -179,7 +179,7 @@ onUnmounted(() => {
     radial-gradient(45% 30% at 85% 15%, rgba(6, 65, 57, 0.08), transparent 70%),
     #A2F1DF;
   color: #073933;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   box-sizing: border-box;
 }
 
@@ -247,8 +247,11 @@ onUnmounted(() => {
   border-radius: 999px;
   background: transparent;
   color: #163830;
-  font-size: 14px;
+  font-family: 'Michroma', sans-serif;
+  font-size: 12px;
   font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -264,6 +267,7 @@ onUnmounted(() => {
   border-radius: 999px;
   background: rgba(7, 57, 51, 0.12);
   color: #073933;
+  font-family: 'Michroma', sans-serif;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -277,8 +281,10 @@ onUnmounted(() => {
 .pricing-subtitle {
   margin: 0;
   color: #163830;
-  font-size: 14px;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 13.5px;
   font-weight: 500;
+  line-height: 1.6;
   text-align: center;
 }
 
@@ -325,18 +331,19 @@ onUnmounted(() => {
   border-radius: 999px;
   background: #A2F1DF;
   color: #073933;
+  font-family: 'Michroma', sans-serif;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.09em;
 }
 
 .plan-name {
   position: relative;
   margin: 0 0 12px;
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
-  font-size: 28px;
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
+  font-size: 26px;
   font-weight: 700;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.01em;
   color: #073933;
 }
 
@@ -345,8 +352,9 @@ onUnmounted(() => {
   margin: 0 0 24px;
   min-height: 54px;
   color: #1d483f;
-  font-size: 13.5px;
-  line-height: 1.55;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
 }
 
 .plan-price-row {
@@ -358,16 +366,18 @@ onUnmounted(() => {
 
 .plan-currency {
   margin-top: 6px;
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif;
   font-size: 26px;
   font-weight: 700;
   color: #073933;
 }
 
 .plan-amount {
-  font-size: 48px;
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif;
+  font-size: 46px;
   font-weight: 800;
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.02em;
   color: #073933;
 }
 
@@ -376,6 +386,7 @@ onUnmounted(() => {
   margin-bottom: 7px;
   margin-left: 6px;
   color: #2d554c;
+  font-family: 'Michroma', sans-serif;
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -384,7 +395,8 @@ onUnmounted(() => {
 .plan-strike {
   margin-top: 8px;
   color: #65857e;
-  font-size: 14px;
+  font-family: 'Michroma', sans-serif;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: line-through;
 }
@@ -392,8 +404,9 @@ onUnmounted(() => {
 .included-label {
   margin: 24px 0 14px;
   color: #073933;
+  font-family: 'Michroma', sans-serif;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.12em;
 }
 
@@ -411,8 +424,9 @@ onUnmounted(() => {
   display: flex;
   gap: 10px;
   color: #163830;
-  font-size: 13px;
-  line-height: 1.45;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 12.5px;
+  line-height: 1.6;
 }
 
 .feature-check {
@@ -432,20 +446,28 @@ onUnmounted(() => {
   position: relative;
   margin-top: auto;
   width: 100%;
-  height: 44px;
+  height: 46px;
   border: 1px solid #073933;
   border-radius: 999px;
   background: #ffffff;
   color: #073933;
-  font-size: 13px;
+  font-family: 'Michroma', sans-serif;
+  font-size: 12px;
   font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .choose-btn:hover:not(:disabled) {
   background: #073933;
   color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(7, 57, 51, 0.25);
 }
 
 .choose-btn--primary {
@@ -456,9 +478,10 @@ onUnmounted(() => {
 }
 
 .choose-btn--primary:hover:not(:disabled) {
-  background: #032420;
-  border-color: #032420;
-  transform: translateY(-1px);
+  background: #042823;
+  border-color: #042823;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(7, 57, 51, 0.38);
 }
 
 .choose-btn:disabled {
@@ -474,8 +497,9 @@ onUnmounted(() => {
   margin: 16px 0 0;
   min-height: 48px;
   color: #3b6158;
-  font-size: 12px;
-  line-height: 1.5;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 11.5px;
+  line-height: 1.6;
 }
 
 .pricing-error {
@@ -486,6 +510,7 @@ onUnmounted(() => {
   border-radius: 10px;
   background: rgba(220, 38, 38, 0.08);
   color: #b91c1c;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   font-size: 13px;
   font-weight: 500;
   text-align: center;
@@ -495,6 +520,7 @@ onUnmounted(() => {
   margin: 20px auto 0;
   max-width: 680px;
   color: #1d483f;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   font-size: 12.5px;
   text-align: center;
   font-weight: 500;
@@ -514,7 +540,9 @@ onUnmounted(() => {
 .pricing-legal-text {
   margin: 0;
   max-width: 640px;
-  line-height: 1.5;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 11px;
+  line-height: 1.6;
 }
 
 .pricing-legal-links {

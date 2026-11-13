@@ -161,10 +161,10 @@ onUnmounted(() => {
   padding: 0.6rem 1.4rem;
   background-color: #073933;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   border-radius: 0.75rem;
   border: 1px solid #073933;
@@ -214,12 +214,14 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: 'Michroma', sans-serif;
 }
 
 .user-name {
-  font-family: 'Space Grotesk', 'Inter', monospace;
-  font-size: 0.8rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.75rem;
   font-weight: 600;
+  letter-spacing: 0.02em;
   color: #0a1c17;
   max-width: 140px;
   overflow: hidden;
@@ -250,10 +252,10 @@ onUnmounted(() => {
   padding: 0.6rem 1.35rem;
   background-color: #073933;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
-  font-size: 0.75rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   border-radius: 0.75rem;
   text-decoration: none;

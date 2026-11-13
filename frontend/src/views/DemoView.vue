@@ -196,7 +196,7 @@ const openPlans = () => {
   min-height: 100vh;
   background: #ffffff;
   color: #000000;
-  font-family: var(--font-sans, 'Space Grotesk', system-ui, sans-serif);
+  font-family: Michroma, "Michroma Fallback", sans-serif;
 }
 
 .demo-navbar {
@@ -218,7 +218,7 @@ const openPlans = () => {
 }
 
 .brand-name {
-  font-family: var(--font-display, 'Space Grotesk', sans-serif);
+  font-family: 'microgrammaBold', 'Microgramma', sans-serif !important;
   font-size: 1.05rem;
   font-weight: 700;
   letter-spacing: 0.22em;

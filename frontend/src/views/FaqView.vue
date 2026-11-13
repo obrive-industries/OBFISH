@@ -155,6 +155,7 @@ const faqs = [
   min-height: 100vh;
   background-color: #A2F1DF;
   color: #0a1c17;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
 }
 
 .faq-main {
@@ -273,6 +274,7 @@ const faqs = [
   text-align: left;
   cursor: pointer;
   color: inherit;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
 }
 
 .faq-trigger:focus-visible {
@@ -290,11 +292,11 @@ const faqs = [
 
 .faq-question {
   flex: 1;
-  font-family: 'Inter', sans-serif;
-  font-size: 1.12rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 15px;
   font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: -0.01em;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
   color: #073933;
 }
 
@@ -333,8 +335,9 @@ const faqs = [
 
 .faq-answer {
   margin: 0;
-  font-size: 0.95rem;
-  line-height: 1.7;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 13.5px;
+  line-height: 1.75;
   color: #000000;
 }
 
@@ -363,8 +366,9 @@ const faqs = [
 
 .cta-text {
   margin: 0;
-  font-size: 1rem;
-  line-height: 1.5;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
   color: #073933;
   font-weight: 600;
 }
@@ -377,7 +381,7 @@ const faqs = [
   border-radius: 0.75rem;
   background: #073933;
   color: #ffffff;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Michroma', sans-serif;
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.08em;

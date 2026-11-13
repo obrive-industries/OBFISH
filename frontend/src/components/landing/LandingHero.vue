@@ -334,7 +334,7 @@ const scrollDown = () => {
 }
 
 .hero-btn-primary {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Michroma', sans-serif;
   font-size: 0.8125rem;
   line-height: 1.25rem;
   font-weight: 600;
@@ -370,7 +370,7 @@ const scrollDown = () => {
 }
 
 .hero-btn-github {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Michroma', sans-serif;
   font-size: 0.8125rem;
   line-height: 1.25rem;
   font-weight: 600;
@@ -452,7 +452,8 @@ const scrollDown = () => {
   color: #073933 !important;
   border-radius: 0.75rem;
   padding: 0.85rem 1.25rem;
-  font-size: 0.95rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.875rem;
   font-weight: 500;
   box-shadow: 0 2px 8px rgba(7, 57, 51, 0.08);
   transition: all 0.2s ease;
@@ -479,6 +480,7 @@ const scrollDown = () => {
   color: #ffffff !important;
   border-radius: 0.75rem;
   padding: 0.85rem 1.75rem;
+  font-family: 'Michroma', sans-serif;
   font-size: 0.8125rem;
   font-weight: 600;
   letter-spacing: 0.08em;

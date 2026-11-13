@@ -471,7 +471,7 @@ const handleForgot = async () => {
   max-width: 440px;
   padding: 36px 32px 30px;
   box-shadow: 0 25px 60px -15px rgba(7, 57, 51, 0.22), 0 0 0 1px rgba(162, 241, 223, 0.25);
-  font-family: var(--font-sans, 'Inter', system-ui, sans-serif);
+  font-family: Michroma, "Michroma Fallback", sans-serif;
   animation: modalEnter 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -561,9 +561,11 @@ const handleForgot = async () => {
   background: transparent;
   border: none;
   border-radius: 9999px;
-  font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.86rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.76rem;
   font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: #4a635d;
   cursor: pointer;
   transition: all 0.2s cubic-bezier(0.19, 1, 0.22, 1);
@@ -586,10 +588,10 @@ const handleForgot = async () => {
 .alert {
   padding: 11px 15px;
   border-radius: 12px;
-  font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.82rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.78rem;
   margin-bottom: 16px;
-  line-height: 1.45;
+  line-height: 1.5;
 }
 
 .error-alert {
@@ -635,9 +637,10 @@ const handleForgot = async () => {
 }
 
 .form-label {
-  font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.82rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
+  letter-spacing: 0.03em;
   color: #000000;
 }
 
@@ -654,8 +657,8 @@ const handleForgot = async () => {
   background: #F8FAF9;
   border: 1.5px solid rgba(7, 57, 51, 0.16);
   border-radius: 12px;
-  font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.92rem;
+  font-family: Michroma, "Michroma Fallback", sans-serif;
+  font-size: 0.85rem;
   color: #000000;
   outline: none;
   transition: all 0.2s ease;
@@ -706,10 +709,11 @@ const handleForgot = async () => {
   border: 1.5px solid #000000;
   border-radius: 9999px;
   padding: 13px 20px;
-  font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.92rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.8125rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.19, 1, 0.22, 1);
   margin-top: 6px;
@@ -746,10 +750,12 @@ const handleForgot = async () => {
   background: transparent;
   border: none;
   color: #073933;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.75rem;
   font-weight: 700;
+  letter-spacing: 0.02em;
   cursor: pointer;
   padding: 0 4px;
-  font-size: inherit;
   text-decoration: underline;
   text-decoration-color: rgba(7, 57, 51, 0.35);
   transition: all 0.2s ease;
@@ -820,8 +826,8 @@ const handleForgot = async () => {
   background: transparent;
   border: none;
   color: #073933;
-  font-family: var(--font-sans, 'Inter', sans-serif);
-  font-size: 0.84rem;
+  font-family: 'Michroma', sans-serif;
+  font-size: 0.75rem;
   font-weight: 700;
   cursor: pointer;
   text-decoration: underline;
